@@ -1,0 +1,28 @@
+{
+    "hatman": {
+        "frameWidth": 24,
+        "frameHeight": 32,
+        "animations": {
+            "down": {
+                "start": 27,
+                "end": 29
+            },
+            "right": {
+                "start": 15,
+                "end": 17
+            },
+            "up": {
+                "start": 3,
+                "end": 5
+            },
+            "left": {
+                "start": 39,
+                "end": 41
+            },
+            "wait": {
+                "start": 27,
+                "end": 27
+            }
+        }
+    }
+}

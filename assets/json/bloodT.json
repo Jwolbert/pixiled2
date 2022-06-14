@@ -1,0 +1,12 @@
+{
+    "slash": {
+        "frameWidth": 24,
+        "frameHeight": 32,
+        "animations": {
+            "slash": {
+                "start": 25,
+                "end": 25
+            }
+        }
+    }
+}
