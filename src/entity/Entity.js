@@ -11,7 +11,9 @@ export default class Entity {
     velocityY = 0;
     currentAnimation;
     dead;
-    currentAction;
+    currentAction = {
+        name: "idle"
+    };
     effects = [];
     hp = 100;
     effectTimer = 0;
@@ -25,6 +27,34 @@ export default class Entity {
         this.gameObject = gameObject;
         this.gameObject.id = this.id;
         this.dead = false;
+    }
+
+    getJSON () {
+        return {
+            id: this.id,
+            name: this.name,
+            type: this.type,
+            x: this.x,
+            y: this.y,
+            velocityX: this.velocityX,
+            velocityY: this.velocityY,
+            dead: this.dead,
+            currentAction: this.currentAction,
+            hp: this.hp,
+        };
+    }
+
+    updateWithJSON (JSON) {
+        this.id = JSON.id;
+        this.name = JSON.name;
+        this.type = JSON.type;
+        this.x = JSON.x;
+        this.y = JSON.y;
+        this.velocityX = JSON.velocityX;
+        this.velocityY = JSON.velocityY;
+        this.dead = JSON.dead;
+        this.currentAction = JSON.currentAction;
+        this.hp = JSON.hp;
     }
 
     update ()
@@ -88,7 +118,9 @@ export default class Entity {
 
     getCurrentAction () {
         const action = this.currentAction;
-        this.currentAction = null;
+        this.currentAction = {
+            name: "idle"
+        };
         return action;
     }
 

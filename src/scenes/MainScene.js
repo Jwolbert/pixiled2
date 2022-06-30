@@ -3,11 +3,13 @@ import NpcMap from "../entity/npc/NpcMap";
 import Player from "../entity/player/Player";
 import AnimationUtility from "../utility/AnimationUtility";
 import Attack from "../entity/action/attack/Attack";
-import Npc from "../entity/npc/Npc";
+import GameWebSocket from "../websocket/GameWebSocket";
 
 export class Example extends Phaser.Scene
 {
     entities = {};
+    player;
+    websocket;
 
     constructor ()
     {
@@ -27,9 +29,10 @@ export class Example extends Phaser.Scene
     {
 
         console.log("STARTING_SCENE");
+
         AnimationUtility.call(this, ['hatman', 'slash']);
         const map = this.make.tilemap({ key: 'map' });
-        const npcMap = new NpcMap(map);
+        // const npcMap = new NpcMap(map);
 
         // The first parameter is the name of the tileset in Tiled and the second parameter is the key
         // of the tileset image used when loading the file in preload.
@@ -44,30 +47,34 @@ export class Example extends Phaser.Scene
         layer.width = 200;
 
         this.character = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.9).setDepth(3);
-        this.npcCharacter = this.physics.add.sprite(500, 250, 'mainCharacters').setDepth(3);
+        // this.npcCharacter = this.physics.add.sprite(500, 250, 'mainCharacters').setDepth(3);
 
-        new XMLHttpRequest()
-        
         this.physics.add.collider(this.character, layer);
-        this.physics.add.collider(this.npcCharacter, layer);
+        // this.physics.add.collider(this.npcCharacter, layer);
 
         this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);
 
-        const player = new Player('hatman', this.character, this.input);
-        this.entities[player.getId()] = player;
+        this.player = new Player('hatman', this.character, this.input);
+        this.entities[this.player.getId()] = this.player;
 
-        const npc = new Npc('hatman', this.npcCharacter);
-        this.entities[npc.getId()] = npc;
+        // const npc = new Npc('hatman', this.npcCharacter);
+        // this.entities[npc.getId()] = npc;
 
-        npcMap.dStar(player, npc);
+        // npcMap.dStar(player, npc);
 
         /*
         setTimeout(() => {
             player.dead = true;
         }, 60000);
         */
+       setTimeout(() => {
+        console.log(this.count);
+       },1000);
+
+       this.websocket = new GameWebSocket(this.entities, this.player, this.physics); 
     }
+
 
     update ()
     {
@@ -77,6 +84,7 @@ export class Example extends Phaser.Scene
 
         this.bringOutYourDead();
 
+        this.websocket.update();
         this.performActions();
     }
 
