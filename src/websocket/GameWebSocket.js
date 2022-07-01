@@ -6,7 +6,7 @@ export default class GameWebSocket {
     data;
     socket;
     counter = 0;
-    sendEntitiesRate = 10; // lower = faster
+    // sendEntitiesRate = 1; // lower = faster
     open = false;
     physics;
     layer;
@@ -25,28 +25,29 @@ export default class GameWebSocket {
 
         this.socket.addEventListener('message', (event) => {
             const message = JSON.parse(event.data);
-            console.log(message.entities);
-            Object.values(message.entities).forEach((entity) => {
-                if (!this.entities[entity.id]) {
+            Object.values(message.entities).forEach((updateEntity) => {
+                console.log(updateEntity);
+                if (!this.entities[updateEntity.id]) {
                     const newEntitySprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.9).setDepth(3);
                     this.physics.add.collider(newEntitySprite, layer);
                     const newEntity = new Entity('hatman', newEntitySprite);
-                    this.entities[entity.id] = newEntity;
+                    this.entities[updateEntity.id] = newEntity;
+                } else if(updateEntity.dead) {
+                    console.log("dead");
+                    this.entities[updateEntity.id].destroy();
+                    delete this.entities[updateEntity.id];
                 }
-                this.entities[entity.id].updateWithJSON(entity);
+                this.entities[updateEntity.id].updateWithJSON(updateEntity);
             });
-            this.entities[this.player.id] = this.player;
         });
     }
 
     update() {
         if (!this.open) return;
         const message = {};
-        if (++this.counter > this.sendEntitiesRate) {
-            message.entities = this.getEntities();
-            this.counter = 0;
-        }
-        message.action = this.getAction;
+        message.entities = this.getEntities();
+        this.counter = 0;
+        // message.action = this.getAction;
         this.socket.send(JSON.stringify(message));
     }
 
@@ -55,6 +56,7 @@ export default class GameWebSocket {
     }
 
     getEntities() {
+        console.log(Object.keys(this.entities).length);
         const thinEntities = {};
         Object.values(this.entities).forEach((entity) => {
             thinEntities[entity.id] = entity.getJSON();

@@ -7,6 +7,7 @@ import GameWebSocket from "../websocket/GameWebSocket";
 export class Example extends Phaser.Scene
 {
     entities = {};
+    ownedEntities = {};
     data = {};
     player;
     websocket;
@@ -40,8 +41,11 @@ export class Example extends Phaser.Scene
         this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);
         this.player = new Player('hatman', this.character, this.input);
-        this.entities[this.player.getId()] = this.player;
-        this.websocket = new GameWebSocket(this.entities, this.player, this.physics); 
+        this.ownedEntities[this.player.getId()] = this.player;
+        this.entities = {
+            ...this.ownedEntities,
+        };
+        this.websocket = new GameWebSocket(this.entities, this.player, this.physics);
     }
 
 
@@ -50,24 +54,13 @@ export class Example extends Phaser.Scene
         Object.values(this.entities).forEach((entity) => {
             entity.update();
         });
-        this.bringOutYourDead();
-        this.websocket.update();
         this.performActions();
-    }
-
-    bringOutYourDead () {
-        Object.keys(this.entities).forEach((id) => {
-            const entity = this.entities[id];
-            if (entity.dead) {
-                entity.gameObject.destroy();
-                delete this.entities[id];
-            }
-        });
+        this.websocket.update();
     }
 
     performActions () {
-        Object.keys(this.entities).forEach((id) => {
-            this.actionHandler(this.entities[id].getCurrentAction());
+        Object.values(this.ownedEntities).forEach((entity) => {
+            this.actionHandler(entity.getCurrentAction());
         });
     }
 
@@ -91,7 +84,11 @@ export class Example extends Phaser.Scene
         });
         const sprite = this.physics.add.sprite(attack.location.x, attack.location.y, "bloodT").setDepth(3).setRotation(attack.direction).setBodySize(attackArea,attackArea,true);
         const entity = new Attack('slash', sprite);
-        this.entities[entity.getId()] = entity;
+        this.ownedEntities[entity.getId()] = entity;
+        this.entities = {
+            ...this.entities,
+            ...this.ownedEntities,
+        };
         console.log("attack handled");
         console.log("length", Object.keys(this.entities).length);
     }
