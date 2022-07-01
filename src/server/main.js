@@ -9,33 +9,51 @@ const wss = new WebSocket.Server({server: server});
 
 let numberOfClients = 0;
 
-wss.on('connection', (ws) => {
-    wss.state = {};
-    wss.state.data = {};
-    wss.state.entities = {};
-    console.log('Client connected!');
+function bringOutYourDead(entities) {
+    const d34dB33f = [];
+    Object.values(entities).forEach((entity) => {
+        if (entity.dead) {
+            delete entities[entity.id];
+            d34dB33f.push(entity.id);
+        }
+    });
+    return d34dB33f;
+}
 
-    if(numberOfClients === 0) {
-        setInterval(() => {
-            console.log(wss.state.entities);
-            wss.clients.forEach((client) => {
-                client.send(JSON.stringify(wss.state));
-            });
-        }, 5000);
+wss.on('connection', (ws) => {
+    if(numberOfClients++ === 0) {
+        console.log("First gamer connected!");
+        wss.state = {};
+        wss.state.data = {};
+        wss.state.entities = {};
     }
 
-    console.log("Number of clients: " + ++numberOfClients);
+    console.log('Client connected!');
+    console.log("Number of clients: " + numberOfClients);
 
     ws.on('message', function incoming(message) {
         message = JSON.parse(message);
         if (message.entities) {
-            wss.state.entities = {
-                ...wss.state.entities,
-                ...message.entities,
-            };
+            Object.keys(message.entities).forEach((id) => {
+                if (!wss.state.entities[id]) {
+                    if (ws.owner === undefined) {
+                        ws.owner = id;
+                        console.log("owner: " + ws.owner);
+                    }
+                    console.log(`owner ${ws.owner} adding ${id}`);
+                    message.entities[id].owner = ws.owner;
+                    wss.state.entities[id] = message.entities[id];
+                } else if (wss.state.entities[id].owner === ws.owner) {
+                    message.entities[id].owner = ws.owner;
+                    wss.state.entities[id] = message.entities[id];
+                }
+            });
         }
+        ws.send(JSON.stringify(wss.state));
+        bringOutYourDead(wss.state.entities);
     });
 });
+
 
 app.get('/', (req, res) => res.send('Hello world!'));
 
