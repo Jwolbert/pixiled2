@@ -38,6 +38,17 @@ export default class Player extends Entity {
     update () {
         this.velocityInput();
         this.attackInput();
+        if (this.velocityX > 0) {
+            this.setAnimation('right');
+        } else if (this.velocityX < 0) {
+            this.setAnimation('left');
+        } else if (this.velocityY > 0) {
+            this.setAnimation('down');
+        } else if (this.velocityY < 0) {
+            this.setAnimation('up');
+        } else {
+            this.setAnimation('wait');
+        }
         super.update();
     }
 

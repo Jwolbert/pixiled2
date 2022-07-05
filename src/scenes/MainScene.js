@@ -7,7 +7,6 @@ import GameWebSocket from "../websocket/GameWebSocket";
 export class Example extends Phaser.Scene
 {
     entities = {};
-    ownedEntities = {};
     data = {};
     player;
     websocket;
@@ -41,10 +40,7 @@ export class Example extends Phaser.Scene
         this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);
         this.player = new Player('hatman', this.character, this.input);
-        this.ownedEntities[this.player.getId()] = this.player;
-        this.entities = {
-            ...this.ownedEntities,
-        };
+        this.entities[this.player.getId()] = this.player;
         this.websocket = new GameWebSocket(this.entities, this.player, this.physics);
     }
 
@@ -59,7 +55,7 @@ export class Example extends Phaser.Scene
     }
 
     performActions () {
-        Object.values(this.ownedEntities).forEach((entity) => {
+        Object.values(this.entities).forEach((entity) => {
             this.actionHandler(entity.getCurrentAction());
         });
     }
@@ -74,21 +70,12 @@ export class Example extends Phaser.Scene
 
     attackHandler (attack) {
         this.attackCount += 1;
+        const attackArea = 20;
         console.log(this.attackCount);
         console.log(attack.location.x, attack.location.y);
-        const attackArea = 20;
-        const within = this.physics.overlapRect(attack.location.x - attackArea/2, attack.location.y - attackArea/2, attackArea, attackArea);
-        within.forEach((body) => {
-            console.log(this.entities[body.gameObject.id].type);
-            this.entities[body.gameObject.id].addEffect(attack.effect);
-        });
         const sprite = this.physics.add.sprite(attack.location.x, attack.location.y, "bloodT").setDepth(3).setRotation(attack.direction).setBodySize(attackArea,attackArea,true);
-        const entity = new Attack('slash', sprite);
-        this.ownedEntities[entity.getId()] = entity;
-        this.entities = {
-            ...this.entities,
-            ...this.ownedEntities,
-        };
+        const entity = new Attack('slash', sprite, this.entities, this.physics, attack);
+        this.entities[entity.getId()] = entity;
         console.log("attack handled");
         console.log("length", Object.keys(this.entities).length);
     }

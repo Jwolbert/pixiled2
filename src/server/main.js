@@ -26,6 +26,7 @@ wss.on('connection', (ws) => {
         wss.state = {};
         wss.state.data = {};
         wss.state.entities = {};
+        wss.state.deadEntities = {};
     }
 
     console.log('Client connected!');
@@ -50,7 +51,6 @@ wss.on('connection', (ws) => {
             });
         }
         ws.send(JSON.stringify(wss.state));
-        bringOutYourDead(wss.state.entities);
     });
 });
 

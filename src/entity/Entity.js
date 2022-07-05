@@ -43,6 +43,7 @@ export default class Entity {
             dead: this.dead,
             hp: this.hp,
             owner: this.owner,
+            currentAnimation: this.currentAnimation,
         };
     }
 
@@ -56,33 +57,18 @@ export default class Entity {
         this.dead = JSON.dead;
         this.hp = JSON.hp;
         this.owner = JSON.owner;
+        this.currentAnimation = JSON.currentAnimation;
     }
 
     update ()
     {
-        if (this.type != "player") {
-            this.gameObject.setX(this.x);
-            this.gameObject.setY(this.y);
-        } else {
-            this.x = this.gameObject.x;
-            this.y = this.gameObject.y;
-        }
+        this.x = this.gameObject.x;
+        this.y = this.gameObject.y;
         this.gameObject.setVelocityX(this.velocityX * this.speed);
         this.gameObject.setVelocityY(this.velocityY * this.speed);
         this.tickEffect();
         if (this.hp < 1) {
             this.dead = true;
-        }
-        if (this.velocityX > 0) {
-            this.setAnimation('right');
-        } else if (this.velocityX < 0) {
-            this.setAnimation('left');
-        } else if (this.velocityY > 0) {
-            this.setAnimation('down');
-        } else if (this.velocityY < 0) {
-            this.setAnimation('up');
-        } else {
-            this.setAnimation('wait');
         }
     }
 
