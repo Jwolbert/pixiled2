@@ -8,6 +8,7 @@ export class Example extends Phaser.Scene
 {
     entities = {};
     data = {};
+    interactions = [];
     player;
     websocket;
 
@@ -41,7 +42,7 @@ export class Example extends Phaser.Scene
         this.cameras.main.startFollow(this.character);
         this.player = new Player('hatman', this.character, this.input);
         this.entities[this.player.getId()] = this.player;
-        this.websocket = new GameWebSocket(this.entities, this.player, this.physics);
+        this.websocket = new GameWebSocket(this.entities, this.player, this.physics, layer, this.interactions);
     }
 
 
@@ -52,6 +53,7 @@ export class Example extends Phaser.Scene
         });
         this.performActions();
         this.websocket.update();
+        this.interactions.length = 0;
     }
 
     performActions () {
@@ -74,7 +76,7 @@ export class Example extends Phaser.Scene
         console.log(this.attackCount);
         console.log(attack.location.x, attack.location.y);
         const sprite = this.physics.add.sprite(attack.location.x, attack.location.y, "bloodT").setDepth(3).setRotation(attack.direction).setBodySize(attackArea,attackArea,true);
-        const entity = new Attack('slash', sprite, this.entities, this.physics, attack);
+        const entity = new Attack('slash', sprite, this.entities, this.physics, attack, this.interactions);
         this.entities[entity.getId()] = entity;
         console.log("attack handled");
         console.log("length", Object.keys(this.entities).length);

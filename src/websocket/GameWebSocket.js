@@ -1,8 +1,10 @@
 import RemoteEntity from "./RemoteEntity";
+import effects from "../effects";
 
 export default class GameWebSocket {
     entities;
     player;
+    interactions;
     data;
     socket;
     counter = 0;
@@ -10,12 +12,15 @@ export default class GameWebSocket {
     open = false;
     physics;
     layer;
+    owner;
 
-    constructor(entities, player, physics, layer) {
+    constructor(entities, player, physics, layer, interactions) {
         this.entities = entities;
+        this.owner = Object.keys(entities)[0];
         this.player = player;
         this.physics = physics;
         this.layer = layer;
+        this.interactions = interactions;
         this.socket = new WebSocket("ws://" + window.location.hostname + ':3334');
 
         this.socket.addEventListener('open', (event) => {
@@ -44,6 +49,17 @@ export default class GameWebSocket {
                 } else if (this.entities[updateEntity.id]) {
                     // existing entity
                     this.entities[updateEntity.id].updateWithJSON(updateEntity);
+                    if (updateEntity.owner === this.owner) {
+                        updateEntity.receivedInteractions.forEach((i) => {
+                            const newEffect = {
+                                ...effects[i.effect],
+                                source: i.source,
+                                target: i.target,
+                            };
+                            this.entities[updateEntity.id].addEffect(effects[i.effect]);
+                        });
+                        this.entities[updateEntity.id].receivedInteractions = [];
+                    }
                 }
             });
         });
@@ -53,6 +69,7 @@ export default class GameWebSocket {
         if (!this.open) return;
         const message = {};
         message.entities = this.getEntities();
+        message.interactions = this.getInteractions();
         this.socket.send(JSON.stringify(message));
     }
 
@@ -68,5 +85,9 @@ export default class GameWebSocket {
             thinEntities[entity.id] = entity.getJSON();
         });
         return thinEntities;
+    }
+
+    getInteractions() {
+        return this.interactions;
     }
 }

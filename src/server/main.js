@@ -9,17 +9,6 @@ const wss = new WebSocket.Server({server: server});
 
 let numberOfClients = 0;
 
-function bringOutYourDead(entities) {
-    const d34dB33f = [];
-    Object.values(entities).forEach((entity) => {
-        if (entity.dead) {
-            delete entities[entity.id];
-            d34dB33f.push(entity.id);
-        }
-    });
-    return d34dB33f;
-}
-
 wss.on('connection', (ws) => {
     if(numberOfClients++ === 0) {
         console.log("First gamer connected!");
@@ -48,6 +37,15 @@ wss.on('connection', (ws) => {
                     message.entities[id].owner = ws.owner;
                     wss.state.entities[id] = message.entities[id];
                 }
+            });
+        }
+        if (message.interactions) {
+            message.interactions.forEach((i) => {
+                if (!wss.state.entities[i.target].receivedInteractions) {
+                    wss.state.entities[i.target].receivedInteractions = [];
+                }
+                console.log(i);
+                wss.state.entities[i.target].receivedInteractions.push(i);
             });
         }
         ws.send(JSON.stringify(wss.state));

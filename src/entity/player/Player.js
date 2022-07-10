@@ -16,6 +16,7 @@ export default class Player extends Entity {
             name: "dagger",
             attackCooldown: 0,
             effect: {
+                id: "5be01cde-0016-11ed-b939-0242ac120002",
                 name: "bleed",
                 source: this.id,
                 selfTarget: false,

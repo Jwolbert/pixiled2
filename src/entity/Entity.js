@@ -20,6 +20,7 @@ export default class Entity {
     effectTimer = 0;
     effectTimerMaximum = 100;
     speed = 100;
+    receivedInteractions = [];
 
     constructor (name, gameObject)
     {
@@ -44,6 +45,7 @@ export default class Entity {
             hp: this.hp,
             owner: this.owner,
             currentAnimation: this.currentAnimation,
+            receivedInteractions: this.receivedInteractions,
         };
     }
 
@@ -58,6 +60,7 @@ export default class Entity {
         this.hp = JSON.hp;
         this.owner = JSON.owner;
         this.currentAnimation = JSON.currentAnimation;
+        this.receivedInteractions = JSON.receivedInteractions;
     }
 
     update ()
