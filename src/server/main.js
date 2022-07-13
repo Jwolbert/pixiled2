@@ -23,6 +23,7 @@ wss.on('connection', (ws) => {
 
     ws.on('message', function incoming(message) {
         message = JSON.parse(message);
+        const entitiesInteracted = [];
         if (message.entities) {
             Object.keys(message.entities).forEach((id) => {
                 if (!wss.state.entities[id]) {
@@ -35,20 +36,27 @@ wss.on('connection', (ws) => {
                     wss.state.entities[id] = message.entities[id];
                 } else if (wss.state.entities[id].owner === ws.owner) {
                     message.entities[id].owner = ws.owner;
+                    if (wss.state.entities[id].receivedInteractions) {
+                        message.entities[id].receivedInteractions = wss.state.entities[id].receivedInteractions;
+                        entitiesInteracted.push(id);
+                    }
                     wss.state.entities[id] = message.entities[id];
                 }
             });
         }
         if (message.interactions) {
             message.interactions.forEach((i) => {
+                console.log(i);
                 if (!wss.state.entities[i.target].receivedInteractions) {
                     wss.state.entities[i.target].receivedInteractions = [];
                 }
-                console.log(i);
                 wss.state.entities[i.target].receivedInteractions.push(i);
             });
         }
         ws.send(JSON.stringify(wss.state));
+        entitiesInteracted.forEach((id) => {
+            wss.state.entities[id].receivedInteractions = [];
+        });
     });
 });
 

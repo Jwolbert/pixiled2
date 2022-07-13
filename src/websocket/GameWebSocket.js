@@ -42,23 +42,23 @@ export default class GameWebSocket {
                 }
                 if(this.entities[updateEntity.id] && updateEntity.dead) {
                     // existing entity that is dead
-                    console.log("dead");
-                    console.log(this.entities);
                     this.entities[updateEntity.id].destroy();
                     delete this.entities[updateEntity.id];
                 } else if (this.entities[updateEntity.id]) {
                     // existing entity
                     this.entities[updateEntity.id].updateWithJSON(updateEntity);
                     if (updateEntity.owner === this.owner) {
-                        updateEntity.receivedInteractions.forEach((i) => {
-                            const newEffect = {
-                                ...effects[i.effect],
-                                source: i.source,
-                                target: i.target,
-                            };
-                            this.entities[updateEntity.id].addEffect(effects[i.effect]);
-                        });
-                        this.entities[updateEntity.id].receivedInteractions = [];
+                        console.log(updateEntity.receivedInteractions);
+                        if (updateEntity.receivedInteractions) {
+                            updateEntity.receivedInteractions.forEach((i) => {
+                                const newEffect = {
+                                    ...effects[i.effect],
+                                    source: i.source,
+                                    target: i.target,
+                                };
+                                this.entities[updateEntity.id].addEffect(newEffect);
+                            });
+                        }
                     }
                 }
             });

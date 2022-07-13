@@ -4,7 +4,8 @@ export default {
         name: "bleed",
         selfTarget: false,
         apply() {
-            this.gameObject.setTint(0xff0000);
+            //this.gameObject.setTint(0xff0000);
+            this.currentTint = 0xff0000;
             this.speed += 20;
             this.hp -= 1;
         },

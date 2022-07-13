@@ -20,7 +20,7 @@ export default class Entity {
     effectTimer = 0;
     effectTimerMaximum = 100;
     speed = 100;
-    receivedInteractions = [];
+    currentTint = 0xffffff;
 
     constructor (name, gameObject)
     {
@@ -45,7 +45,7 @@ export default class Entity {
             hp: this.hp,
             owner: this.owner,
             currentAnimation: this.currentAnimation,
-            receivedInteractions: this.receivedInteractions,
+            currentTint: this.currentTint,
         };
     }
 
@@ -60,13 +60,14 @@ export default class Entity {
         this.hp = JSON.hp;
         this.owner = JSON.owner;
         this.currentAnimation = JSON.currentAnimation;
-        this.receivedInteractions = JSON.receivedInteractions;
+        this.currentTint = JSON.currentTint;
     }
 
     update ()
     {
         this.x = this.gameObject.x;
         this.y = this.gameObject.y;
+        this.gameObject.setTint(this.currentTint);
         this.gameObject.setVelocityX(this.velocityX * this.speed);
         this.gameObject.setVelocityY(this.velocityY * this.speed);
         this.tickEffect();
@@ -76,7 +77,7 @@ export default class Entity {
     }
 
     clearEffects () {
-        this.gameObject.setTint(0xffffff);
+        this.currentTint = 0xffffff;
     }
 
     tickEffect () {
@@ -84,17 +85,15 @@ export default class Entity {
         if (this.effectTimer > 100) {
             this.effects.forEach((effect, index) => {
                 if(effect.duration < 1) {
-                    this.effects[index]
                     effect.expire.call(this);
                     if (this.effects.length <= 1) {
                         this.effects.pop();
                         this.clearEffects();
                     } else {
-                        this.effects[index] = this.effects.pop();
+                        this.effects.splice(index, 1);
                     }
                 } else {
                     effect.tick.call(this);
-                    console.log(this.hp);
                     effect.duration -= 1;
                 }
             });
