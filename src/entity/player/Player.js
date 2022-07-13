@@ -1,9 +1,10 @@
 import PlayerVelocityControls from "../../controls/PlayerVelocityControls";
 import PlayerAttackControls from "../../controls/PlayerAttackControls";
 import Entity from "../Entity";
+import weapons from "../../weapons";
 export default class Player extends Entity {
     controls;
-    weapon;
+    weapon = "dagger";
 
     constructor (name, gameObject, input)
     {
@@ -12,28 +13,7 @@ export default class Player extends Entity {
         this.controls.velocity = new PlayerVelocityControls(input);
         this.controls.attack = new PlayerAttackControls(input);
         this.type = "player";
-        this.weapon = {
-            name: "dagger",
-            attackCooldown: 0,
-            effect: {
-                id: "5be01cde-0016-11ed-b939-0242ac120002",
-                name: "bleed",
-                source: this.id,
-                selfTarget: false,
-                apply() {
-                    this.gameObject.setTint(0xff0000);
-                    this.speed += 20;
-                    this.hp -= 1;
-                },
-                tick() {
-                    this.hp -= 1;
-                },
-                expire() {
-                    this.speed -= 20;
-                },
-                duration: 5,
-            },
-        };
+        this.weapon = weapons["dagger"];
     }
 
     update () {

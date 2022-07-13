@@ -48,7 +48,6 @@ export default class GameWebSocket {
                     // existing entity
                     this.entities[updateEntity.id].updateWithJSON(updateEntity);
                     if (updateEntity.owner === this.owner) {
-                        console.log(updateEntity.receivedInteractions);
                         if (updateEntity.receivedInteractions) {
                             updateEntity.receivedInteractions.forEach((i) => {
                                 const newEffect = {
