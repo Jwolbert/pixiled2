@@ -2,10 +2,9 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const WebSocket = require('ws');
-
 const port = 3334;
-
 const wss = new WebSocket.Server({server: server});
+const cores = 4;
 
 let numberOfClients = 0;
 
@@ -16,6 +15,15 @@ wss.on('connection', (ws) => {
         wss.state.data = {};
         wss.state.entities = {};
         wss.state.deadEntities = {};
+        wss.state.entitiesInteracted = [];
+        setInterval(() => {
+            wss.clients.forEach((client) => {
+                client.send(JSON.stringify(wss.state));
+            });
+            wss.state.entitiesInteracted.forEach((id) => {
+                wss.state.entities[id].receivedInteractions = [];
+            });
+        }, 30);
     }
 
     console.log('Client connected!');
@@ -38,7 +46,7 @@ wss.on('connection', (ws) => {
                     message.entities[id].owner = ws.owner;
                     if (wss.state.entities[id].receivedInteractions) {
                         message.entities[id].receivedInteractions = wss.state.entities[id].receivedInteractions;
-                        entitiesInteracted.push(id);
+                        wss.state.entitiesInteracted.push(id);
                     }
                     wss.state.entities[id] = message.entities[id];
                 }
@@ -53,10 +61,6 @@ wss.on('connection', (ws) => {
                 wss.state.entities[i.target].receivedInteractions.push(i);
             });
         }
-        ws.send(JSON.stringify(wss.state));
-        entitiesInteracted.forEach((id) => {
-            wss.state.entities[id].receivedInteractions = [];
-        });
     });
 });
 

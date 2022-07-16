@@ -17,6 +17,7 @@ export default class PlayerAttackControls {
             if (this.attacking) {
                 return;
             }
+            console.log("click:", pointer.x, pointer.y);
             console.log(this.screenWidth,pointer.x );
             const dx = pointer.x - this.screenWidth / 2;
             const dy = this.screenHeight / 2 - pointer.y;

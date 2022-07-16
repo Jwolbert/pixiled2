@@ -14,7 +14,7 @@ export default class NpcMap {
                 return row.map((col) => {
                     return {
                         index: col.index,
-                        collide: col.collideDown && col.collideUp && col.collideLeft && col.collideRight,
+                        // collide: col.collideDown && col.collideUp && col.collideLeft && col.collideRight,
                         cost: {},
                         state: {},
                     };

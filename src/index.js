@@ -1,6 +1,8 @@
 import { Example } from "./scenes/MainScene"
 import Phaser from "phaser";
+import PhaserRaycaster from "phaser-raycaster";
 
+console.log(PhaserRaycaster);
 const config = {
     type: Phaser.AUTO,
     parent: 'phaser-example',
@@ -14,6 +16,15 @@ const config = {
             debug: true
         }
     },
+    plugins: {
+        scene: [
+            {
+                key: 'PhaserRaycaster',
+                plugin: PhaserRaycaster,
+                mapping: 'raycasterPlugin'
+            }
+        ]
+    }
 };
 const game = new Phaser.Game(config);
 

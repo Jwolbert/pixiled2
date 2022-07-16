@@ -3,19 +3,21 @@ import effects from "../effects";
 
 export default class GameWebSocket {
     entities;
+    entitiesGroup;
     player;
     interactions;
     data;
     socket;
     counter = 0;
-    // sendEntitiesRate = 1; // lower = faster
+    sendEntitiesRate = 2; // lower = faster
     open = false;
     physics;
     layer;
     owner;
 
-    constructor(entities, player, physics, layer, interactions) {
+    constructor(entities, player, physics, layer, interactions, entitiesGroup) {
         this.entities = entities;
+        this.entitiesGroup = entitiesGroup;
         this.owner = Object.keys(entities)[0];
         this.player = player;
         this.physics = physics;
@@ -37,6 +39,7 @@ export default class GameWebSocket {
                     this.physics.add.collider(newEntitySprite, layer);
                     const newEntity = new RemoteEntity(updateEntity.name, newEntitySprite);
                     newEntitySprite.id = updateEntity.id;
+                    this.entitiesGroup.add(newEntitySprite, true);
                     this.entities[updateEntity.id] = newEntity;
                     this.entities[updateEntity.id].updateWithJSON(updateEntity);
                 }
@@ -66,10 +69,13 @@ export default class GameWebSocket {
 
     update() {
         if (!this.open) return;
-        const message = {};
-        message.entities = this.getEntities();
-        message.interactions = this.getInteractions();
-        this.socket.send(JSON.stringify(message));
+        if (this.counter++ > this.sendEntitiesRate) {
+            const message = {};
+            message.entities = this.getEntities();
+            message.interactions = this.getInteractions();
+            this.socket.send(JSON.stringify(message));
+            this.counter = 0;
+        }
     }
 
     getAction() {

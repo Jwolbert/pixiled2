@@ -26,8 +26,6 @@ export default class Attack extends Entity {
             this.delay -= 1;
             const within = this.physics.overlapRect(this.attack.location.x - this.attackArea/2, this.attack.location.y - this.attackArea/2, this.attackArea, this.attackArea);
             within.forEach((body) => {
-                console.log(this.entities[body.gameObject.id].type);
-                // this.entities[body.gameObject.id].addEffect(this.attack.effect);
                 this.interactions.push({
                     source: this.attack.source,
                     target: body.gameObject.id,
