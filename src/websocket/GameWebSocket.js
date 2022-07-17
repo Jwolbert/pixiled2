@@ -14,8 +14,9 @@ export default class GameWebSocket {
     physics;
     layer;
     owner;
+    debugData;
 
-    constructor(entities, player, physics, layer, interactions, entitiesGroup) {
+    constructor(entities, player, physics, layer, interactions, entitiesGroup, debugData) {
         this.entities = entities;
         this.entitiesGroup = entitiesGroup;
         this.owner = Object.keys(entities)[0];
@@ -24,6 +25,10 @@ export default class GameWebSocket {
         this.layer = layer;
         this.interactions = interactions;
         this.socket = new WebSocket("ws://" + window.location.hostname + ':3334');
+        this.debugData = debugData;
+        if (this.debugData) {
+            this.debugData.websocketUpdates = 0;
+        }
 
         this.socket.addEventListener('open', (event) => {
             this.socket.send(JSON.stringify({'Hello Server!':':)'}));
@@ -32,6 +37,14 @@ export default class GameWebSocket {
 
         this.socket.addEventListener('message', (event) => {
             const message = JSON.parse(event.data);
+            if (debugData) {
+                console.log(message);
+                debugData.websocketUpdates++;
+                if (message.requestsHandledPerSec) {
+                    console.log("serverrequests");
+                    debugData.serverRequestsHandledPerSec = message.requestsHandledPerSec;
+                }
+            }
             Object.values(message.entities).forEach((updateEntity) => {
                 if (!this.entities[updateEntity.id] && !updateEntity.dead) {
                     // new entity
