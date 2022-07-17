@@ -4,7 +4,6 @@ const server = require('http').createServer(app);
 const WebSocket = require('ws');
 const port = 3334;
 const wss = new WebSocket.Server({server: server});
-const cores = 4;
 
 let numberOfClients = 0;
 
@@ -31,7 +30,6 @@ wss.on('connection', (ws) => {
 
     ws.on('message', function incoming(message) {
         message = JSON.parse(message);
-        const entitiesInteracted = [];
         if (message.entities) {
             Object.keys(message.entities).forEach((id) => {
                 if (!wss.state.entities[id]) {

@@ -3,6 +3,7 @@ import Player from "../entity/player/Player";
 import AnimationUtility from "../utility/AnimationUtility";
 import Attack from "../entity/action/attack/Attack";
 import GameWebSocket from "../websocket/GameWebSocket";
+import { profile } from "../debug/debug";
 
 export class Example extends Phaser.Scene
 {
@@ -17,6 +18,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
+    debug = true;
 
     constructor (websocket)
     {
@@ -96,6 +98,9 @@ export class Example extends Phaser.Scene
         this.websocket.update();
         this.interactions.length = 0;
         this.drawRay();
+        if (this.debug) {
+            profile();
+        }
     }
 
     performActions () {

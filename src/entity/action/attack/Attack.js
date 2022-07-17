@@ -26,11 +26,14 @@ export default class Attack extends Entity {
             this.delay -= 1;
             const within = this.physics.overlapRect(this.attack.location.x - this.attackArea/2, this.attack.location.y - this.attackArea/2, this.attackArea, this.attackArea);
             within.forEach((body) => {
-                this.interactions.push({
-                    source: this.attack.source,
-                    target: body.gameObject.id,
-                    effect: this.attack.effect.id,
-                });
+                console.log(body.gameObject);
+                if (body.gameObject.id) {
+                    this.interactions.push({
+                        source: this.attack.source,
+                        target: body.gameObject.id,
+                        effect: this.attack.effect.id,
+                    });
+                }
             });
         } else if (this.duration) {
             this.duration -=1;
