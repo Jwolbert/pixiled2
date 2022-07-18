@@ -80,7 +80,6 @@ export class Example extends Phaser.Scene
         });
         this.performActions();
         this.websocket.update();
-        this.interactions.length = 0;
         this.fogOfWar.drawRay();
         if (this.debug) {
             profile();
@@ -135,9 +134,15 @@ export class Example extends Phaser.Scene
             const websocketUpdates = document.createElement("div");
             websocketUpdates.id = "websocketUpdates";
             debugBox.appendChild(websocketUpdates);
+            const websocketMessagesSent = document.createElement("div");
+            websocketMessagesSent.id = "websocketMessages";
+            debugBox.appendChild(websocketMessagesSent);
             const webserverRequests = document.createElement("div");
             webserverRequests.id = "webserverRequests";
             debugBox.appendChild(webserverRequests);
+            const webserverLastUpdate = document.createElement("div");
+            webserverLastUpdate.id = "webserverLastUpdate";
+            debugBox.appendChild(webserverLastUpdate);
             background.appendChild(debugBox);
         }
         console.log("UI CREATED");

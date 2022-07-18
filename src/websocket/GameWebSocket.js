@@ -28,6 +28,7 @@ export default class GameWebSocket {
         this.debugData = debugData;
         if (this.debugData) {
             this.debugData.websocketUpdates = 0;
+            this.debugData.websocketMessagesSent = 0;
         }
 
         this.socket.addEventListener('open', (event) => {
@@ -38,11 +39,12 @@ export default class GameWebSocket {
         this.socket.addEventListener('message', (event) => {
             const message = JSON.parse(event.data);
             if (debugData) {
-                console.log(message);
                 debugData.websocketUpdates++;
                 if (message.requestsHandledPerSec) {
-                    console.log("serverrequests");
                     debugData.serverRequestsHandledPerSec = message.requestsHandledPerSec;
+                }
+                if (message.totalUpdates) {
+                    debugData.lastServerUpdate = message.totalUpdates;
                 }
             }
             Object.values(message.entities).forEach((updateEntity) => {
@@ -65,6 +67,9 @@ export default class GameWebSocket {
                     this.entities[updateEntity.id].updateWithJSON(updateEntity);
                     if (updateEntity.owner === this.owner) {
                         if (updateEntity.receivedInteractions) {
+                            if (updateEntity.receivedInteractions.length > 0) {
+                                console.log(updateEntity.receivedInteractions);
+                            }
                             updateEntity.receivedInteractions.forEach((i) => {
                                 const newEffect = {
                                     ...effects[i.effect],
@@ -87,7 +92,11 @@ export default class GameWebSocket {
             message.entities = this.getEntities();
             message.interactions = this.getInteractions();
             this.socket.send(JSON.stringify(message));
+            this.clearInteractions();
             this.counter = 0;
+            if (this.debugData) {
+                this.debugData.websocketMessagesSent++;
+            }
         }
     }
 
@@ -107,5 +116,9 @@ export default class GameWebSocket {
 
     getInteractions() {
         return this.interactions;
+    }
+
+    clearInteractions() {
+        this.interactions.length = 0;
     }
 }

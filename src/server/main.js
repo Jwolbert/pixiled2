@@ -18,6 +18,9 @@ wss.on('connection', (ws) => {
         wss.state.entitiesInteracted = [];
         let previousTime = new Date().getTime();
         setInterval(() => {
+            if (debug) {
+                wss.state.totalUpdates++;
+            }
             wss.clients.forEach((client) => {
                 client.send(JSON.stringify(wss.state));
             });
@@ -29,6 +32,7 @@ wss.on('connection', (ws) => {
         if (debug) {
             console.log("debugging enabled");
             wss.requestsHandled = 0;
+            wss.state.totalUpdates = 0;
             setInterval(() => {
                 const currentTime = new Date().getTime();
                 const diffSec = (currentTime - previousTime) / 1000;

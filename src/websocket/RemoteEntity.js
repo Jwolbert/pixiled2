@@ -4,7 +4,7 @@ export default class RemoteEntity extends Entity {
 
     type = "remoteEntity";
     positionBuffer = [];
-    positionBufferSize = 5;
+    positionBufferSize = 1;
     positionBufferSumX;
     positionBufferSumY;
 

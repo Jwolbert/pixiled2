@@ -16,14 +16,24 @@ const profile = () => {
 
         if (debugData.websocketUpdates) {
             const websocketUpdates = document.querySelector("#websocketUpdates");
-            websocketUpdates.textContent = `Server update rate: ${(debugData.websocketUpdates / diffSec).toFixed(2)} updates per second`;
+            websocketUpdates.textContent = `Client update rate: ${(debugData.websocketUpdates / diffSec).toFixed(2)} updates per second`;
             debugData.websocketUpdates = 0;
+        }
+
+        if (debugData.websocketMessagesSent) {
+            const websocketMessagesSent = document.querySelector("#websocketMessages");
+            websocketMessagesSent.textContent = `Client send rate: ${(debugData.websocketMessagesSent / diffSec).toFixed(2)} messages per second`;
+            debugData.websocketMessagesSent = 0;
         }
 
         if (debugData.serverRequestsHandledPerSec) {
             const webserverRequests = document.querySelector("#webserverRequests");
             webserverRequests.textContent = `Server processing rate: ${debugData.serverRequestsHandledPerSec.toFixed(2)} requests per second`;
-            debugData.websocketUpdates = 0;
+        }
+
+        if (debugData.lastServerUpdate) {
+            const webserverLastUpdate = document.querySelector("#webserverLastUpdate");
+            webserverLastUpdate.textContent = `Last server update received: ${debugData.lastServerUpdate}`;
         }
     }
 };

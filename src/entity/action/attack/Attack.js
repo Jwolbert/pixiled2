@@ -35,6 +35,7 @@ export default class Attack extends Entity {
                     });
                 }
             });
+            console.log(this.interactions);
         } else if (this.duration) {
             this.duration -=1;
         } else {
