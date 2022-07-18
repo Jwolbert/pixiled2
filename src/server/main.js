@@ -12,10 +12,8 @@ wss.on('connection', (ws) => {
     if(numberOfClients++ === 0) {
         console.log("First gamer connected!");
         wss.state = {};
-        wss.state.data = {};
         wss.state.entities = {};
-        wss.state.deadEntities = {};
-        wss.state.entitiesInteracted = [];
+        wss.entitiesInteracted = [];
         let previousTime = new Date().getTime();
         setInterval(() => {
             if (debug) {
@@ -24,9 +22,24 @@ wss.on('connection', (ws) => {
             wss.clients.forEach((client) => {
                 client.send(JSON.stringify(wss.state));
             });
-            wss.state.entitiesInteracted.forEach((id) => {
-                wss.state.entities[id].receivedInteractions = [];
+            // clean up
+            wss.entitiesInteracted.forEach((id) => {
+                if (wss.state.entities[id]) {
+                    wss.state.entities[id].receivedInteractions = [];
+                }
             });
+            const deadEntities = {};
+            Object.keys(wss.state.entities).forEach((id) => {
+                if (wss.state.entities[id].dead && !wss.state.entities[id].cleaned) {
+                    deadEntities[id] = wss.state.entities[id];
+                    wss.state.entities[id].cleaned = true;
+                }
+            });
+            setTimeout(() => {
+                Object.keys(deadEntities).forEach((id) => {
+                    delete wss.state.entities[id];
+                });
+            }, 2000);
         }, 30);
 
         if (debug) {
@@ -62,7 +75,7 @@ wss.on('connection', (ws) => {
                     message.entities[id].owner = ws.owner;
                     if (wss.state.entities[id].receivedInteractions) {
                         message.entities[id].receivedInteractions = wss.state.entities[id].receivedInteractions;
-                        wss.state.entitiesInteracted.push(id);
+                        wss.entitiesInteracted.push(id);
                     }
                     wss.state.entities[id] = message.entities[id];
                 }
