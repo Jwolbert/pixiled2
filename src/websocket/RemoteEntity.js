@@ -33,6 +33,7 @@ export default class RemoteEntity extends Entity {
         this.positionBufferSumY += this.y;
         this.gameObject.setVelocityX(this.velocityX * this.speed);
         this.gameObject.setVelocityY(this.velocityY * this.speed);
+        this.tickEffect();
     }
 
 };

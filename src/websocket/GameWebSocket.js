@@ -9,7 +9,7 @@ export default class GameWebSocket {
     data;
     socket;
     counter = 0;
-    sendEntitiesRate = 2; // lower = faster
+    sendEntitiesRate = 0; // lower = faster
     open = false;
     physics;
     layer;

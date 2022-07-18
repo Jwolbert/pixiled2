@@ -73,7 +73,7 @@ export default class Entity {
     }
 
     clearEffects () {
-        this.currentTint = 0xffffff;
+        this.gameObject.setTint(0xffffff);
     }
 
     tickEffect () {
