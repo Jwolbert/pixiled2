@@ -42,9 +42,9 @@ const profile = () => {
 
         if (entities) {
             const entityList = document.querySelector("#entityList");
-            entityList.childNodes.forEach((child) => {
-                entityList.removeChild(child);
-            })
+            while (entityList.firstChild) {
+                entityList.removeChild(entityList.firstChild);
+            }
             Object.keys(entities).forEach((id) => {
                 const entityNode = document.createElement("div");
                 entityNode.textContent = `ID: ${id.split("-")[0]} HP: ${entities[id].hp}`
