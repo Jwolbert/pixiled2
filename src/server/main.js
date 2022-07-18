@@ -5,6 +5,9 @@ const WebSocket = require('ws');
 const port = 3334;
 const wss = new WebSocket.Server({server: server});
 const debug = true;
+const debugInterval = 1000;
+
+const serverTickInterval = 17;
 
 let numberOfClients = 0;
 
@@ -42,7 +45,7 @@ wss.on('connection', (ws) => {
                     delete wss.state.entities[id];
                 });
             }, 2000);
-        }, 30);
+        }, serverTickInterval);
 
         if (debug) {
             console.log("debugging enabled");
@@ -54,7 +57,7 @@ wss.on('connection', (ws) => {
                 previousTime = currentTime;
                 wss.state.requestsHandledPerSec = wss.requestsHandled / diffSec;
                 wss.requestsHandled = 0;
-            }, 5000);
+            }, debugInterval);
         }
     }
 
@@ -68,9 +71,9 @@ wss.on('connection', (ws) => {
                 if (!wss.state.entities[id]) {
                     if (ws.owner === undefined) {
                         ws.owner = id;
-                        console.log("owner: " + ws.owner);
+                        console.log("owner " + ws.owner.split("-")[0]);
                     }
-                    console.log(`owner ${ws.owner} adding ${id}`);
+                    console.log(`owner ${ws.owner.split("-")[0]} adding ${id.split("-")[0]}`);
                     message.entities[id].owner = ws.owner;
                     wss.state.entities[id] = message.entities[id];
                 } else if (wss.state.entities[id].owner === ws.owner) {

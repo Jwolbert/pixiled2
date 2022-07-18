@@ -9,12 +9,13 @@ export default class GameWebSocket {
     data;
     socket;
     counter = 0;
-    sendEntitiesRate = 0; // lower = faster
+    forceUpdateRate = 2; // lower = faster
     open = false;
     physics;
     layer;
     owner;
     debugData;
+    lastServerTick = 0;
 
     constructor(entities, player, physics, layer, interactions, entitiesGroup, debugData) {
         this.entities = entities;
@@ -37,6 +38,10 @@ export default class GameWebSocket {
         });
 
         this.socket.addEventListener('message', (event) => {
+            // send client state
+            this.update(true);
+
+            // update client state
             const message = JSON.parse(event.data);
             if (debugData) {
                 debugData.websocketUpdates++;
@@ -46,6 +51,10 @@ export default class GameWebSocket {
                 if (message.totalUpdates) {
                     debugData.lastServerUpdate = message.totalUpdates;
                 }
+                if (this.lastServerTick > message.totalUpdates) {
+                    console.log("Message received out of order");
+                }
+                this.lastServerTick = message.totalUpdates;
             }
             Object.values(message.entities).forEach((updateEntity) => {
                 if (!this.entities[updateEntity.id] && !updateEntity.dead) {
@@ -83,9 +92,11 @@ export default class GameWebSocket {
         });
     }
 
-    update() {
+    update(forceUpdate) {
         if (!this.open) return;
-        if (this.counter++ > this.sendEntitiesRate) {
+        // client will send state after receiving state from server but before reading the new state
+        // forceUpdateRate will keep client message sending rate above a minimum amount
+        if (this.counter++ > this.forceUpdateRate || forceUpdate) {
             const message = {};
             message.entities = this.getEntities();
             message.interactions = this.getInteractions();

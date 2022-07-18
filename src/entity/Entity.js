@@ -55,7 +55,6 @@ export default class Entity {
         this.velocityX = JSON.velocityX;
         this.velocityY = JSON.velocityY;
         this.dead = JSON.dead;
-        this.hp = JSON.hp;
         this.owner = JSON.owner;
         this.currentAnimation = JSON.currentAnimation;
     }

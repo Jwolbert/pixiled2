@@ -20,6 +20,7 @@ export default class RemoteEntity extends Entity {
     updateWithJSON (JSON) {
         super.setAnimation(JSON.currentAnimation);
         super.updateWithJSON(JSON);
+        this.hp = JSON.hp;
     }
 
     update () {

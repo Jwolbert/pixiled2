@@ -1,18 +1,19 @@
 let previousTime = new Date().getTime();
 let debugCounter = 0;
-const debugFrequency = 500;
+const debugFrequency = 60;
+let lastServerTick = 0;
 let debugData = {};
+let entities;
 
 const profile = () => {
     if (debugCounter++ > debugFrequency) {
         const currentTime = new Date().getTime();
         const diffSec = (currentTime - previousTime) / 1000;
         previousTime = currentTime;
-        console.log(`Update rate: ${(debugFrequency / diffSec).toFixed(2)} updates per second`);
         debugCounter = 0;
 
         const fps = document.querySelector("#fpsMeter");
-        fps.textContent = `Frame rate: ${(debugFrequency / diffSec).toFixed(2)} updates per second`;
+        fps.textContent = `Frame rate: ${(debugFrequency / diffSec).toFixed(2)} frames per second`;
 
         if (debugData.websocketUpdates) {
             const websocketUpdates = document.querySelector("#websocketUpdates");
@@ -33,7 +34,22 @@ const profile = () => {
 
         if (debugData.lastServerUpdate) {
             const webserverLastUpdate = document.querySelector("#webserverLastUpdate");
-            webserverLastUpdate.textContent = `Last server update received: ${debugData.lastServerUpdate}`;
+            webserverLastUpdate.textContent = `Last server tick received: #${debugData.lastServerUpdate}`;
+            if (lastServerTick > debugData.lastServerUpdate) {
+                
+            }
+        }
+
+        if (entities) {
+            const entityList = document.querySelector("#entityList");
+            entityList.childNodes.forEach((child) => {
+                entityList.removeChild(child);
+            })
+            Object.keys(entities).forEach((id) => {
+                const entityNode = document.createElement("div");
+                entityNode.textContent = `ID: ${id.split("-")[0]} HP: ${entities[id].hp}`
+                entityList.appendChild(entityNode);
+            });
         }
     }
 };
@@ -42,4 +58,8 @@ const setDebugData = (data) => {
     debugData = data;
 };
 
-export { profile, setDebugData };
+const setEntities = (data) => {
+    entities = data;
+};
+
+export { profile, setDebugData, setEntities };
