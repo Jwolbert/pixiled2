@@ -28,6 +28,7 @@ wss.on('connection', (ws) => {
                     wss.state.entities[id].receivedInteractions = [];
                 }
             });
+            // TODO: this array might be able to be removed bc websockets no longer send objects owner by another client
             const deadEntities = {};
             Object.keys(wss.state.entities).forEach((id) => {
                 if (wss.state.entities[id].dead && !wss.state.entities[id].cleaned) {
@@ -35,6 +36,7 @@ wss.on('connection', (ws) => {
                     wss.state.entities[id].cleaned = true;
                 }
             });
+            // TODO: same story for this timeout
             setTimeout(() => {
                 Object.keys(deadEntities).forEach((id) => {
                     delete wss.state.entities[id];

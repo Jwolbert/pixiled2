@@ -65,20 +65,18 @@ export default class GameWebSocket {
                 } else if (this.entities[updateEntity.id]) {
                     // existing entity
                     this.entities[updateEntity.id].updateWithJSON(updateEntity);
-                    if (updateEntity.owner === this.owner) {
-                        if (updateEntity.receivedInteractions) {
-                            if (updateEntity.receivedInteractions.length > 0) {
-                                console.log(updateEntity.receivedInteractions);
-                            }
-                            updateEntity.receivedInteractions.forEach((i) => {
-                                const newEffect = {
-                                    ...effects[i.effect],
-                                    source: i.source,
-                                    target: i.target,
-                                };
-                                this.entities[updateEntity.id].addEffect(newEffect);
-                            });
+                    if (updateEntity.receivedInteractions) {
+                        if (updateEntity.receivedInteractions.length > 0) {
+                            console.log(updateEntity.receivedInteractions);
                         }
+                        updateEntity.receivedInteractions.forEach((i) => {
+                            const newEffect = {
+                                ...effects[i.effect],
+                                source: i.source,
+                                target: i.target,
+                            };
+                            this.entities[updateEntity.id].addEffect(newEffect);
+                        });
                     }
                 }
             });
@@ -108,7 +106,10 @@ export default class GameWebSocket {
 
     getEntities() {
         const thinEntities = {};
-        Object.values(this.entities).forEach((entity) => {
+        Object.values(this.entities)
+        .filter((entity) => {
+            return entity.owner === this.owner || !entity.owner;
+        }).forEach((entity) => {
             thinEntities[entity.id] = entity.getJSON();
         });
         return thinEntities;

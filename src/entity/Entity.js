@@ -20,7 +20,6 @@ export default class Entity {
     effectTimer = 0;
     effectTimerMaximum = 100;
     speed = 100;
-    currentTint = 0xffffff;
 
     constructor (name, gameObject)
     {
@@ -45,7 +44,6 @@ export default class Entity {
             hp: this.hp,
             owner: this.owner,
             currentAnimation: this.currentAnimation,
-            currentTint: this.currentTint,
         };
     }
 
@@ -60,14 +58,12 @@ export default class Entity {
         this.hp = JSON.hp;
         this.owner = JSON.owner;
         this.currentAnimation = JSON.currentAnimation;
-        this.currentTint = JSON.currentTint;
     }
 
     update ()
     {
         this.x = this.gameObject.x;
         this.y = this.gameObject.y;
-        this.gameObject.setTint(this.currentTint);
         this.gameObject.setVelocityX(this.velocityX * this.speed);
         this.gameObject.setVelocityY(this.velocityY * this.speed);
         this.tickEffect();
