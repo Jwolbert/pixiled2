@@ -19,7 +19,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = true;
+    debug = true; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;

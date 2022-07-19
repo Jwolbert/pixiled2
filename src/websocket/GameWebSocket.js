@@ -32,8 +32,10 @@ export default class GameWebSocket {
             this.debugData.websocketMessagesSent = 0;
         }
 
-        this.socket.addEventListener('open', (event) => {
-            this.socket.send(JSON.stringify({'Hello Server!':':)'}));
+        this.socket.addEventListener('open', () => {
+            const message = {};
+            message.owner = this.owner;
+            this.socket.send(JSON.stringify(message));
             this.open = true;
         });
 

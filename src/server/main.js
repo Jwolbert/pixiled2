@@ -4,7 +4,7 @@ const server = require('http').createServer(app);
 const WebSocket = require('ws');
 const port = 3334;
 const wss = new WebSocket.Server({server: server});
-const debug = true;
+const debug = true; // DEBUGGGGGGG
 const debugInterval = 1000;
 
 const serverTickInterval = 17;
@@ -17,11 +17,20 @@ wss.on('connection', (ws) => {
         wss.state = {};
         wss.state.entities = {};
         wss.entitiesInteracted = [];
+        wss.messages = [];
+        wss.owners = {};
         let previousTime = new Date().getTime();
         setInterval(() => {
             if (debug) {
                 wss.state.totalUpdates++;
             }
+
+            wss.messages.forEach((message) => {
+                handleMessage(message);
+            });
+
+            wss.messages.length = 0;
+
             wss.clients.forEach((client) => {
                 client.send(JSON.stringify(wss.state));
             });
@@ -31,7 +40,7 @@ wss.on('connection', (ws) => {
                     wss.state.entities[id].receivedInteractions = [];
                 }
             });
-            // TODO: this array might be able to be removed bc websockets no longer send objects owner by another client
+            // TODO: deadEntities might be able to be removed bc clients now only send what they own
             const deadEntities = {};
             Object.keys(wss.state.entities).forEach((id) => {
                 if (wss.state.entities[id].dead && !wss.state.entities[id].cleaned) {
@@ -65,6 +74,14 @@ wss.on('connection', (ws) => {
     console.log("Number of clients: " + numberOfClients);
 
     ws.on('message', function incoming(message) {
+        if (ws.owner === undefined) {
+            ws.owner = JSON.parse(message).owner;
+            wss.messages.push({owner: ws.owner, message});
+            console.log("owner " + ws.owner.split("-")[0]);
+        } else {
+            wss.messages.push({owner: ws.owner, message});
+        }
+        /*
         message = JSON.parse(message);
         if (message.entities) {
             Object.keys(message.entities).forEach((id) => {
@@ -96,9 +113,40 @@ wss.on('connection', (ws) => {
             });
         }
         wss.requestsHandled++;
+        */
     });
 });
 
+const handleMessage = (message) => {
+    const owner = message.owner;
+    message = JSON.parse(message.message);
+    if (message.entities) {
+        Object.keys(message.entities).forEach((id) => {
+            if (!wss.state.entities[id]) {
+                console.log(`owner ${owner.split("-")[0]} adding ${id.split("-")[0]}`);
+                message.entities[id].owner = owner;
+                wss.state.entities[id] = message.entities[id];
+            } else if (wss.state.entities[id].owner === owner) {
+                message.entities[id].owner = owner;
+                if (wss.state.entities[id].receivedInteractions) {
+                    message.entities[id].receivedInteractions = wss.state.entities[id].receivedInteractions;
+                    wss.entitiesInteracted.push(id);
+                }
+                wss.state.entities[id] = message.entities[id];
+            }
+        });
+    }
+    if (message.interactions) {
+        message.interactions.forEach((i) => {
+            console.log(i);
+            if (!wss.state.entities[i.target].receivedInteractions) {
+                wss.state.entities[i.target].receivedInteractions = [];
+            }
+            wss.state.entities[i.target].receivedInteractions.push(i);
+        });
+    }
+    wss.requestsHandled++;
+};
 
 app.get('/', (req, res) => res.send('Hello world!'));
 

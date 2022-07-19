@@ -4,7 +4,7 @@ export default class RemoteEntity extends Entity {
 
     type = "remoteEntity";
     positionBuffer = [];
-    positionBufferSize = 1;
+    positionBufferSize = 2;
     positionBufferSumX;
     positionBufferSumY;
 
@@ -24,8 +24,8 @@ export default class RemoteEntity extends Entity {
     }
 
     update () {
-        this.gameObject.setX(this.positionBufferSumX / this.positionBufferSize);
-        this.gameObject.setY(this.positionBufferSumY / this.positionBufferSize);
+        this.gameObject.setX(Math.round(this.positionBufferSumX / this.positionBufferSize));
+        this.gameObject.setY(Math.round(this.positionBufferSumY / this.positionBufferSize));
         const lastBufferEntry = this.positionBuffer.shift();
         this.positionBufferSumX -= lastBufferEntry.x;
         this.positionBufferSumY -= lastBufferEntry.y;
