@@ -99,18 +99,9 @@ export class Example extends Phaser.Scene
         }
     }
 
-    attackCount = 0;
-
     attackHandler (attack) {
-        this.attackCount += 1;
-        const attackArea = 20;
-        console.log(this.attackCount);
-        console.log(attack.location.x, attack.location.y);
-        const sprite = this.physics.add.sprite(attack.location.x, attack.location.y, "bloodT").setDepth(3).setRotation(attack.direction).setBodySize(attackArea,attackArea,true);
-        const entity = new Attack('slash', sprite, this.entities, this.physics, attack, this.interactions);
+        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions);
         this.entities[entity.getId()] = entity;
-        console.log("attack handled");
-        console.log("length", Object.keys(this.entities).length);
     }
 
     createUi () {

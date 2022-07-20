@@ -13,7 +13,7 @@ export default class Player extends Entity {
         this.controls.velocity = new PlayerVelocityControls(input);
         this.controls.attack = new PlayerAttackControls(input);
         this.type = "player";
-        this.weapon = weapons["dagger"];
+        this.weapon = weapons["fireballScroll"];
     }
 
     update () {

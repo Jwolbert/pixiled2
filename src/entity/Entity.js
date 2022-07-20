@@ -20,6 +20,7 @@ export default class Entity {
     effectTimer = 0;
     effectTimerMaximum = 100;
     speed = 100;
+    direction;
 
     constructor (name, gameObject)
     {
@@ -45,6 +46,7 @@ export default class Entity {
             owner: this.owner,
             currentAnimation: this.currentAnimation,
             type: this.type,
+            direction: this.direction,
         };
     }
 
@@ -58,6 +60,7 @@ export default class Entity {
         this.dead = JSON.dead;
         this.owner = JSON.owner;
         this.currentAnimation = JSON.currentAnimation;
+        this.direction = JSON.direction;
     }
 
     update ()

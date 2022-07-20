@@ -18,9 +18,9 @@ export default class PlayerAttackControls {
                 return;
             }
             console.log("click:", pointer.x, pointer.y);
-            console.log(this.screenWidth,pointer.x );
             const dx = pointer.x - this.screenWidth / 2;
             const dy = this.screenHeight / 2 - pointer.y;
+            console.log("delta", dx, dy);
             this.direction = Math.atan( dy / dx);
             if (dx < 0) {
                 this.direction += Math.PI;
@@ -28,8 +28,9 @@ export default class PlayerAttackControls {
                 this.direction += Math.PI * 2;
             }
             this.location = {x: Math.cos(this.direction) * this.range, y: -1 * Math.sin(this.direction) * this.range}
-            this.direction += Math.PI;
-            this.direction *= -1;
+            // this.direction += Math.PI;
+            // this.direction *= -1;
+            console.log("control direction", this.direction);
             this.attacking = true;
         });
     }
