@@ -63,7 +63,7 @@ export default class GameWebSocket {
                     // new entity
                     const newEntitySprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.9).setDepth(3);
                     this.physics.add.collider(newEntitySprite, layer);
-                    const newEntity = new RemoteEntity(updateEntity.name, newEntitySprite);
+                    const newEntity = new RemoteEntity(updateEntity, newEntitySprite);
                     newEntitySprite.id = updateEntity.id;
                     this.entitiesGroup.add(newEntitySprite, true);
                     this.entities[updateEntity.id] = newEntity;

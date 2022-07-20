@@ -4,7 +4,7 @@ import Entity from "../Entity";
 import weapons from "../../weapons";
 export default class Player extends Entity {
     controls;
-    weapon = "dagger";
+    weapon;
 
     constructor (name, gameObject, input)
     {
@@ -54,17 +54,11 @@ export default class Player extends Entity {
             this.weapon.attackCooldown = 100;
             const location = {x: this.gameObject.x + input.location.x, y: this.gameObject.y + input.location.y};
             this.currentAction = {
-                name: "slash",
-                type: "attack",
+                ...this.weapon.action,
                 direction: input.direction,
                 location: location,
                 source: this.id,
-                effect: {...this.weapon.effect},
             };
         }
-    }
-
-    destroy () {
-        super.destroy();
     }
 }

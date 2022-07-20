@@ -1,0 +1,12 @@
+{
+    "fireball": {
+        "frameWidth": 64,
+        "frameHeight": 32,
+        "animations": {
+            "fireball": {
+                "start": 0,
+                "end": 3
+            }
+        }
+    }
+}

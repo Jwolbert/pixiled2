@@ -44,6 +44,7 @@ export default class Entity {
             hp: this.hp,
             owner: this.owner,
             currentAnimation: this.currentAnimation,
+            type: this.type,
         };
     }
 

@@ -39,21 +39,21 @@ export class Example extends Phaser.Scene
         this.load.image('ruins', 'assets/sheets/jawbreaker_tiles-extruded.png');
         this.load.spritesheet('mainCharacters', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('bloodT', 'assets/sheets/bloodT.png', { frameWidth: 24, frameHeight: 32 });
+        this.load.spritesheet('fireballSprite', 'assets/sheets/fireballSprite.png', { frameWidth: 64, frameHeight: 32 });
         this.load.tilemapTiledJSON('map', 'assets/json/Ruins2.json');
     }
 
     create ()
     {
         console.log("STARTING_SCENE");
-        AnimationUtility.call(this, ['hatman', 'slash']);
+        AnimationUtility.call(this, ['hatman', 'slash', 'fireball']);
         const map = this.make.tilemap({ key: 'map' });
         const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         const layer = map.createLayer(0, tiles, 0, 0);
         map.setCollision([ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ]);
         console.log(map);
         this.map = map;
-
-        const collisionSet = new Set([ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ]);
+        
         console.log(this);
 
         layer.width = 200;
@@ -119,10 +119,10 @@ export class Example extends Phaser.Scene
         gameWindow.id = "gameWindow";
         background.id = "background";
         background.style.backgroundColor = "black";
-        background.style.display = "flex";
-        background.style.padding = "5%";
-        background.style.flexDirection = "row";
-        background.style.justifyContent = "center";
+        //background.style.display = "flex";
+        //background.style.padding = "5%";
+        //background.style.flexDirection = "row";
+        //background.style.justifyContent = "center";
         if (this.debug) {
             const debugBox = document.createElement("div");
             debugBox.style.backgroundColor = "grey";
