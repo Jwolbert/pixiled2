@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export default class FogOfWar {
 
     raycasterPlugin;
@@ -9,9 +11,11 @@ export default class FogOfWar {
     graphics;
     physics;
     player;
+    debug;
     intersections = [];
+    id;
 
-    constructor (raycasterPlugin, scene, entities, entitiesGroup, graphics, map, physics, player) {
+    constructor (raycasterPlugin, scene, entities, entitiesGroup, graphics, map, physics, player, debug) {
         this.raycasterPlugin = raycasterPlugin;
         this.scene = scene;
         this.entities = entities;
@@ -20,8 +24,14 @@ export default class FogOfWar {
         this.map = map;
         this.physics = physics;
         this.player = player;
+        this.debug = debug;
         this.createObstacles();
         this.createRayCaster();
+        this.id = uuidv4();
+    }
+
+    getId() {
+        return this.id;
     }
 
     createObstacles () {
@@ -31,7 +41,10 @@ export default class FogOfWar {
         this.map.layers[0].data.forEach((row) => {
             row.forEach((tile) => {
                 if (collisionSet.has(tile.index)) {
-                    const obstacle = this.scene.add.rectangle(tile.x * 32 + 16, tile.y * 32 + 16, 32, 32).setStrokeStyle(1, 0xff0000);
+                    const obstacle = this.scene.add.rectangle(tile.x * 32 + 16, tile.y * 32 + 16, 32, 32);
+                    if (this.debug) {
+                        const obstacle = this.scene.add.rectangle(tile.x * 32 + 16, tile.y * 32 + 16, 32, 32).setStrokeStyle(1, 0xff0000);
+                    }
                     obstacles.add(obstacle, true);
                 }
             });
@@ -47,7 +60,7 @@ export default class FogOfWar {
         //create ray
         this.ray = this.raycaster.createRay({
             autoSlice: false,  //automatically slice casting result into triangles
-            collisionRange: 250, //ray's field of view range
+            collisionRange: 1, //ray's field of view range
         });
 
         //enable ray arcade physics
@@ -77,7 +90,9 @@ export default class FogOfWar {
 
         this.scene.add.rectangle(1600, 1600, 3200, 3200).setFillStyle(0x000000, 0.1);
         //map obstacles
-        this.raycaster.mapGameObjects(this.obstacles.getChildren());
+        if (this.obstacles) {
+            this.raycaster.mapGameObjects(this.obstacles.getChildren());
+        }
 
         // TODO: get this working
         let x = this.physics.add.overlap(this.ray, this.entitiesGroup, function(rayCircle, target){
@@ -102,12 +117,13 @@ export default class FogOfWar {
         //draw rays
         this.graphics = this.scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xffffff, alpha: 0.1 } });
 
-        this.drawRay();
+        this.update();
     }
 
-    drawRay () {
+    update () {
         this.ray.setOrigin(this.player.gameObject.x, this.player.gameObject.y);
         this.intersections = this.ray.castCircle();
+        console.log(this.ray.getStats());
         this.graphics.clear();
         this.graphics.lineStyle(1, 0x00ff00);
         this.graphics.fillStyle(0xffffff, 0.085);

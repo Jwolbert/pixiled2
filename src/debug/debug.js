@@ -60,6 +60,66 @@ const setDebugData = (data) => {
 
 const setEntities = (data) => {
     entities = data;
+    document.querySelector("#clientId");
 };
 
-export { profile, setDebugData, setEntities };
+function createDebugBox() {
+    const debugBox = document.createElement("div");
+    debugBox.style.backgroundColor = "grey";
+    debugBox.style.padding = "0.5rem";
+    debugBox.style.position = "absolute";
+    debugBox.style.right = "0";
+
+    const debugTitle = document.createElement("div");
+    debugTitle.textContent = "-------------------- DEBUG PANEL --------------------";
+    debugBox.appendChild(debugTitle);
+    debugBox.appendChild(document.createElement("br"));
+
+    const clientId = document.createElement("div");
+    clientId.id = "clientId";
+    clientId.textContent = `Client ID: ${this.player.id.split("-")[0]}`;
+    debugBox.appendChild(clientId);
+    debugBox.appendChild(document.createElement("br"));
+
+    const netStats = document.createElement("div");
+    netStats.id = "netStats";
+    netStats.textContent = "-------------------- NET STATS -------------------------";
+    debugBox.appendChild(netStats);
+    debugBox.appendChild(document.createElement("br"));
+
+    const fps = document.createElement("div");
+    fps.id = "fpsMeter";
+    debugBox.appendChild(fps);
+
+    const websocketUpdates = document.createElement("div");
+    websocketUpdates.id = "websocketUpdates";
+    debugBox.appendChild(websocketUpdates);
+
+    const websocketMessagesSent = document.createElement("div");
+    websocketMessagesSent.id = "websocketMessages";
+    debugBox.appendChild(websocketMessagesSent);
+
+    const webserverRequests = document.createElement("div");
+    webserverRequests.id = "webserverRequests";
+    debugBox.appendChild(webserverRequests);
+
+    const webserverLastUpdate = document.createElement("div");
+    webserverLastUpdate.id = "webserverLastUpdate";
+    debugBox.appendChild(webserverLastUpdate);
+    debugBox.appendChild(document.createElement("br"));
+
+    const entityListTitle = document.createElement("div");
+    entityListTitle.id = "entityListTitle";
+    entityListTitle.textContent = "-------------------- ENTITY LIST -----------------------";
+    debugBox.appendChild(entityListTitle);
+    debugBox.appendChild(document.createElement("br"));
+
+    const entityList = document.createElement("div");
+    entityList.id = "entityList";
+    debugBox.appendChild(entityList);
+
+    const background = document.body;
+    background.appendChild(debugBox);
+};
+
+export { profile, setDebugData, setEntities, createDebugBox };

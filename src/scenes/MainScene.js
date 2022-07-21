@@ -3,7 +3,7 @@ import Player from "../entity/player/Player";
 import AnimationUtility from "../utility/AnimationUtility";
 import Attack from "../entity/action/attack/Attack";
 import GameWebSocket from "../websocket/GameWebSocket";
-import { profile, setDebugData, setEntities } from "../debug/debug";
+import { profile, setDebugData, setEntities, createDebugBox } from "../debug/debug";
 import FogOfWar from "../fogOfWar/FogOfWar";
 
 export class Example extends Phaser.Scene
@@ -65,12 +65,14 @@ export class Example extends Phaser.Scene
         this.player = new Player('hatman', this.character, this.input);
         this.entities[this.player.getId()] = this.player;
         this.entitiesGroup.add(this.character);
-        console.log(this.entitiesGroup);
-        setDebugData(this.debugData);
-        setEntities(this.entities);
+        if (this.debug) {
+            createDebugBox.call(this);
+            setDebugData(this.debugData);
+            setEntities(this.entities);
+        }
         this.websocket = new GameWebSocket(this.entities, this.player, this.physics, layer, this.interactions, this.entitiesGroup, this.debugData);
-        this.createUi();
-        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player);
+        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug);
+        this.cameras.resize(this.game.config.width, this.game.config.height);
     }
 
 
@@ -81,7 +83,9 @@ export class Example extends Phaser.Scene
         });
         this.performActions();
         this.websocket.update();
-        this.fogOfWar.drawRay();
+        if (this.fogOfWar) {
+            this.fogOfWar.update();
+        }
         if (this.debug) {
             profile();
         }
@@ -102,73 +106,5 @@ export class Example extends Phaser.Scene
     attackHandler (attack) {
         const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions);
         this.entities[entity.getId()] = entity;
-    }
-
-    createUi () {
-        const gameWindow = document.querySelector("canvas");
-        const background = document.querySelector("body");
-        gameWindow.id = "gameWindow";
-        background.id = "background";
-        background.style.backgroundColor = "black";
-        //background.style.display = "flex";
-        //background.style.padding = "5%";
-        //background.style.flexDirection = "row";
-        //background.style.justifyContent = "center";
-        if (this.debug) {
-            const debugBox = document.createElement("div");
-            debugBox.style.backgroundColor = "grey";
-            debugBox.style.padding = "0.5rem";
-
-            const debugTitle = document.createElement("div");
-            debugTitle.textContent = "-------------------- DEBUG PANEL --------------------";
-            debugBox.appendChild(debugTitle);
-            debugBox.appendChild(document.createElement("br"));
-
-            const clientId = document.createElement("div");
-            clientId.id = "clientId";
-            clientId.textContent = `Client ID: ${this.player.id.split("-")[0]}`;
-            debugBox.appendChild(clientId);
-            debugBox.appendChild(document.createElement("br"));
-
-            const netStats = document.createElement("div");
-            netStats.id = "netStats";
-            netStats.textContent = "-------------------- NET STATS -------------------------";
-            debugBox.appendChild(netStats);
-            debugBox.appendChild(document.createElement("br"));
-
-            const fps = document.createElement("div");
-            fps.id = "fpsMeter";
-            debugBox.appendChild(fps);
-
-            const websocketUpdates = document.createElement("div");
-            websocketUpdates.id = "websocketUpdates";
-            debugBox.appendChild(websocketUpdates);
-
-            const websocketMessagesSent = document.createElement("div");
-            websocketMessagesSent.id = "websocketMessages";
-            debugBox.appendChild(websocketMessagesSent);
-
-            const webserverRequests = document.createElement("div");
-            webserverRequests.id = "webserverRequests";
-            debugBox.appendChild(webserverRequests);
-
-            const webserverLastUpdate = document.createElement("div");
-            webserverLastUpdate.id = "webserverLastUpdate";
-            debugBox.appendChild(webserverLastUpdate);
-            debugBox.appendChild(document.createElement("br"));
-
-            const entityListTitle = document.createElement("div");
-            entityListTitle.id = "entityListTitle";
-            entityListTitle.textContent = "-------------------- ENTITY LIST -----------------------";
-            debugBox.appendChild(entityListTitle);
-            debugBox.appendChild(document.createElement("br"));
-
-            const entityList = document.createElement("div");
-            entityList.id = "entityList";
-            debugBox.appendChild(entityList);
-
-            background.appendChild(debugBox);
-        }
-        console.log("UI CREATED");
     }
 };

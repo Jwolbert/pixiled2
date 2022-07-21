@@ -26,11 +26,12 @@ export default class Attack extends Entity {
         this.name = attack.name;
         this.currentAnimation = attack.animation;
         this.direction = attack.direction;
+        attack.direction *= -1;
+        this.velocityX = Math.cos(attack.direction);
+        this.velocityY = Math.sin(attack.direction);
+        this.gameObject.setCircle(attack.radius, attack.radius + attack.radius * this.velocityX , attack.radius * this.velocityY);
         if (this.attack.speed) {
-            attack.direction *= -1;
-            this.velocityX = Math.cos(attack.direction);
-            this.velocityY = Math.sin(attack.direction);
-            this.gameObject.setCircle(attack.radius, attack.radius + attack.radius * this.velocityX , attack.radius * this.velocityY);
+            // this.gameObject.setCircle(attack.radius, attack.radius + attack.radius * this.velocityX , attack.radius * this.velocityY);
             this.gameObject.setVelocityX(this.velocityX * attack.speed);
             this.gameObject.setVelocityY(this.velocityY * attack.speed);
         }
