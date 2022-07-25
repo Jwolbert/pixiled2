@@ -8,8 +8,9 @@ export default class Attack extends Entity {
     interactions;
     type = "attack";
     attackArea = 20;
+    collideHealth = 1;
 
-    constructor (name, entities, physics, attack, interactions) {
+    constructor (name, entities, physics, attack, interactions, layer) {
         super(
             name,
             physics.add.sprite(attack.location.x, attack.location.y, "bloodT")
@@ -17,6 +18,7 @@ export default class Attack extends Entity {
                 .setRotation(attack.direction * -1)
                 .setCircle(attack.radius, attack.radius, 0)
         );
+        this.layer = layer;
         this.entities = entities;
         this.physics = physics;
         this.interactions = interactions;
@@ -30,10 +32,20 @@ export default class Attack extends Entity {
         this.velocityX = Math.cos(attack.direction);
         this.velocityY = Math.sin(attack.direction);
         this.gameObject.setCircle(attack.radius, attack.radius + attack.radius * this.velocityX , attack.radius * this.velocityY);
+        this.speed = this.attack.speed;
+        this.collideHealth = attack.collideHealth;
         if (this.attack.speed) {
             // this.gameObject.setCircle(attack.radius, attack.radius + attack.radius * this.velocityX , attack.radius * this.velocityY);
             this.gameObject.setVelocityX(this.velocityX * attack.speed);
             this.gameObject.setVelocityY(this.velocityY * attack.speed);
+            this.gameObject.setBounce(attack.bounce, attack.bounce);
+            console.log(this.gameObject.velocityX, this.gameObject.velocityY)
+            this.physics.add.collider(this.gameObject, this.layer, (attack, layer) => {
+                console.log(this.entities[attack.id].collideHealth);
+                if (this.entities[attack.id].collideHealth-- <= 0) {
+                    this.entities[attack.id].dead = true;
+                }
+            });
         }
     }
 

@@ -35,9 +35,6 @@ const profile = () => {
         if (debugData.lastServerUpdate) {
             const webserverLastUpdate = document.querySelector("#webserverLastUpdate");
             webserverLastUpdate.textContent = `Last server tick received: #${debugData.lastServerUpdate}`;
-            if (lastServerTick > debugData.lastServerUpdate) {
-                
-            }
         }
 
         if (entities) {
@@ -50,6 +47,16 @@ const profile = () => {
                 entityNode.textContent = `ID: ${id.split("-")[0]} HP: ${entities[id].hp} TYPE: ${entities[id].type}`
                 entityList.appendChild(entityNode);
             });
+        }
+
+        if (debugData.fogOfWar?.time) {
+            const fogOfWarTime = document.querySelector("#fogOfWarTime");
+            fogOfWarTime.textContent = `Fog of war compute time: #${debugData.fogOfWar.time}`;
+        }
+
+        if (debugData.fogOfWar?.rays) {
+            const fogOfWarRays = document.querySelector("#fogOfWarRays");
+            fogOfWarRays.textContent = `Fog of war compute rays: #${debugData.fogOfWar.rays}`;
         }
     }
 };
@@ -117,6 +124,22 @@ function createDebugBox() {
     const entityList = document.createElement("div");
     entityList.id = "entityList";
     debugBox.appendChild(entityList);
+    debugBox.appendChild(document.createElement("br"));
+
+    const fogOfWarTitle = document.createElement("div");
+    fogOfWarTitle.id = "fogOfWarTitle";
+    fogOfWarTitle.textContent = "-------------------- FOG OF WAR -----------------------";
+    debugBox.appendChild(fogOfWarTitle);
+    debugBox.appendChild(document.createElement("br"));
+
+    const fogOfWarTime = document.createElement("div");
+    fogOfWarTime.id = "fogOfWarTime";
+    debugBox.appendChild(fogOfWarTime);
+
+    const fogOfWarRays = document.createElement("div");
+    fogOfWarRays.id = "fogOfWarRays";
+    debugBox.appendChild(fogOfWarRays);
+    debugBox.appendChild(document.createElement("br"));
 
     const background = document.body;
     background.appendChild(debugBox);

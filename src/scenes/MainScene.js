@@ -19,10 +19,11 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = true; // DEBUGGGGGGG
+    debug = false; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
+    layer;
 
     constructor (websocket)
     {
@@ -50,6 +51,7 @@ export class Example extends Phaser.Scene
         const map = this.make.tilemap({ key: 'map' });
         const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         const layer = map.createLayer(0, tiles, 0, 0);
+        this.layer = layer;
         map.setCollision([ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ]);
         console.log(map);
         this.map = map;
@@ -71,7 +73,7 @@ export class Example extends Phaser.Scene
             setEntities(this.entities);
         }
         this.websocket = new GameWebSocket(this.entities, this.player, this.physics, layer, this.interactions, this.entitiesGroup, this.debugData);
-        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug);
+        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData);
         this.cameras.resize(this.game.config.width, this.game.config.height);
     }
 
@@ -104,7 +106,7 @@ export class Example extends Phaser.Scene
     }
 
     attackHandler (attack) {
-        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions);
+        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.layer);
         this.entities[entity.getId()] = entity;
     }
 };
