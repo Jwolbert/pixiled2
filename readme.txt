@@ -17,4 +17,8 @@ Add two layers to the scene, one pure black and one black gradient from center t
 Add more weapons
 Create DB
 Implement client auth
-Implement concept of rooms(1 room per process) and redirect clients to rooms whenever they want to join a game
+Implement concept of rooms(1 room per node process) and redirect clients to rooms whenever they want to join a game
+
+BUGS:
+Colors stopped working whenever effects are applied to players
+Dagger weapon needs a rework after fireball was added
