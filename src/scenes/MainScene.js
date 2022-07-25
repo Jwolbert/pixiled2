@@ -24,6 +24,7 @@ export class Example extends Phaser.Scene
     map;
     debugData;
     layer;
+    darknessLayer;
 
     constructor (websocket)
     {
@@ -52,6 +53,13 @@ export class Example extends Phaser.Scene
         const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         const layer = map.createLayer(0, tiles, 0, 0);
         this.layer = layer;
+        this.darknessLayer = this.add.layer();
+        this.darknessGraphics = this.add.graphics({ fillStyle: { color: 0x000000 } }).fillRectShape(new Phaser.Geom.Rectangle(250, 200, 300, 200));
+        this.darknessLayer.add(this.layer);
+        
+        console.log(this.darknessLayer);
+        console.log(this.layer);
+
         map.setCollision([ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ]);
         console.log(map);
         this.map = map;
@@ -73,7 +81,7 @@ export class Example extends Phaser.Scene
             setEntities(this.entities);
         }
         this.websocket = new GameWebSocket(this.entities, this.player, this.physics, layer, this.interactions, this.entitiesGroup, this.debugData);
-        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData);
+        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData, this.darknessLayer);
         this.cameras.resize(this.game.config.width, this.game.config.height);
     }
 

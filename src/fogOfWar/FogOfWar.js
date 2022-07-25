@@ -18,8 +18,9 @@ export default class FogOfWar {
     screenY = 600;
     collisionSet;
     currentlyMapped = [];
+    darknessLayer;
 
-    constructor (raycasterPlugin, scene, entities, entitiesGroup, graphics, map, physics, player, debug, debugData) {
+    constructor (raycasterPlugin, scene, entities, entitiesGroup, graphics, map, physics, player, debug, debugData, darknessLayer) {
         this.raycasterPlugin = raycasterPlugin;
         this.scene = scene;
         this.entities = entities;
@@ -29,6 +30,7 @@ export default class FogOfWar {
         this.physics = physics;
         this.player = player;
         this.debug = debug;
+        this.darknessLayer = darknessLayer;
         this.debugData = debugData;
         this.id = uuidv4();
         this.createObstacles();
@@ -164,7 +166,13 @@ export default class FogOfWar {
         if(this.intersections.length > 0) {
             this.graphics.fillPoints(this.intersections);
         }
+
+        const bitmask = this.graphics.createGeometryMask();
+
+        bitmask.setInvertAlpha();
       
+        this.darknessLayer.setMask(bitmask);
+
         if (this.debug) {
             if(this.ray.slicedIntersections.length > 0)
                 for(let slice of this.ray.slicedIntersections) {
