@@ -19,8 +19,9 @@ export default class FogOfWar {
     collisionSet;
     currentlyMapped = [];
     darknessLayer;
+    tilemapLayer;
 
-    constructor (raycasterPlugin, scene, entities, entitiesGroup, graphics, map, physics, player, debug, debugData, darknessLayer) {
+    constructor (raycasterPlugin, scene, entities, entitiesGroup, graphics, map, physics, player, debug, debugData, darknessLayer, tilemapLayer) {
         this.raycasterPlugin = raycasterPlugin;
         this.scene = scene;
         this.entities = entities;
@@ -32,6 +33,7 @@ export default class FogOfWar {
         this.debug = debug;
         this.darknessLayer = darknessLayer;
         this.debugData = debugData;
+        this.tilemapLayer = tilemapLayer;
         this.id = uuidv4();
         this.createObstacles();
         this.createRay();
@@ -79,8 +81,6 @@ export default class FogOfWar {
         //enable ray arcade physics
         this.ray.enablePhysics();
 
-        console.log(this.ray._raycaster);
-
         if (this.debug) {
             this.ray._raycaster.setOptions({
                 debug: {
@@ -99,7 +99,6 @@ export default class FogOfWar {
         }
 
         this.ray._raycaster.setBoundingBox(0, 0, 3200, 3200);
-        console.log(this.ray._raycaster);
 
         this.scene.add.rectangle(1600, 1600, 3200, 3200).setFillStyle(0x000000, 0.1);
 
@@ -108,6 +107,14 @@ export default class FogOfWar {
         if (this.obstacles) {
             this.raycaster.mapGameObjects(this.currentlyMapped);
         }
+
+        console.log(this.tilemapLayer);
+
+        // this.raycaster.mapGameObjects(this.tilemapLayer, false, {
+        //     collisionTiles: [ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ] //array of tile types which collide with rays
+        // });
+
+        console.log(this.raycaster);
 
         // TODO: get this working
         // let x = this.physics.add.overlap(this.ray, this.entitiesGroup, function(rayCircle, target){
@@ -130,18 +137,21 @@ export default class FogOfWar {
         */
 
         //draw rays
-        this.graphics = this.scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xffffff, alpha: 0.1 } });
+        this.graphics = this.scene.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xffffff, alpha: 0.01 } });
 
         this.update();
     }
 
-    update () {
-        this.ray._raycaster.setBoundingBox(this.player.gameObject.x - this.screenX / 2, this.player.gameObject.y - this.screenY / 2, this.screenX, this.screenY);
+    optCount = 0;
+    optRate = 10;
 
+    update () {
+        this.raycaster.setBoundingBox(this.player.gameObject.x - this.screenX / 2, this.player.gameObject.y - this.screenY / 2, this.screenX, this.screenY);
 
         // mapped object optimizer
         const opt = true;
-        if (this.obstacles && opt) {
+        if (this.obstacles && opt && this.optCount++ > this.optRate) {
+            this.optCount = 0;
             const within = this.physics.overlapRect(this.player.gameObject.x - this.screenX / 2, this.player.gameObject.y - this.screenY / 2, this.screenX, this.screenY);
             if (this.currentlyMapped.length > 0) {
                 this.ray._raycaster.removeMappedObjects(this.currentlyMapped);
@@ -161,8 +171,8 @@ export default class FogOfWar {
             this.debugData.fogOfWar = this.ray.getStats();
         }
         this.graphics.clear();
-        this.graphics.lineStyle(1, 0x00ff00);
-        this.graphics.fillStyle(0xffffff, 0.085);
+        // this.graphics.lineStyle(1, 0x00ff00);
+        // this.graphics.fillStyle(0xffffff, 0.085);
         if(this.intersections.length > 0) {
             this.graphics.fillPoints(this.intersections);
         }
@@ -173,13 +183,14 @@ export default class FogOfWar {
       
         this.darknessLayer.setMask(bitmask);
 
-        if (this.debug) {
+        // turned off
+        if (this.debug && false) {
             if(this.ray.slicedIntersections.length > 0)
                 for(let slice of this.ray.slicedIntersections) {
                     this.graphics.strokeTriangleShape(slice);
                 }
         }
         // this.graphics.fillStyle(0xff00ff);
-        this.graphics.fillPoint(this.ray.origin.x, this.ray.origin.y, 3);
+        // this.graphics.fillPoint(this.ray.origin.x, this.ray.origin.y, 3);
     };
 }

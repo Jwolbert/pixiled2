@@ -19,12 +19,13 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = false; // DEBUGGGGGGG
+    debug = true; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
     layer;
     darknessLayer;
+    staticLayer;
 
     constructor (websocket)
     {
@@ -42,7 +43,7 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('mainCharacters', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('bloodT', 'assets/sheets/bloodT.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('fireballSprite', 'assets/sheets/fireballSprite.png', { frameWidth: 64, frameHeight: 32 });
-        this.load.tilemapTiledJSON('map', 'assets/json/Ruins2.json');
+        this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
     }
 
     create ()
@@ -53,20 +54,20 @@ export class Example extends Phaser.Scene
         const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         const layer = map.createLayer(0, tiles, 0, 0);
         this.layer = layer;
-        this.darknessLayer = this.add.layer();
-        this.darknessGraphics = this.add.graphics({ fillStyle: { color: 0x000000 } }).fillRectShape(new Phaser.Geom.Rectangle(250, 200, 300, 200));
-        this.darknessLayer.add(this.layer);
-        
-        console.log(this.darknessLayer);
-        console.log(this.layer);
-
         map.setCollision([ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ]);
+        this.darknessLayer = this.add.layer();
+        this.staticLayer = this.add.layer();
+        this.darknessLayer.add(this.layer);
+        this.staticLayer.add(map.createLayer(1, tiles, 0, 0));
+        this.staticLayer.setAlpha(0.5);
+        console.log(this.staticLayer);
+        console.log(this.darknessLayer);
+
         console.log(map);
         this.map = map;
         
         console.log(this);
 
-        layer.width = 200;
         this.character = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.9).setDepth(3);
         this.entitiesGroup = this.physics.add.group();
         this.physics.add.collider(this.character, layer);
@@ -81,7 +82,7 @@ export class Example extends Phaser.Scene
             setEntities(this.entities);
         }
         this.websocket = new GameWebSocket(this.entities, this.player, this.physics, layer, this.interactions, this.entitiesGroup, this.debugData);
-        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData, this.darknessLayer);
+        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData, this.darknessLayer, this.layer);
         this.cameras.resize(this.game.config.width, this.game.config.height);
     }
 
