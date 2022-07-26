@@ -14,14 +14,14 @@ export default class FogOfWar {
     debug;
     intersections = [];
     id;
-    screenX = 800;
-    screenY = 600;
+    screenX = 500;
+    screenY = 375;
     collisionSet;
     currentlyMapped = [];
-    darknessLayer;
+    dynamicLayer;
     tilemapLayer;
 
-    constructor (raycasterPlugin, scene, entities, entitiesGroup, graphics, map, physics, player, debug, debugData, darknessLayer, tilemapLayer) {
+    constructor (raycasterPlugin, scene, entities, entitiesGroup, graphics, map, physics, player, debug, debugData, dynamicLayer, tilemapLayer) {
         this.raycasterPlugin = raycasterPlugin;
         this.scene = scene;
         this.entities = entities;
@@ -31,7 +31,7 @@ export default class FogOfWar {
         this.physics = physics;
         this.player = player;
         this.debug = debug;
-        this.darknessLayer = darknessLayer;
+        this.dynamicLayer = dynamicLayer;
         this.debugData = debugData;
         this.tilemapLayer = tilemapLayer;
         this.id = uuidv4();
@@ -110,9 +110,19 @@ export default class FogOfWar {
 
         console.log(this.tilemapLayer);
 
-        // this.raycaster.mapGameObjects(this.tilemapLayer, false, {
-        //     collisionTiles: [ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ] //array of tile types which collide with rays
-        // });
+        // map all tiles by 
+        const mapByLayer = false;
+        if (mapByLayer) {
+            // doesn't work with mapped object pruner
+            this.raycaster.mapGameObjects(this.tilemapLayer, false, {
+                collisionTiles: [ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ] //array of tile types which collide with rays
+            });
+        } else {
+            this.currentlyMapped = this.obstacles.getChildren();
+            if (this.obstacles) {
+                this.raycaster.mapGameObjects(this.currentlyMapped);
+            }
+        }
 
         console.log(this.raycaster);
 
@@ -148,9 +158,9 @@ export default class FogOfWar {
     update () {
         this.raycaster.setBoundingBox(this.player.gameObject.x - this.screenX / 2, this.player.gameObject.y - this.screenY / 2, this.screenX, this.screenY);
 
-        // mapped object optimizer
+        // mapped object pruner
         const opt = true;
-        if (this.obstacles && opt && this.optCount++ > this.optRate) {
+        if (opt && this.obstacles && this.optCount++ > this.optRate) {
             this.optCount = 0;
             const within = this.physics.overlapRect(this.player.gameObject.x - this.screenX / 2, this.player.gameObject.y - this.screenY / 2, this.screenX, this.screenY);
             if (this.currentlyMapped.length > 0) {
@@ -181,7 +191,7 @@ export default class FogOfWar {
 
         bitmask.setInvertAlpha();
       
-        this.darknessLayer.setMask(bitmask);
+        this.dynamicLayer.setMask(bitmask);
 
         // turned off
         if (this.debug && false) {

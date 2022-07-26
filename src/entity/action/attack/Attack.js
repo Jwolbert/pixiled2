@@ -1,4 +1,3 @@
-import { ContextExclusionPlugin } from "webpack";
 import Entity from "../../Entity";
 
 export default class Attack extends Entity {
@@ -24,7 +23,9 @@ export default class Attack extends Entity {
         this.interactions = interactions;
         this.attack = attack;
         this.attack.landed = false;
+        console.log(this.gameObject);
         this.gameObject.play(`${attack.name}_${attack.animation}`);
+        this.gameObject.alpha = 0.7;
         this.name = attack.name;
         this.currentAnimation = attack.animation;
         this.direction = attack.direction;
@@ -39,10 +40,11 @@ export default class Attack extends Entity {
             this.gameObject.setVelocityX(this.velocityX * attack.speed);
             this.gameObject.setVelocityY(this.velocityY * attack.speed);
             this.gameObject.setBounce(attack.bounce, attack.bounce);
-            console.log(this.gameObject.velocityX, this.gameObject.velocityY)
             this.physics.add.collider(this.gameObject, this.layer, (attack, layer) => {
                 console.log(this.entities[attack.id].collideHealth);
+                attack.toggleFlipY();
                 if (this.entities[attack.id].collideHealth-- <= 0) {
+                    console.log(this.entities[attack.id].gameObject);
                     this.entities[attack.id].dead = true;
                 }
             });

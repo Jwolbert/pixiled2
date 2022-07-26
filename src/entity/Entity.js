@@ -24,6 +24,7 @@ export default class Entity {
 
     constructor (name, gameObject)
     {
+        console.log(gameObject);
         this.id = uuidv4();
         this.name = name;
         this.gameObject = gameObject;
@@ -56,13 +57,10 @@ export default class Entity {
         this.name = JSON.name;
         this.x = JSON.x;
         this.y = JSON.y;
-        this.velocityX = JSON.velocityX;
-        this.velocityY = JSON.velocityY;
         // this.dead = JSON.dead;
         this.owner = JSON.owner;
         this.currentAnimation = JSON.currentAnimation;
         this.direction = JSON.direction;
-        this.speed = JSON.speed;
     }
 
     update ()

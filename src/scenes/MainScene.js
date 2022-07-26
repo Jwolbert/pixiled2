@@ -23,9 +23,10 @@ export class Example extends Phaser.Scene
     fogOfWar;
     map;
     debugData;
-    layer;
-    darknessLayer;
+    mapLayer;
+    dynamicLayer; //bad name should be called dynamic layer
     staticLayer;
+    borderLayer;
 
     constructor (websocket)
     {
@@ -40,7 +41,8 @@ export class Example extends Phaser.Scene
     {
         //this.load.spritesheet('hatman', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
         this.load.image('ruins', 'assets/sheets/jawbreaker_tiles-extruded.png');
-        this.load.spritesheet('mainCharacters', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
+        //this.load.spritesheet('mainCharacters', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
+        this.load.spritesheet('mainCharacters2x', 'assets/sheets/mainCharacters2x.png', { frameWidth: 48, frameHeight: 64 });
         this.load.spritesheet('bloodT', 'assets/sheets/bloodT.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('fireballSprite', 'assets/sheets/fireballSprite.png', { frameWidth: 64, frameHeight: 32 });
         this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
@@ -52,25 +54,40 @@ export class Example extends Phaser.Scene
         AnimationUtility.call(this, ['hatman', 'slash', 'fireball']);
         const map = this.make.tilemap({ key: 'map' });
         const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
-        const layer = map.createLayer(0, tiles, 0, 0);
-        this.layer = layer;
+        this.mapLayer =  map.createLayer(0, tiles, 0, 0);
         map.setCollision([ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ]);
-        this.darknessLayer = this.add.layer();
+        this.dynamicLayer = this.add.layer().setDepth(1);
         this.staticLayer = this.add.layer();
-        this.darknessLayer.add(this.layer);
-        this.staticLayer.add(map.createLayer(1, tiles, 0, 0));
-        this.staticLayer.setAlpha(0.5);
+        this.dynamicLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
+        this.staticLayer.add(this.mapLayer);
+        this.staticLayer.setAlpha(0.25);
         console.log(this.staticLayer);
-        console.log(this.darknessLayer);
+        this.dynamicLayer.setAlpha(1);
+        console.log(this.dynamicLayer);
+
+
+        /*
+        const border = this.make.graphics();
+        border.beginPath();
+        border.fillRect(0, 0, 800, 50);
+        border.fillRect(750, 50, 50, 500);
+        border.fillRect(0, 550, 800, 50);
+        border.fillRect(0, 50, 50, 500);
+        const mask = border.createGeometryMask();
+        mask.set
+        mask.setInvertAlpha();
+        this.staticLayer.setMask(mask);
+        */
+
 
         console.log(map);
         this.map = map;
         
         console.log(this);
 
-        this.character = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.9).setDepth(3);
+        this.character = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.8).setDepth(3);
         this.entitiesGroup = this.physics.add.group();
-        this.physics.add.collider(this.character, layer);
+        this.physics.add.collider(this.character, this.mapLayer);
         this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);
         this.player = new Player('hatman', this.character, this.input);
@@ -81,8 +98,8 @@ export class Example extends Phaser.Scene
             setDebugData(this.debugData);
             setEntities(this.entities);
         }
-        this.websocket = new GameWebSocket(this.entities, this.player, this.physics, layer, this.interactions, this.entitiesGroup, this.debugData);
-        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData, this.darknessLayer, this.layer);
+        this.websocket = new GameWebSocket(this.entities, this.player, this.physics, this.mapLayer, this.interactions, this.entitiesGroup, this.debugData, this.dynamicLayer, this);
+        this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData, this.dynamicLayer, this.mapLayer);
         this.cameras.resize(this.game.config.width, this.game.config.height);
     }
 

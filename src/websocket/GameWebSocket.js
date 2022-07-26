@@ -17,16 +17,18 @@ export default class GameWebSocket {
     debugData;
     lastServerTick = 0;
 
-    constructor(entities, player, physics, layer, interactions, entitiesGroup, debugData) {
+    constructor(entities, player, physics, layer, interactions, entitiesGroup, debugData, dynamicLayer, scene) {
         this.entities = entities;
         this.entitiesGroup = entitiesGroup;
         this.owner = Object.keys(entities)[0];
         this.player = player;
         this.physics = physics;
         this.layer = layer;
+        this.dynamicLayer = dynamicLayer;
         this.interactions = interactions;
         this.socket = new WebSocket("ws://" + window.location.hostname + ':3334');
         this.debugData = debugData;
+        this.scene = scene;
         if (this.debugData) {
             this.debugData.websocketUpdates = 0;
             this.debugData.websocketMessagesSent = 0;
@@ -61,9 +63,11 @@ export default class GameWebSocket {
             Object.values(message.entities).forEach((updateEntity) => {
                 if (!this.entities[updateEntity.id] && !updateEntity.dead) {
                     // new entity
-                    const newEntitySprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.9).setDepth(3);
+                    const newEntitySprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.8).setDepth(3);
+                    const newSceneSprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.8).setDepth(3);
                     this.physics.add.collider(newEntitySprite, layer);
-                    const newEntity = new RemoteEntity(updateEntity, newEntitySprite);
+                    this.dynamicLayer.add(newSceneSprite);
+                    const newEntity = new RemoteEntity(updateEntity, newEntitySprite, newSceneSprite);
                     newEntitySprite.id = updateEntity.id;
                     this.entitiesGroup.add(newEntitySprite, true);
                     this.entities[updateEntity.id] = newEntity;
