@@ -14,6 +14,8 @@ src/server/main.js is the game server.
 TODO:
 Switch to a more efficient websocket datatype than JSON(this will prolly be a bitch).
 Add two layers to the scene, one pure black and one black gradient from center to use with fog of war bitmask.
+x {this might be done. I changed the player size by x2(C:\Users\branc\OneDrive\Desktop\code\projects\pixiled2\assets\json\mainCharacters2x.json)}
+
 Add more weapons
 Create DB
 Implement client auth
@@ -22,3 +24,10 @@ Implement concept of rooms(1 room per node process) and redirect clients to room
 BUGS:
 Colors stopped working whenever effects are applied to players
 Dagger weapon needs a rework after fireball was added
+
+DEBUG:
+there are debug booleans in:
+
+server/main.js
+index.js
+MainScene.js

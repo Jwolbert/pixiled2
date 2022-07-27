@@ -19,7 +19,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = true; // DEBUGGGGGGG
+    debug = false; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -50,8 +50,16 @@ export class Example extends Phaser.Scene
 
     create ()
     {
-        console.log("STARTING_SCENE");
+        if(this.debug) {
+            console.log("STARTING_SCENE");
+        }
+
+
+        //anims
         AnimationUtility.call(this, ['hatman', 'slash', 'fireball']);
+
+
+        //layers
         const map = this.make.tilemap({ key: 'map' });
         const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         this.mapLayer =  map.createLayer(0, tiles, 0, 0);
@@ -85,14 +93,25 @@ export class Example extends Phaser.Scene
         
         console.log(this);
 
-        this.character = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.8).setDepth(3);
         this.entitiesGroup = this.physics.add.group();
+
+
+        // MOVE THIS INTO Player.js
+        //
+
+        //game shit
+        this.character = this.physics.add.sprite(96, 96, 'mainCharacters2x').setScale(.8).setDepth(3);
+        console.log(this.character)
+        this.entitiesGroup.add(this.character);
         this.physics.add.collider(this.character, this.mapLayer);
+
+
+        this.player = new Player('hatman', this.character, this.input);
+        //
+
         this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);
-        this.player = new Player('hatman', this.character, this.input);
         this.entities[this.player.getId()] = this.player;
-        this.entitiesGroup.add(this.character);
         if (this.debug) {
             createDebugBox.call(this);
             setDebugData(this.debugData);

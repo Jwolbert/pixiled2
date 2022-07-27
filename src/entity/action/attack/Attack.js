@@ -42,7 +42,6 @@ export default class Attack extends Entity {
             this.gameObject.setBounce(attack.bounce, attack.bounce);
             this.physics.add.collider(this.gameObject, this.layer, (attack, layer) => {
                 console.log(this.entities[attack.id].collideHealth);
-                attack.toggleFlipY();
                 if (this.entities[attack.id].collideHealth-- <= 0) {
                     console.log(this.entities[attack.id].gameObject);
                     this.entities[attack.id].dead = true;

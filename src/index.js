@@ -2,6 +2,7 @@ import { Example } from "./scenes/MainScene"
 import Phaser from "phaser";
 import PhaserRaycaster from "phaser-raycaster";
 
+//YEET
 setTimeout(() => {createUi()}, 50);
 
 function createUi () {
@@ -20,14 +21,14 @@ function createUi () {
     const config = {
         type: Phaser.CANVAS,
         parent: 'phaser-example',
-        width: 800,
-        height: 600,
+        width: 880,
+        height: 660,
         zoom: 1,
         scene: [ Example ],
         physics: {
             default: 'arcade',
             arcade: {
-                debug: false
+                debug: true
             }
         },
         plugins: {
