@@ -2,6 +2,8 @@ let previousTime = new Date().getTime();
 let debugCounter = 0;
 const debugFrequency = 60;
 let lastServerTick = 0;
+let frameRateMin = 60;
+let frameRateCounter = 0;
 let debugData = {};
 let entities;
 
@@ -13,7 +15,15 @@ const profile = () => {
         debugCounter = 0;
 
         const fps = document.querySelector("#fpsMeter");
-        fps.textContent = `Frame rate: ${(debugFrequency / diffSec).toFixed(2)} frames per second`;
+        const frameRate = debugFrequency / diffSec;
+        if (frameRateCounter++ > 10) {
+            frameRateCounter = 0;
+            frameRateMin = 60;
+        }
+        if (frameRateMin > frameRate) {
+            frameRateMin = frameRate;
+        }
+        fps.textContent = `Frame rate: ${frameRate.toFixed(2)}/${frameRateMin.toFixed(2)} frames per second`;
 
         if (debugData.websocketUpdates) {
             const websocketUpdates = document.querySelector("#websocketUpdates");
@@ -51,12 +61,12 @@ const profile = () => {
 
         if (debugData.fogOfWar?.time) {
             const fogOfWarTime = document.querySelector("#fogOfWarTime");
-            fogOfWarTime.textContent = `Fog of war compute time: #${debugData.fogOfWar.time}`;
+            fogOfWarTime.textContent = `Fog of war compute time: ${debugData.fogOfWar.time.toFixed(3)}`;
         }
 
         if (debugData.fogOfWar?.rays) {
             const fogOfWarRays = document.querySelector("#fogOfWarRays");
-            fogOfWarRays.textContent = `Fog of war compute rays: #${debugData.fogOfWar.rays}`;
+            fogOfWarRays.textContent = `Fog of war compute rays: ${debugData.fogOfWar.rays}`;
         }
     }
 };

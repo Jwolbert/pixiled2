@@ -14,8 +14,8 @@ export default class FogOfWar {
     debug;
     intersections = [];
     id;
-    screenX = 500;
-    screenY = 375;
+    screenX = 560;
+    screenY = 420;
     collisionSet;
     currentlyMapped = [];
     dynamicLayer;
@@ -54,7 +54,7 @@ export default class FogOfWar {
             row.forEach((tile) => {
                 if (collisionSet.has(tile.index)) {
                     let obstacle;
-                    if (this.debug) {
+                    if (this.debug && false) {
                         obstacle = this.scene.add.rectangle(tile.x * 32 + 16, tile.y * 32 + 16, 32, 32).setStrokeStyle(1, 0xff0000);
                     } else {
                         obstacle = this.scene.add.rectangle(tile.x * 32 + 16, tile.y * 32 + 16, 32, 32);
@@ -81,7 +81,7 @@ export default class FogOfWar {
         //enable ray arcade physics
         this.ray.enablePhysics();
 
-        if (this.debug) {
+        if (this.debug && false) {
             this.ray._raycaster.setOptions({
                 debug: {
                     enabled: true, //enable debug mode

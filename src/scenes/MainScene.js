@@ -19,13 +19,14 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = false; // DEBUGGGGGGG
+    debug = true; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
     mapLayer;
-    dynamicLayer; //bad name should be called dynamic layer
+    dynamicLayer;
     staticLayer;
+    staticLayerWalls;
     borderLayer;
 
     constructor (websocket)
@@ -66,8 +67,10 @@ export class Example extends Phaser.Scene
         map.setCollision([ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ]);
         this.dynamicLayer = this.add.layer().setDepth(1);
         this.staticLayer = this.add.layer();
+        this.staticLayerWalls = this.add.layer().setDepth(2);
         this.dynamicLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
         this.staticLayer.add(this.mapLayer);
+        this.staticLayerWalls.add(map.createLayer(2, tiles, 0, 0).setAlpha(0.4))
         this.staticLayer.setAlpha(0.25);
         console.log(this.staticLayer);
         this.dynamicLayer.setAlpha(1);
@@ -151,7 +154,7 @@ export class Example extends Phaser.Scene
     }
 
     attackHandler (attack) {
-        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.layer);
+        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.mapLayer);
         this.entities[entity.getId()] = entity;
     }
 };

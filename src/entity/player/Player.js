@@ -5,6 +5,7 @@ import weapons from "../../weapons";
 export default class Player extends Entity {
     controls;
     weapon;
+    attackCooldown;
 
     constructor (name, gameObject, input)
     {
@@ -14,6 +15,7 @@ export default class Player extends Entity {
         this.controls.attack = new PlayerAttackControls(input);
         this.type = "player";
         this.weapon = weapons["fireballScroll"];
+        this.attackCooldown = this.weapon.cooldown;
     }
 
     update () {
@@ -40,18 +42,18 @@ export default class Player extends Entity {
     }
 
     attackInput () {
-        if (this.weapon.attackCooldown > 1) {
-            this.weapon.attackCooldown -= 1;
+        if (this.attackCooldown > 1) {
+            this.attackCooldown -= 1;
             return;
         }
-        if (this.weapon.attackCooldown > 0) {
-            const input = this.controls.attack.get();
-            this.weapon.attackCooldown -= 1;
+        if (this.attackCooldown > 0) {
+            this.controls.attack.get();
+            this.attackCooldown -= 1;
             return;
         }
         const input = this.controls.attack.get();
         if (input) {
-            this.weapon.attackCooldown = 100;
+            this.attackCooldown = this.weapon.cooldown;
             const location = {x: this.gameObject.x + input.location.x, y: this.gameObject.y + input.location.y};
             this.currentAction = {
                 ...this.weapon.action,
