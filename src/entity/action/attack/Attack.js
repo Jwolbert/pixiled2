@@ -32,7 +32,7 @@ export default class Attack extends Entity {
         attack.direction *= -1;
         this.velocityX = Math.cos(attack.direction);
         this.velocityY = Math.sin(attack.direction);
-        this.gameObject.setCircle(attack.radius, attack.radius + attack.radius * this.velocityX , attack.radius * this.velocityY);
+        this.gameObject.setCircle(attack.radius, 16 + (8) * this.velocityX, (8) * this.velocityY);
         this.speed = this.attack.speed;
         this.collideHealth = attack.collideHealth;
         if (this.attack.speed) {

@@ -22,10 +22,13 @@ export default class Entity {
     speed = 100;
     direction;
 
-    constructor (name, gameObject)
+    constructor (name, gameObject, id)
     {
-        console.log(gameObject);
-        this.id = uuidv4();
+        if (id) {
+            this.id = id; 
+        } else {
+            this.id = uuidv4();
+        }
         this.name = name;
         this.gameObject = gameObject;
         this.gameObject.id = this.id;
@@ -57,7 +60,7 @@ export default class Entity {
         this.name = JSON.name;
         this.x = JSON.x;
         this.y = JSON.y;
-        // this.dead = JSON.dead;
+        // this.dead = JSON.dead; entiities die in websocket
         this.owner = JSON.owner;
         this.currentAnimation = JSON.currentAnimation;
         this.direction = JSON.direction;

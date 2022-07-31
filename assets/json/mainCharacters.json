@@ -1,7 +1,5 @@
 {
     "hatman": {
-        "frameWidth": 24,
-        "frameHeight": 32,
         "animations": {
             "down": {
                 "start": 27,

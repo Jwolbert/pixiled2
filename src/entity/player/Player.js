@@ -9,7 +9,7 @@ export default class Player extends Entity {
 
     constructor (name, gameObject, input)
     {
-        super(name, gameObject);
+        super(name, gameObject, window.id);
         this.controls = {};
         this.controls.velocity = new PlayerVelocityControls(input);
         this.controls.attack = new PlayerAttackControls(input);

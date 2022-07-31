@@ -19,7 +19,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = true; // DEBUGGGGGGG
+    debug = false; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -64,20 +64,46 @@ export class Example extends Phaser.Scene
         const map = this.make.tilemap({ key: 'map' });
         const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         this.mapLayer =  map.createLayer(0, tiles, 0, 0);
-        map.setCollision([ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ]);
         this.dynamicLayer = this.add.layer().setDepth(1);
         this.staticLayer = this.add.layer();
         this.staticLayerWalls = this.add.layer().setDepth(2);
-        this.dynamicLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
+        // this.dynamicLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
         this.staticLayer.add(this.mapLayer);
-        this.staticLayerWalls.add(map.createLayer(2, tiles, 0, 0).setAlpha(0.4))
+        // this.staticLayerWalls.add(map.createLayer(2, tiles, 0, 0).setAlpha(0.4))
         this.staticLayer.setAlpha(0.25);
         console.log(this.staticLayer);
         this.dynamicLayer.setAlpha(1);
         console.log(this.dynamicLayer);
+        const colisionList = [ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ];
+        map.setCollision(colisionList);
+
+        /*
+        setTimeout(() => {
+            const bodies = this.physics.world.bodies.getArray().filter((body) => body.gameObject.type == 'Rectangle');
+            console.log(bodies);
+            this.mapLayer.layer.data.flat().reduce((last,current) => {
+                if ([2, 18, 29].includes(current.index)) {
+                    console.log("RESIZE");
+                    bodies[last].gameObject.setSize(20, 20);
+                    // bodies[last].setSize(20, 20, true);
+                    bodies[last].update();
+                    return last + 1;
+                }
+                return last;
+            }, 0);
+            console.log("BODIES", this.physics.world.bodies);
+            // this.physics.add.collider(this.character, this.mapLayer);
+        }, 5000)
+        console.log(this.mapLayer.layer.data);
+        console.log("BODIES", this.physics.world.bodies);
+        console.log(this.physics);
+        // this.character.body.updateFromGameObject();
+
+        */
 
 
         /*
+        border layer
         const border = this.make.graphics();
         border.beginPath();
         border.fillRect(0, 0, 800, 50);
@@ -103,10 +129,14 @@ export class Example extends Phaser.Scene
         //
 
         //game shit
-        this.character = this.physics.add.sprite(96, 96, 'mainCharacters2x').setScale(.8).setDepth(3);
-        console.log(this.character)
-        this.entitiesGroup.add(this.character);
+        this.character = this.physics.add.sprite(72, 72, 'mainCharacters2x').setScale(.8).setDepth(3);
+        this.character.body.setSize(36, 40, true);
+        this.character.body.setOffset(6, 24);
         this.physics.add.collider(this.character, this.mapLayer);
+        console.log(this.character);
+
+        this.entitiesGroup.add(this.character);
+        // this.physics.add.collider(this.character, this.mapLayer);
 
 
         this.player = new Player('hatman', this.character, this.input);

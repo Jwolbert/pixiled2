@@ -1,7 +1,8 @@
 const fs = require('fs'), http = require('http');
 
-const hostname = '127.0.0.1';
-const port = 3333;
+const port = 2222;
+
+console.log("Webserver listening on port: " + port)
 
 http.createServer(function (req, res) {
     fs.readFile(__dirname + req.url, function (err,data) {
@@ -13,4 +14,4 @@ http.createServer(function (req, res) {
       res.writeHead(200);
       res.end(data);
     });
-  }).listen(3333);
+  }).listen(port);

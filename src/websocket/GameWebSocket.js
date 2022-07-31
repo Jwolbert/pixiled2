@@ -63,6 +63,7 @@ export default class GameWebSocket {
             Object.values(message.entities).forEach((updateEntity) => {
                 if (!this.entities[updateEntity.id] && !updateEntity.dead) {
                     // new entity
+                    // one sprite cant be in the two layers  :<<<<((((
                     const newEntitySprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.8).setDepth(3);
                     const newSceneSprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.8).setDepth(3);
                     this.physics.add.collider(newEntitySprite, layer);

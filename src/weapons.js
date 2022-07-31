@@ -24,7 +24,7 @@ export default {
         name: "fireballScroll",
         attackCooldown: 0,
         action: {
-            radius: 16,
+            radius: 12,
             dimX: 64,
             dimY: 32,
             speed: 200,

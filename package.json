@@ -10,6 +10,7 @@
     "prod": "webpack --mode=production"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "4.18.1",
     "phaser": "3.55.2",
     "phaser-raycaster": "^0.10.4",
