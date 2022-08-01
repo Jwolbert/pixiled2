@@ -1,5 +1,7 @@
 {
     "hatman": "mainCharacters2x",
     "slash": "bloodT",
-    "fireball": "fireballSprite"
+    "fireball": "fireballSprite",
+    "bloodOrb": "bloodOrb",
+    "bloodOrbParticles": "bloodOrbParticles"
 }

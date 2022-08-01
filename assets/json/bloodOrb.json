@@ -1,0 +1,12 @@
+{
+    "bloodOrb": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+            "bloodOrb": {
+                "start": 0,
+                "end": 5
+            }
+        }
+    }
+}

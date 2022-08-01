@@ -26,7 +26,7 @@ export default class GameWebSocket {
         this.layer = layer;
         this.dynamicLayer = dynamicLayer;
         this.interactions = interactions;
-        this.socket = new WebSocket("ws://" + window.location.hostname + ':3334');
+        this.socket = new WebSocket("ws://" + window.location.hostname + ':' + window.webSocketPort);
         this.debugData = debugData;
         this.scene = scene;
         if (this.debugData) {

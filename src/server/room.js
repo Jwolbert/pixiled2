@@ -1,5 +1,5 @@
-const port = 3334;
-const debug = true; // DEBUGGGGGGG
+const port = process.env.port;
+const debug = false; // DEBUGGGGGGG
 const debugInterval = 1000;
 const serverTickInterval = 17;
 
@@ -12,6 +12,9 @@ const wss = new WebSocket.Server({server: server});
 let numberOfClients = 0;
 
 wss.on('connection', (ws) => {
+    ws.once('disconnect', function () {
+        process.send(JSON.stringify({disconnected: ws.owner}));
+    });
     if(numberOfClients++ === 0) {
         console.log("First gamer connected!");
         wss.state = {};
@@ -115,9 +118,7 @@ const handleMessage = (message) => {
     wss.requestsHandled++;
 };
 
-app.get('/', (req, res) => res.send('Hello world!'));
-
-server.listen(port, () => console.log('Listening on port 3334'));
+server.listen(port, () => console.log('Listening on port ' + process.env.port));
 
 /*
         message = JSON.parse(message);

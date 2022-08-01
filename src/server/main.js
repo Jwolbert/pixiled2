@@ -19,12 +19,14 @@ app.post('/joinGame', (req, res) => {
     if (clientId) {
         clients.push(clientId);
     }
-    const child = fork('room.js', { env: { port: currentWebsocketPort } });
-    child.on('message', (msg) => {
-
-    });
+    if (currentWebsocketPort === 3333){
+        const child = fork('room.js', { env: { port: currentWebsocketPort++ } });
+        child.on('message', (message) => {
+            console.log(message);
+        });
+    }
     const message = {};
-    message.webServerPort = currentWebsocketPort++;
+    message.webSocketPort = 3333;
     message.numClients = clients.length;
     res.send(JSON.stringify(message));
 });

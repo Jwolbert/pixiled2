@@ -19,7 +19,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = false; // DEBUGGGGGGG
+    debug = true; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -28,6 +28,7 @@ export class Example extends Phaser.Scene
     staticLayer;
     staticLayerWalls;
     borderLayer;
+    particles;
 
     constructor (websocket)
     {
@@ -46,6 +47,8 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('mainCharacters2x', 'assets/sheets/mainCharacters2x.png', { frameWidth: 48, frameHeight: 64 });
         this.load.spritesheet('bloodT', 'assets/sheets/bloodT.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('fireballSprite', 'assets/sheets/fireballSprite.png', { frameWidth: 64, frameHeight: 32 });
+        this.load.spritesheet('bloodOrb', 'assets/sheets/bloodOrb.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('bloodOrbParticles', 'assets/sheets/bloodOrbParticles.png', { frameWidth: 32, frameHeight: 32 });
         this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
     }
 
@@ -55,27 +58,29 @@ export class Example extends Phaser.Scene
             console.log("STARTING_SCENE");
         }
 
-
         //anims
-        AnimationUtility.call(this, ['hatman', 'slash', 'fireball']);
+        AnimationUtility.call(this, ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles']);
+        console.log("anims", this.anims.anims);
 
+        //particles
+        this.particles = this.add.particles('bloodOrbParticles');
 
         //layers
         const map = this.make.tilemap({ key: 'map' });
         const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
+        const colisionList = [ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ];
+        map.setCollision(colisionList);
         this.mapLayer =  map.createLayer(0, tiles, 0, 0);
         this.dynamicLayer = this.add.layer().setDepth(1);
         this.staticLayer = this.add.layer();
         this.staticLayerWalls = this.add.layer().setDepth(2);
-        // this.dynamicLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
+        this.dynamicLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
         this.staticLayer.add(this.mapLayer);
-        // this.staticLayerWalls.add(map.createLayer(2, tiles, 0, 0).setAlpha(0.4))
+        this.staticLayerWalls.add(map.createLayer(2, tiles, 0, 0).setAlpha(0.4))
         this.staticLayer.setAlpha(0.25);
         console.log(this.staticLayer);
         this.dynamicLayer.setAlpha(1);
         console.log(this.dynamicLayer);
-        const colisionList = [ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ];
-        map.setCollision(colisionList);
 
         /*
         setTimeout(() => {
@@ -129,14 +134,14 @@ export class Example extends Phaser.Scene
         //
 
         //game shit
-        this.character = this.physics.add.sprite(72, 72, 'mainCharacters2x').setScale(.8).setDepth(3);
+        this.character = this.physics.add.sprite(72, 72, 'mainCharacters2x').setScale(.6).setDepth(3);
         this.character.body.setSize(36, 40, true);
         this.character.body.setOffset(6, 24);
-        this.physics.add.collider(this.character, this.mapLayer);
+        // this.physics.add.collider(this.character, this.mapLayer);
         console.log(this.character);
 
         this.entitiesGroup.add(this.character);
-        // this.physics.add.collider(this.character, this.mapLayer);
+        this.physics.add.collider(this.character, this.mapLayer);
 
 
         this.player = new Player('hatman', this.character, this.input);
@@ -162,7 +167,9 @@ export class Example extends Phaser.Scene
             entity.update();
         });
         this.performActions();
-        this.websocket.update();
+        if (this.websocket) {
+            this.websocket.update();
+        }
         if (this.fogOfWar) {
             this.fogOfWar.update();
         }
@@ -184,7 +191,7 @@ export class Example extends Phaser.Scene
     }
 
     attackHandler (attack) {
-        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.mapLayer);
+        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.mapLayer, this.particles, this.anims);
         this.entities[entity.getId()] = entity;
     }
 };

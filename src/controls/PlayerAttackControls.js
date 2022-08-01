@@ -7,7 +7,7 @@ export default class PlayerAttackControls {
     screenWidth;
     screenHeight;
     location;
-    range = 30;
+    range = 10;
     constructor (input) 
     {
         this.input = input;
