@@ -16,7 +16,7 @@ export default function (listOfNames) {
                 key: name + "_" + animation,
                 frames: this.anims.generateFrameNumbers(path, data[name].animations[animation]),
                 frameRate: animationConfig.frameRate,
-                yoyo: animationConfig.yoyo,
+                yoyo: data[name].yoyo ?? animationConfig.yoyo,
                 repeat: animationConfig.repeat
             };
             this.anims.create(config);

@@ -14,8 +14,8 @@ export default class FogOfWar {
     debug;
     intersections = [];
     id;
-    screenX = 560;
-    screenY = 420;
+    screenX = 520;
+    screenY = 390;
     collisionSet;
     currentlyMapped = [];
     dynamicLayer;

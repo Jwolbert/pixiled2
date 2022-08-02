@@ -35,7 +35,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
             this.attack.landed = false;
             console.log(this.gameObject);
             this.gameObject.play(`${attack.name}_${attack.animation}`);
-            // this.gameObject.alpha = 0.7;
+            this.gameObject.alpha = 0.7;
             this.name = attack.name;
             this.currentAnimation = attack.animation;
             this.direction = attack.direction;
