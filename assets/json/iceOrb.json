@@ -1,0 +1,12 @@
+{
+    "iceOrb": {
+        "frameWidth": 123,
+        "frameHeight": 123,
+        "animations": {
+            "iceOrb": {
+                "start": 0,
+                "end": 0
+            }
+        }
+    }
+}

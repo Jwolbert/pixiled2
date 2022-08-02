@@ -1,7 +1,10 @@
 import Entity from "../../Entity";
 import Phaser from "phaser";
 
-export default function (name, entities, physics, attack, interactions, layer, particles, anims) {
+export default function (name, entities, physics, attack, interactions, layer, add, anims) {
+
+    const particles = add.particles(attack.particleSheet);
+    particles.setDepth(3);
 
     class Attack extends Entity {
         physics;
@@ -11,17 +14,18 @@ export default function (name, entities, physics, attack, interactions, layer, p
         type = "attack";
         attackArea = 20;
         collideHealth = 1;
-        particles;
+        flightEmitter;
+        explodeEmitter;
     
-        constructor (name, entities, physics, attack, interactions, layer, particles, anims) {
+        constructor (name, entities, physics, attack, interactions, layer, anims) {
             super(
                 name,
                 physics.add.sprite(attack.location.x, attack.location.y, "bloodT")
                     .setDepth(3)
                     // .setRotation(attack.direction * -1) 
                     .setBodySize(attack.radius, attack.radius, true)
+                    .setScale(1/3)
             );
-            this.particles = particles;
             this.anims = anims;
             this.layer = layer;
             this.entities = entities;
@@ -31,7 +35,7 @@ export default function (name, entities, physics, attack, interactions, layer, p
             this.attack.landed = false;
             console.log(this.gameObject);
             this.gameObject.play(`${attack.name}_${attack.animation}`);
-            this.gameObject.alpha = 0.7;
+            // this.gameObject.alpha = 0.7;
             this.name = attack.name;
             this.currentAnimation = attack.animation;
             this.direction = attack.direction;
@@ -42,18 +46,21 @@ export default function (name, entities, physics, attack, interactions, layer, p
             this.speed = this.attack.speed;
             this.collideHealth = attack.collideHealth;
             if (this.attack.speed) {
-                this.gameObject.setCircle(attack.radius, 8, 8);
-                let emitter = this.particles.createEmitter({
-                    alpha: { start: 1, end: 0.0, ease: 'Expo.easeOut' },
+                this.gameObject.setCircle(attack.radius, 16, 16);
+                this.flightEmitter = particles.createEmitter({
+                    alpha: { start: 1, end: 0.5, ease: 'Expo.easeOut' },
                     quantity: 1,
                     frequency: 200,
-                    // angle: { min: 0, max: 30 },
+                    angle: { min: 0, max: 360 },
                     // alpha: { min: 0, max: 1 },
-                    // speed: 200,
+                    speed: 20,
                     // gravityY: 100,
-                    lifespan: { min: 3500, max: 3500 },
+                    lifespan: { min: 1000, max: 1000 },
                     follow: this.gameObject,
                     particleClass: AnimatedParticle,
+                    scale: { start: 1/3, end: 0.1},
+                    // blendMode: 'SCREEN',
+                    // scale: 0.25,
                 });
                 this.gameObject.setVelocityX(this.velocityX * attack.speed);
                 this.gameObject.setVelocityY(this.velocityY * attack.speed);
@@ -63,9 +70,40 @@ export default function (name, entities, physics, attack, interactions, layer, p
                     if (this.entities[attack.id].collideHealth-- <= 0) {
                         console.log(this.entities[attack.id].gameObject);
                         this.entities[attack.id].dead = true;
+                        this.flightEmitter.stop();
                     }
                 });
             }
+        }
+
+        destroy () {
+            if (attack.explodes) {
+                this.explode();
+            }
+            super.destroy();
+        }
+
+        explode () {
+            this.explodeEmitter = particles.createEmitter({
+                alpha: { start: 1, end: 0.2, ease: 'Expo.easeOut' },
+                quantity: 20,
+                frequency: 10,
+                angle: { min: 0, max: 360 },
+                // alpha: { min: 0, max: 1 },
+                speed: { start: 100, end: 0},
+                gravityY: 50,
+                lifespan: { min: 800, max: 1000 },
+                follow: this.gameObject,
+                particleClass: AnimatedParticle,
+                // blendMode: 'ADD',
+                scale: { start: 1/3, end: 0.1},
+                maxParticles: 40,
+            });
+            attack.radius = attack.explodeRadius;
+            setTimeout(() => {
+                this.flightEmitter.remove();
+                this.explodeEmitter.remove();
+            }, 10000);
         }
     
         update () {
@@ -83,6 +121,7 @@ export default function (name, entities, physics, attack, interactions, layer, p
                                     target: body.gameObject.id,
                                     effect: this.attack.effect.id,
                                 });
+                                console.log("EFFECT", body.gameObject);
                                 this.attack.landed = true;
                             }
                         }
@@ -91,11 +130,12 @@ export default function (name, entities, physics, attack, interactions, layer, p
             } else {
                 this.dead = true;
             }
+
         }
 
     }
 
-    const animationName = attack.particles;
+    const particleName = attack.particles;
 
     class AnimatedParticle extends Phaser.GameObjects.Particles.Particle
     {
@@ -110,10 +150,11 @@ export default function (name, entities, physics, attack, interactions, layer, p
 
         update (delta, step, processors)
         {
+
             if (!this.anim) {
-                this.anim = this.frame.texture.manager.game.anims.anims.entries[animationName];
+                this.anim = this.frame.texture.manager.game.anims.anims.entries[particleName];
                 // this.frame = this.anim.frames[0].frame;
-                console.log(this);
+                // console.log("FIRST_PARTICLE",this);
             }
             var result = super.update(delta, step, processors);
 

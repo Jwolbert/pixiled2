@@ -3,5 +3,9 @@
     "slash": "bloodT",
     "fireball": "fireballSprite",
     "bloodOrb": "bloodOrb",
-    "bloodOrbParticles": "bloodOrbParticles"
+    "bloodOrbParticles": "bloodOrbParticles",
+    "poisonOrb": "poisonOrb",
+    "poisonOrbParticles": "poisonOrbParticles",
+    "iceOrb": "iceOrb",
+    "iceOrbParticles": "iceOrbParticles"
 }

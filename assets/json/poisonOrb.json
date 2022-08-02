@@ -1,0 +1,12 @@
+{
+    "poisonOrb": {
+        "frameWidth": 32,
+        "frameHeight": 32,
+        "animations": {
+            "poisonOrb": {
+                "start": 0,
+                "end": 5
+            }
+        }
+    }
+}

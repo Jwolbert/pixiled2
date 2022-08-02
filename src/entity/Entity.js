@@ -19,7 +19,7 @@ export default class Entity {
     hp = 100;
     effectTimer = 0;
     effectTimerMaximum = 100;
-    speed = 100;
+    speed = 75;
     direction;
 
     constructor (name, gameObject, id)

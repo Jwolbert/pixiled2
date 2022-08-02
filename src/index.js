@@ -63,15 +63,15 @@ function startGame () {
     background.id = "background";
     background.style.backgroundColor = "black";
     background.style.display = "flex";
-    background.style.padding = "5%";
+    // background.style.padding = "5%";
     background.style.flexDirection = "row";
     background.style.justifyContent = "center";
     const config = {
         type: Phaser.CANVAS,
         parent: 'phaser-example',
-        width: 880,
-        height: 660,
-        zoom: 1,
+        width: 800,
+        height: 600,
+        zoom: 1.25,
         scene: [ Example ],
         physics: {
             default: 'arcade',

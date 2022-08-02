@@ -1,0 +1,12 @@
+{
+    "iceOrbParticles": {
+        "frameWidth": 123,
+        "frameHeight": 123,
+        "animations": {
+            "particles": {
+                "start": 0,
+                "end": 0
+            }
+        }
+    }
+}

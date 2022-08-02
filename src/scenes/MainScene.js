@@ -49,6 +49,10 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('fireballSprite', 'assets/sheets/fireballSprite.png', { frameWidth: 64, frameHeight: 32 });
         this.load.spritesheet('bloodOrb', 'assets/sheets/bloodOrb.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('bloodOrbParticles', 'assets/sheets/bloodOrbParticles.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('poisonOrb', 'assets/sheets/poisonOrb.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('poisonOrbParticles', 'assets/sheets/poisonOrbParticles.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('iceOrb', 'assets/sheets/iceOrb.png', { frameWidth: 123, frameHeight: 123 });
+        this.load.spritesheet('iceOrbParticles', 'assets/sheets/iceOrbParticles.png', { frameWidth: 123, frameHeight: 123 });
         this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
     }
 
@@ -59,11 +63,10 @@ export class Example extends Phaser.Scene
         }
 
         //anims
-        AnimationUtility.call(this, ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles']);
+        AnimationUtility.call(this, 
+            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles']
+            );
         console.log("anims", this.anims.anims);
-
-        //particles
-        this.particles = this.add.particles('bloodOrbParticles');
 
         //layers
         const map = this.make.tilemap({ key: 'map' });
@@ -131,10 +134,9 @@ export class Example extends Phaser.Scene
 
 
         // MOVE THIS INTO Player.js
-        //
 
         //game shit
-        this.character = this.physics.add.sprite(72, 72, 'mainCharacters2x').setScale(.6).setDepth(3);
+        this.character = this.physics.add.sprite(72, 72, 'mainCharacters2x').setScale(.5).setDepth(3);
         this.character.body.setSize(36, 40, true);
         this.character.body.setOffset(6, 24);
         // this.physics.add.collider(this.character, this.mapLayer);
@@ -191,7 +193,7 @@ export class Example extends Phaser.Scene
     }
 
     attackHandler (attack) {
-        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.mapLayer, this.particles, this.anims);
+        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.mapLayer, this.add, this.anims);
         this.entities[entity.getId()] = entity;
     }
 };

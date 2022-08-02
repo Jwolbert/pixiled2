@@ -1,7 +1,7 @@
 export default function (listOfNames) {
     const animationConfig = {
         key: 'down',
-        yoyo: false,
+        yoyo: true,
         repeat: -1,
         frameRate: 6,
     }
