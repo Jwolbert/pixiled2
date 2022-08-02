@@ -24,9 +24,8 @@ wss.on('connection', (ws) => {
         wss.owners = {};
         let previousTime = new Date().getTime();
         setInterval(() => {
-            if (debug) {
-                wss.state.totalUpdates++;
-            }
+            
+            wss.state.totalUpdates++;
 
             wss.messages.forEach((message) => {
                 handleMessage(message);
@@ -59,18 +58,16 @@ wss.on('connection', (ws) => {
             }, 2000);
         }, serverTickInterval);
 
-        if (debug) {
-            console.log("debugging enabled");
+        console.log("debugging enabled");
+        wss.requestsHandled = 0;
+        wss.state.totalUpdates = 0;
+        setInterval(() => {
+            const currentTime = new Date().getTime();
+            const diffSec = (currentTime - previousTime) / 1000;
+            previousTime = currentTime;
+            wss.state.requestsHandledPerSec = wss.requestsHandled / diffSec;
             wss.requestsHandled = 0;
-            wss.state.totalUpdates = 0;
-            setInterval(() => {
-                const currentTime = new Date().getTime();
-                const diffSec = (currentTime - previousTime) / 1000;
-                previousTime = currentTime;
-                wss.state.requestsHandledPerSec = wss.requestsHandled / diffSec;
-                wss.requestsHandled = 0;
-            }, debugInterval);
-        }
+        }, debugInterval);
     }
 
     console.log('Client connected!');
