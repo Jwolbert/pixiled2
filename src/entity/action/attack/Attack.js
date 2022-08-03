@@ -1,7 +1,7 @@
 import Entity from "../../Entity";
 import Phaser from "phaser";
 
-export default function (name, entities, physics, attack, interactions, layer, add, anims) {
+export default function (name, entities, physics, attack, interactions, layer, add, anims, dynamicLayer) {
 
     const particles = add.particles(attack.particleSheet);
     particles.setDepth(3);
@@ -65,6 +65,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 this.gameObject.setVelocityX(this.velocityX * attack.speed);
                 this.gameObject.setVelocityY(this.velocityY * attack.speed);
                 this.gameObject.setBounce(attack.bounce, attack.bounce);
+                dynamicLayer.add(this.gameObject);
                 this.physics.add.collider(this.gameObject, this.layer, (attack, layer) => {
                     console.log(this.entities[attack.id].collideHealth);
                     if (this.entities[attack.id].collideHealth-- <= 0) {

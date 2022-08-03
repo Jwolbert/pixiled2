@@ -68,22 +68,16 @@ export class Example extends Phaser.Scene
             );
         console.log("anims", this.anims.anims);
 
-        //layers
+        // map
         const map = this.make.tilemap({ key: 'map' });
-        const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         const colisionList = [ 2, 18, 26, 34, 35, 41, 42, 36, 37, 28, 20, 21, 22, 30, 29, 46 ];
+        const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         map.setCollision(colisionList);
-        this.mapLayer =  map.createLayer(0, tiles, 0, 0);
-        this.dynamicLayer = this.add.layer().setDepth(1);
-        this.staticLayer = this.add.layer();
-        this.staticLayerWalls = this.add.layer().setDepth(2);
-        this.dynamicLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
-        this.staticLayer.add(this.mapLayer);
-        this.staticLayerWalls.add(map.createLayer(2, tiles, 0, 0).setAlpha(0.4))
-        this.staticLayer.setAlpha(0.25);
-        console.log(this.staticLayer);
-        this.dynamicLayer.setAlpha(1);
-        console.log(this.dynamicLayer);
+
+        // layers
+        this.createPhysicsLayer(map, tiles);
+        this.createDisplayLayers(map, tiles);
+
 
         /*
         setTimeout(() => {
@@ -193,7 +187,21 @@ export class Example extends Phaser.Scene
     }
 
     attackHandler (attack) {
-        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.mapLayer, this.add, this.anims);
+        const entity = new Attack(attack.name, this.entities, this.physics, attack, this.interactions, this.mapLayer, this.add, this.anims, this.dynamicLayer);
         this.entities[entity.getId()] = entity;
+    }
+
+    createDisplayLayers (map, tiles) {
+        this.staticLayer = this.add.layer();
+        this.staticLayerWalls = this.add.layer().setDepth(2);
+        this.staticLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
+        this.staticLayerWalls.add(map.createLayer(2, tiles, 0, 0).setAlpha(0.4))
+        // this.staticLayer.setAlpha(0.25);
+    }
+
+    createPhysicsLayer (map, tiles) {
+        this.mapLayer =  map.createLayer(0, tiles, 0, 0);
+        this.dynamicLayer = this.add.layer().setDepth(1);
+        this.dynamicLayer.add(this.mapLayer);
     }
 };
