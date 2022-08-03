@@ -1,7 +1,7 @@
 import PlayerVelocityControls from "../../controls/PlayerVelocityControls";
 import PlayerAttackControls from "../../controls/PlayerAttackControls";
 import Entity from "../Entity";
-import weapons from "../../weapons";
+import weapons from "../../configs/weapons";
 export default class Player extends Entity {
     controls;
     weapon;

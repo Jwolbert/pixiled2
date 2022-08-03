@@ -77,6 +77,16 @@ export default function (name, entities, physics, attack, interactions, layer, a
             }
         }
 
+        getJSON () {
+            const JSON = super.getJSON();
+            JSON.attack = {
+                location: attack.location,
+                direction: attack.directions,
+                name: attack.name,
+            };
+            return JSON;
+        };
+
         destroy () {
             if (attack.explodes) {
                 this.explode();
@@ -108,6 +118,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
         }
     
         update () {
+            if (!this.attack.source) return; //remote attack wont have source
             if (this.attack.delay) {
                 this.attack.delay -= 1;
             } else if (this.attack.duration) {

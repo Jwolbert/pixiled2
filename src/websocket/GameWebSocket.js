@@ -1,5 +1,5 @@
-import RemoteEntity from "./RemoteEntity";
-import effects from "../effects";
+import effects from "../configs/effects";
+import CreateRemoteEntity from "./CreateRemoteEntity";
 
 export default class GameWebSocket {
     entities;
@@ -68,16 +68,7 @@ export default class GameWebSocket {
                     return;
                 } 
                 if (!this.entities[updateEntity.id]) {
-                    // new entity
-                    // one sprite cant be in the two layers  :<<<<((((
-                    const newEntitySprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.5).setDepth(3);
-                    // const newSceneSprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.5).setDepth(3);
-                    this.physics.add.collider(newEntitySprite, layer);
-                    // this.dynamicLayer.add(newSceneSprite);
-                    const newEntity = new RemoteEntity(updateEntity, newEntitySprite, newSceneSprite);
-                    newEntitySprite.id = updateEntity.id;
-                    this.entitiesGroup.add(newEntitySprite, true);
-                    this.entities[updateEntity.id] = newEntity;
+                    CreateRemoteEntity(scene, updateEntity);
                 }
                 // existing entity
                 this.entities[updateEntity.id].updateWithJSON(updateEntity);
