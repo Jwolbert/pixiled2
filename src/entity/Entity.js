@@ -50,7 +50,7 @@ export default class Entity {
             owner: this.owner,
             currentAnimation: this.currentAnimation,
             type: this.type,
-            direction: this.direction,
+            // direction: this.direction,
             speed: this.speed,
         };
     }
@@ -63,7 +63,7 @@ export default class Entity {
         // this.dead = JSON.dead; entiities die in websocket
         this.owner = JSON.owner;
         this.currentAnimation = JSON.currentAnimation;
-        this.direction = JSON.direction;
+        // this.direction = JSON.direction;
     }
 
     update ()

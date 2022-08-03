@@ -6,6 +6,8 @@ export default function (name, entities, physics, attack, interactions, layer, a
     const particles = add.particles(attack.particleSheet);
     particles.setDepth(3);
 
+    console.log(name, entities, physics, attack, interactions, layer, add, anims, dynamicLayer);
+
     class Attack extends Entity {
         physics;
         entities;
@@ -38,10 +40,9 @@ export default function (name, entities, physics, attack, interactions, layer, a
             // this.gameObject.alpha = 0.7;
             this.name = attack.name;
             this.currentAnimation = attack.animation;
-            this.direction = attack.direction;
-            attack.direction *= -1;
-            this.velocityX = Math.cos(attack.direction);
-            this.velocityY = Math.sin(attack.direction);
+            this.direction = attack.direction * -1;
+            this.velocityX = Math.cos(this.direction);
+            this.velocityY = Math.sin(this.direction);
             //this.gameObject.setCircle(attack.radius);
             this.speed = this.attack.speed;
             this.collideHealth = attack.collideHealth;
@@ -66,6 +67,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 this.gameObject.setVelocityY(this.velocityY * attack.speed);
                 this.gameObject.setBounce(attack.bounce, attack.bounce);
                 dynamicLayer.add(this.gameObject);
+                if (!this.attack.source) return;
                 this.physics.add.collider(this.gameObject, this.layer, (attack, layer) => {
                     console.log(this.entities[attack.id].collideHealth);
                     if (this.entities[attack.id].collideHealth-- <= 0) {
@@ -81,7 +83,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
             const JSON = super.getJSON();
             JSON.attack = {
                 location: attack.location,
-                direction: attack.directions,
+                direction: attack.direction,
                 name: attack.name,
             };
             return JSON;
@@ -111,6 +113,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 maxParticles: 40,
             });
             attack.radius = attack.explodeRadius;
+            this.flightEmitter.stop();
             setTimeout(() => {
                 this.flightEmitter.remove();
                 this.explodeEmitter.remove();

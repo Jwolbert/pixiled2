@@ -67,7 +67,7 @@ export default {
         effect: effects["4c8c6620-0707-11ed-b939-0242ac120002"],
         selfTarget: false,
         explodes: true,
-        explodeRadiue: 32,
+        explodeRadius: 32,
     },
     iceOrb: {
         radius: 45,
@@ -87,6 +87,6 @@ export default {
         effect: effects["4c8c6620-0707-11ed-b939-0242ac120002"],
         selfTarget: false,
         explodes: true,
-        explodeRadiue: 32,
+        explodeRadius: 32,
     },
 };

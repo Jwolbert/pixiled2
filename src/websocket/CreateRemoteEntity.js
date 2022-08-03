@@ -57,6 +57,6 @@ export default function(scene, newRemoteEntityJson) {
         
         newEntity = new Attack(newRemoteEntityJson.name, scene.entities, scene.physics, attack, scene.interactions, scene.mapLayer, scene.add, scene.anims, scene.dynamicLayer);
     }
-
+    console.log("JSON", newRemoteEntityJson);
     scene.entities[newRemoteEntityJson.id] = newEntity;
 }
