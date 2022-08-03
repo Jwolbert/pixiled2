@@ -64,8 +64,8 @@ export default class GameWebSocket {
                 if (!this.entities[updateEntity.id] && !updateEntity.dead) {
                     // new entity
                     // one sprite cant be in the two layers  :<<<<((((
-                    const newEntitySprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.6).setDepth(3);
-                    const newSceneSprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.6).setDepth(3);
+                    const newEntitySprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.5).setDepth(3);
+                    const newSceneSprite = this.physics.add.sprite(48, 48, 'mainCharacters').setScale(.5).setDepth(3);
                     this.physics.add.collider(newEntitySprite, layer);
                     this.dynamicLayer.add(newSceneSprite);
                     const newEntity = new RemoteEntity(updateEntity, newEntitySprite, newSceneSprite);
@@ -78,22 +78,22 @@ export default class GameWebSocket {
                     // existing entity that is dead
                     this.entities[updateEntity.id].destroy();
                     delete this.entities[updateEntity.id];
-                } else if (this.entities[updateEntity.id]) {
-                    // existing entity
-                    this.entities[updateEntity.id].updateWithJSON(updateEntity);
-                    if (updateEntity.receivedInteractions) {
-                        if (updateEntity.receivedInteractions.length > 0) {
-                            console.log(updateEntity.receivedInteractions);
-                        }
-                        updateEntity.receivedInteractions.forEach((i) => {
-                            const newEffect = {
-                                ...effects[i.effect],
-                                source: i.source,
-                                target: i.target,
-                            };
-                            this.entities[updateEntity.id].addEffect(newEffect);
-                        });
+                    return;
+                } 
+                // existing entity
+                this.entities[updateEntity.id].updateWithJSON(updateEntity);
+                if (updateEntity.receivedInteractions) {
+                    if (updateEntity.receivedInteractions.length > 0) {
+                        console.log(updateEntity.receivedInteractions);
                     }
+                    updateEntity.receivedInteractions.forEach((i) => {
+                        const newEffect = {
+                            ...effects[i.effect],
+                            source: i.source,
+                            target: i.target,
+                        };
+                        this.entities[updateEntity.id].addEffect(newEffect);
+                    });
                 }
             });
         });
