@@ -73,6 +73,7 @@ function startGame () {
         height: 600,
         zoom: 1.25,
         scene: [ Example ],
+        roundPixels: true,
         physics: {
             default: 'arcade',
             arcade: {

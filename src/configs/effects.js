@@ -1,6 +1,6 @@
 export default {
-    "5be01cde-0016-11ed-b939-0242ac120002": {
-        id: "5be01cde-0016-11ed-b939-0242ac120002",
+    bleed: {
+        id: "bleed",
         name: "bleed",
         selfTarget: false,
         apply() {
@@ -16,8 +16,8 @@ export default {
         },
         duration: 5,
     },
-    "2c8c6620-0707-11ed-b939-0242ac120002": {
-        id: "2c8c6620-0707-11ed-b939-0242ac120002",
+    ignited: {
+        id: "ignited",
         name: "ignited",
         selfTarget: false,
         apply() {
@@ -33,8 +33,8 @@ export default {
         },
         duration: 5,
     },
-    "3c8c6620-0707-11ed-b939-0242ac120002": {
-        id: "3c8c6620-0707-11ed-b939-0242ac120002",
+    drained: {
+        id: "drained",
         name: "drained",
         selfTarget: false,
         apply() {
@@ -50,8 +50,25 @@ export default {
         },
         duration: 5,
     },
-    "4c8c6620-0707-11ed-b939-0242ac120002": {
-        id: "4c8c6620-0707-11ed-b939-0242ac120002",
+    poisoned: {
+        id: "poisoned",
+        name: "poisoned",
+        selfTarget: false,
+        apply() {
+            this.gameObject.setTint(0xff0000);
+            this.speed += 20;
+            this.hp -= 1;
+        },
+        tick() {
+            this.hp -= 1;
+        },
+        expire() {
+            this.speed -= 20;
+        },
+        duration: 5,
+    },
+    chilled: {
+        id: "poisoned",
         name: "poisoned",
         selfTarget: false,
         apply() {
