@@ -14,7 +14,7 @@ export default class Player extends Entity {
         this.controls.velocity = new PlayerVelocityControls(input);
         this.controls.attack = new PlayerAttackControls(input);
         this.type = "player";
-        this.weapon = weapons["iceOrbScroll"];
+        this.weapon = weapons["poisonOrbScroll"];
         this.attackCooldown = this.weapon.cooldown;
     }
 

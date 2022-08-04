@@ -5,6 +5,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
 
     const particles = add.particles(attack.particleSheet);
     particles.setDepth(3);
+    let explodedD = false;
 
     console.log(name, entities, physics, attack, interactions, layer, add, anims, dynamicLayer);
 
@@ -18,6 +19,8 @@ export default function (name, entities, physics, attack, interactions, layer, a
         collideHealth = 1;
         flightEmitter;
         explodeEmitter;
+        afterEmitter;
+        exploded = false;
     
         constructor (name, entities, physics, attack, interactions, layer, anims) {
             super(
@@ -26,7 +29,6 @@ export default function (name, entities, physics, attack, interactions, layer, a
                     .setDepth(3)
                     // .setRotation(attack.direction * -1) 
                     .setBodySize(attack.radius, attack.radius, true)
-                    .setScale(1/3)
             );
             this.anims = anims;
             this.layer = layer;
@@ -37,7 +39,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
             this.attack.landed = false;
             console.log(this.gameObject);
             this.gameObject.play(`${attack.name}_${attack.animation}`);
-            // this.gameObject.alpha = 0.7;
+            // this.gameObject.alpha = 0.8;
             this.name = attack.name;
             this.currentAnimation = attack.animation;
             this.direction = attack.direction * -1;
@@ -47,19 +49,18 @@ export default function (name, entities, physics, attack, interactions, layer, a
             this.speed = this.attack.speed;
             this.collideHealth = attack.collideHealth;
             if (this.attack.speed) {
-                this.gameObject.setCircle(attack.radius, 16, 16);
+                this.gameObject.setCircle(attack.radius, 8, 8);
                 this.flightEmitter = particles.createEmitter({
-                    alpha: { start: 1, end: 0.5, ease: 'Expo.easeOut' },
+                    // alpha: { start: 1, end: 0.5, ease: 'Expo.easeOut' },
                     quantity: 1,
                     frequency: 200,
                     angle: { min: 0, max: 360 },
                     // alpha: { min: 0, max: 1 },
                     speed: 20,
                     // gravityY: 100,
-                    lifespan: { min: 1000, max: 1000 },
+                    lifespan: { min: 1500, max: 2000 },
                     follow: this.gameObject,
                     particleClass: AnimatedParticle,
-                    scale: { start: 1/3, end: 0.1},
                     // blendMode: 'SCREEN',
                     // scale: 0.25,
                 });
@@ -67,13 +68,10 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 this.gameObject.setVelocityY(this.velocityY * attack.speed);
                 this.gameObject.setBounce(attack.bounce, attack.bounce);
                 dynamicLayer.add(this.gameObject);
-                if (!this.attack.source) return;
-                this.physics.add.collider(this.gameObject, this.layer, (attack, layer) => {
-                    console.log(this.entities[attack.id].collideHealth);
-                    if (this.entities[attack.id].collideHealth-- <= 0) {
-                        console.log(this.entities[attack.id].gameObject);
-                        this.entities[attack.id].dead = true;
-                        this.flightEmitter.stop();
+                // if (!this.attack.source) return;
+                this.physics.add.collider(this.gameObject, this.layer, () => {
+                    if (this.collideHealth-- <= 0) {
+                        this.explode();
                     }
                 });
             }
@@ -89,61 +87,76 @@ export default function (name, entities, physics, attack, interactions, layer, a
             return JSON;
         };
 
-        destroy () {
-            if (attack.explodes) {
-                this.explode();
-            }
-            super.destroy();
-        }
-
         explode () {
+            if (this.exploded) {
+                this.flightEmitter.remove();
+                this.explodeEmitter.remove();
+                this.afterEmitter.remove();
+                this.dead = true;
+                return;
+            }
+            this.exploded = true;
+            explodedD = true;
+            this.attack.radius = attack.explodeRadius;
+            this.attack.duration = attack.explodeDuration;
+            this.attack.selfTarget = attack.explodeSelfTarget;
             this.explodeEmitter = particles.createEmitter({
-                alpha: { start: 1, end: 0.2, ease: 'Expo.easeOut' },
-                quantity: 20,
-                frequency: 10,
+                // alpha: { start: 1, end: 0.1, ease: 'Expo.easeOut' },
+                quantity: 15,
+                frequency: 1,
                 angle: { min: 0, max: 360 },
-                // alpha: { min: 0, max: 1 },
-                speed: { start: 100, end: 0},
-                gravityY: 50,
-                lifespan: { min: 800, max: 1000 },
+                speed: { start: 200, end: 0},
+                lifespan: { min: 1600, max: 2000 },
+                gravityY: 0,
                 follow: this.gameObject,
                 particleClass: AnimatedParticle,
                 // blendMode: 'ADD',
-                scale: { start: 1/3, end: 0.1},
-                maxParticles: 40,
+                emitZone: { type: 'random', source: new Phaser.Geom.Circle(0, 0, 16) },
+                deathZone: { type: 'onLeave', source: new Phaser.Geom.Circle(this.gameObject.x, this.gameObject.y, 48) },
+                maxParticles: 15,
             });
-            attack.radius = attack.explodeRadius;
+            this.afterEmitter = particles.createEmitter({
+                // alpha: { start: 1, end: 0.4, ease: 'Expo.easeOut' },
+                quantity: 25,
+                frequency: 0,
+                angle: { min: 0, max: 360 },
+                speed: { start: 30, end: 0},
+                lifespan: { min: 2400, max: 3000 },
+                follow: this.gameObject,
+                particleClass: AnimatedParticle,
+                // blendMode: 'ADD',
+                emitZone: { type: 'random', source: new Phaser.Geom.Circle(0, 0, 32) },
+                deathZone: { type: 'onLeave', source: new Phaser.Geom.Circle(this.gameObject.x, this.gameObject.y, 48) },
+                maxParticles: 25,
+            });
+            this.gameObject.body.stop();
             this.flightEmitter.stop();
-            setTimeout(() => {
-                this.flightEmitter.remove();
-                this.explodeEmitter.remove();
-            }, 10000);
         }
     
         update () {
-            if (!this.attack.source) return; //remote attack wont have source
+            // attack params are updated after exploding
+            if (this.exploded) {
+                this.gameObject.alpha -= 0.1;
+            }
             if (this.attack.delay) {
                 this.attack.delay -= 1;
             } else if (this.attack.duration) {
                 this.attack.duration -=1;
-                if (!this.attack.landed) {
-                    const within = this.physics.overlapCirc(this.gameObject.getCenter().x, this.gameObject.getCenter().y, this.attack.radius);
-                    within.forEach((body) => {
-                        if (body.gameObject.id) {
-                            if (this.entities[body.gameObject.id]?.type !== "attack" && (body.gameObject.id !== this.attack.source) || this.attack.selfTarget) {
-                                this.interactions.push({
-                                    source: this.attack.source,
-                                    target: body.gameObject.id,
-                                    effect: this.attack.effect.id,
-                                });
-                                console.log("EFFECT", body.gameObject);
-                                this.attack.landed = true;
-                            }
+                if (!this.attack.source) return; //remote attack wont have source
+                const within = this.physics.overlapCirc(this.gameObject.getCenter().x, this.gameObject.getCenter().y, this.attack.radius);
+                within.forEach((body) => {
+                    if (body.gameObject?.id) {
+                        if (this.entities[body.gameObject.id]?.type !== "attack" && ((body.gameObject.id !== this.attack.source) || this.attack.selfTarget)) {
+                            this.interactions.push({
+                                source: this.attack.source,
+                                target: body.gameObject.id,
+                                effect: this.attack.effect.id,
+                            });
                         }
-                    });
-                }
+                    }
+                });
             } else {
-                this.dead = true;
+                this.explode();
             }
 
         }
@@ -151,6 +164,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
     }
 
     const particleName = attack.particles;
+    let frameCounter = 0;
 
     class AnimatedParticle extends Phaser.GameObjects.Particles.Particle
     {
@@ -168,9 +182,16 @@ export default function (name, entities, physics, attack, interactions, layer, a
 
             if (!this.anim) {
                 this.anim = this.frame.texture.manager.game.anims.anims.entries[particleName];
-                // this.frame = this.anim.frames[0].frame;
+                if (!explodedD) {
+                    this.frame = this.anim.frames[0].frame;
+                } else if (frameCounter < 15) {
+                    this.frame = this.anim.frames[(frameCounter++ + 1) % 3].frame;
+                } else {
+                    this.frame = this.anim.frames[0].frame;
+                }
                 // console.log("FIRST_PARTICLE",this);
             }
+
             var result = super.update(delta, step, processors);
 
             this.t += delta;
@@ -186,7 +207,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                     this.i = 0;
                 }
 
-                this.frame = this.anim.frames[this.i].frame;
+                // this.frame = this.anim.frames[this.i].frame;
 
                 this.i++;
 

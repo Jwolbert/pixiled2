@@ -15,7 +15,7 @@ export default class Entity {
     currentAction = {
         name: "idle"
     };
-    effects = [];
+    effects = {};
     hp = 100;
     effectTimer = 0;
     effectTimerMaximum = 100;
@@ -32,6 +32,7 @@ export default class Entity {
         this.name = name;
         this.gameObject = gameObject;
         this.gameObject.id = this.id;
+        console.log("GAMEOBJECT ID", this.gameObject.id);
         this.dead = false;
         this.x = gameObject.x;
         this.y = gameObject.y;
@@ -85,14 +86,14 @@ export default class Entity {
     tickEffect () {
         this.effectTimer += 1;
         if (this.effectTimer > 100) {
-            this.effects.forEach((effect, index) => {
+            Object.values(this.effects).forEach((effect, index) => {
                 if(effect.duration < 1) {
                     effect.expire.call(this);
                     if (this.effects.length <= 1) {
-                        this.effects.pop();
+                        this.effects = {};
                         this.clearEffects();
                     } else {
-                        this.effects.splice(index, 1);
+                        delete this.effects[effect.name];
                     }
                 } else {
                     effect.tick.call(this);
@@ -127,10 +128,9 @@ export default class Entity {
     }
 
     addEffect (effect) {
-        if (!effect.selfTarget && effect.source === this.id) {
-            return;
+        if (!this.effects[effect.name]) {
+            effect.apply.call(this);
         }
-        effect.apply.call(this);
-        this.effects.push(effect);
+        this.effects[effect.name] = effect;
     }
 }

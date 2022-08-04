@@ -51,8 +51,8 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('bloodOrbParticles', 'assets/sheets/bloodOrbParticles.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('poisonOrb', 'assets/sheets/poisonOrb.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('poisonOrbParticles', 'assets/sheets/poisonOrbParticles.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('iceOrb', 'assets/sheets/iceOrb.png', { frameWidth: 123, frameHeight: 123 });
-        this.load.spritesheet('iceOrbParticles', 'assets/sheets/iceOrbParticles.png', { frameWidth: 123, frameHeight: 123 });
+        this.load.spritesheet('iceOrb', 'assets/sheets/iceOrb.png', { frameWidth: 52, frameHeight: 52 });
+        this.load.spritesheet('iceOrbParticles', 'assets/sheets/iceOrbParticles.png', { frameWidth: 16, frameHeight: 16 });
         this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
     }
 
@@ -136,7 +136,7 @@ export class Example extends Phaser.Scene
         // this.physics.add.collider(this.character, this.mapLayer);
         console.log(this.character);
 
-        this.entitiesGroup.add(this.character);
+        // this.entitiesGroup.add(this.character);
         this.physics.add.collider(this.character, this.mapLayer);
 
 
@@ -194,13 +194,13 @@ export class Example extends Phaser.Scene
     createDisplayLayers (map, tiles) {
         this.staticLayer = this.add.layer();
         this.staticLayerWalls = this.add.layer().setDepth(2);
-        this.staticLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.4));
+        this.staticLayer.add(map.createLayer(1, tiles, 0, 0).setAlpha(0.2));
         this.staticLayerWalls.add(map.createLayer(2, tiles, 0, 0).setAlpha(0.4))
         // this.staticLayer.setAlpha(0.25);
     }
 
     createPhysicsLayer (map, tiles) {
-        this.mapLayer =  map.createLayer(0, tiles, 0, 0);
+        this.mapLayer =  map.createLayer(0, tiles, 0, 0).setAlpha(0.4);
         this.dynamicLayer = this.add.layer().setDepth(1);
         this.dynamicLayer.add(this.mapLayer);
     }

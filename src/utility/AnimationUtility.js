@@ -15,7 +15,7 @@ export default function (listOfNames) {
             const config = {
                 key: name + "_" + animation,
                 frames: this.anims.generateFrameNumbers(path, data[name].animations[animation]),
-                frameRate: animationConfig.frameRate,
+                frameRate: data[name].frameRate ?? animationConfig.frameRate,
                 yoyo: data[name].yoyo ?? animationConfig.yoyo,
                 repeat: animationConfig.repeat
             };

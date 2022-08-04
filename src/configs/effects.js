@@ -53,7 +53,7 @@ export default {
     poisoned: {
         id: "poisoned",
         name: "poisoned",
-        selfTarget: false,
+        selfTarget: true,
         apply() {
             this.gameObject.setTint(0xff0000);
             this.speed += 20;
@@ -68,8 +68,8 @@ export default {
         duration: 5,
     },
     chilled: {
-        id: "poisoned",
-        name: "poisoned",
+        id: "chilled",
+        name: "chilled",
         selfTarget: false,
         apply() {
             this.gameObject.setTint(0xff0000);
