@@ -73,7 +73,7 @@ export default {
         radius: 20,
         dimX: 32,
         dimY: 32,
-        speed: 50,
+        speed: 150,
         cooldown: 25,
         name: "iceOrb",
         animation: "iceOrb",

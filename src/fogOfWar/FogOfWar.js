@@ -189,7 +189,7 @@ export default class FogOfWar {
 
         const bitmask = this.graphics.createGeometryMask();
 
-        bitmask.setInvertAlpha();
+        // bitmask.setInvertAlpha();
       
         this.dynamicLayer.setMask(bitmask);
 

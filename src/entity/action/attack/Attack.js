@@ -5,6 +5,9 @@ export default function (name, entities, physics, attack, interactions, layer, a
 
     const particles = add.particles(attack.particleSheet);
     particles.setDepth(3);
+    // dynamicLayer.add(particles);
+    // console.log(particles);
+
     let explodedD = false;
 
     console.log(name, entities, physics, attack, interactions, layer, add, anims, dynamicLayer);
@@ -64,6 +67,8 @@ export default function (name, entities, physics, attack, interactions, layer, a
                     // blendMode: 'SCREEN',
                     // scale: 0.25,
                 });
+                // console.log(this.flightEmitter);
+                // dynamicLayer.add(this.flightEmitter);
                 this.gameObject.setVelocityX(this.velocityX * attack.speed);
                 this.gameObject.setVelocityY(this.velocityY * attack.speed);
                 this.gameObject.setBounce(attack.bounce, attack.bounce);

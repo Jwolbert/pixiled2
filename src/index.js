@@ -22,7 +22,52 @@ function createMenu () {
     button.appendChild(buttonText);
     modal.appendChild(button);
     body.appendChild(modal);
+    window.createItemContainer(5, 5);
 }
+
+window.createItemContainer = function (rows, columns) {
+    const bag = document.createElement('div');
+    bag.style.position = 'absolute';
+    bag.style.backgroundColor = 'green';
+    // bag.style.width = 200;
+    // bag.style.height = 200;
+    bag.style.top = 0;
+    bag.style.left = 0;
+    bag.draggable = true;
+    bag.style.cursor = "move";
+    bag.style.padding = "1rem";
+    const itemList = document.createElement('div');
+    itemList.style.backgroundColor = "black";
+    itemList.style.display = "flex";
+    itemList.style.gridTemplateColumns = "repeat(auto-fill,minmax(200px, 1fr))";
+    itemList.style.flexWrap = "wrap";
+    let dX = 0;
+    let dY = 0;
+    for(let i = 0; i < rows; i++) {
+        for(let i = 0; i < columns; i++) {
+            const item = document.createElement('div');
+            item.style.width = 50;
+            item.style.height = 50;
+            itemList.appendChild(item);
+        }
+    }
+    bag.appendChild(itemList);
+    bag.addEventListener('dragstart', (data) => {
+        console.log(data.screenX, data.screenY);
+        dX = data.screenX;
+        dY = data.screenY;
+    });
+    bag.addEventListener('dragend', (data) => {
+        console.log(data.screenX, data.screenY);
+        dX = data.screenX - dX;
+        dY = data.screenY - dY;
+        bag.style.top = Number(bag.style.top.replace("px", "")) + dY;
+        bag.style.left = Number(bag.style.left.replace("px", "")) + dX;
+        console.log(bag.style.top, bag.style.left);
+    });
+    const body = document.body;
+    body.appendChild(bag);
+};
 
 function destroyMenu () {
     const menu = document.getElementById("menuModal");
@@ -71,15 +116,16 @@ function startGame () {
         parent: 'phaser-example',
         width: 800,
         height: 600,
-        zoom: 1.25,
+        // zoom: 1.25,
         scene: [ Example ],
-        roundPixels: true,
+        // roundPixels: true,
         physics: {
             default: 'arcade',
             arcade: {
                 debug: false,
             }
         },
+        // pixelArt: true,
         plugins: {
             scene: [
                 {

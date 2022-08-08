@@ -72,6 +72,7 @@ export default {
         name: "chilled",
         selfTarget: false,
         apply() {
+            console.log("APPLY", this.gameObject);
             this.gameObject.setTint(0xff0000);
             this.speed += 20;
             this.hp -= 1;
