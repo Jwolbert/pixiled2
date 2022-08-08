@@ -5,7 +5,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
 
     const particles = add.particles(attack.particleSheet);
     particles.setDepth(3);
-    // dynamicLayer.add(particles);
+    dynamicLayer.add(particles);
     // console.log(particles);
 
     let explodedD = false;

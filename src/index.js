@@ -22,35 +22,61 @@ function createMenu () {
     button.appendChild(buttonText);
     modal.appendChild(button);
     body.appendChild(modal);
-    window.createItemContainer(5, 5);
+    window.createItemContainer([1,2,3]);
 }
 
-window.createItemContainer = function (rows, columns) {
+window.createItemContainer = function (items) {
     const bag = document.createElement('div');
     bag.style.position = 'absolute';
-    bag.style.backgroundColor = 'green';
-    // bag.style.width = 200;
+    // bag.style.backgroundColor = 'green';
+    bag.style.backgroundImage = "url(../assets/images/BackpackDavidBrown.png)";
+    bag.style.backgroundSize = "21.5rem 21.5rem";
+    bag.style.width = "21.5rem";
+    bag.style.height = "21.5rem";
     // bag.style.height = 200;
     bag.style.top = 0;
     bag.style.left = 0;
     bag.draggable = true;
     bag.style.cursor = "move";
-    bag.style.padding = "1rem";
     const itemList = document.createElement('div');
-    itemList.style.backgroundColor = "black";
     itemList.style.display = "flex";
-    itemList.style.gridTemplateColumns = "repeat(auto-fill,minmax(200px, 1fr))";
     itemList.style.flexWrap = "wrap";
+    itemList.style.gap = "0.25rem";
+    itemList.style.marginLeft = "4rem";
+    itemList.style.marginRight = "6rem";
+    itemList.style.marginTop = "6rem";
+    itemList.style.marginBottom = "4rem";
+    itemList.style.width = "12.5rem";
+    itemList.style.height = "11.5rem";
+    // itemList.style.opacity = "0";
     let dX = 0;
     let dY = 0;
-    for(let i = 0; i < rows; i++) {
-        for(let i = 0; i < columns; i++) {
-            const item = document.createElement('div');
-            item.style.width = 50;
-            item.style.height = 50;
-            itemList.appendChild(item);
-        }
-    }
+    items.forEach((item) => {
+        item = document.createElement('div');
+        item.style.width = 50;
+        item.style.height = 50;
+        item.style.backgroundColor = "red";
+        itemList.appendChild(item);
+        item.draggable = true;
+        item.style.position = "relative"
+        let dX = 0;
+        let dY = 0;
+        item.addEventListener('dragstart', (data) => {
+            console.log(data.screenX, data.screenY);
+            dX = data.screenX;
+            dY = data.screenY;
+            data.stopPropagation();
+        });
+        item.addEventListener('dragend', (data) => {
+            console.log(data.screenX, data.screenY);
+            dX = data.screenX - dX;
+            dY = data.screenY - dY;
+            item.style.top = Number(item.style.top.replace("px", "")) + dY;
+            item.style.left = Number(item.style.left.replace("px", "")) + dX;
+            console.log(item.style.top, item.style.left);
+            data.stopPropagation();
+        });
+    });
     bag.appendChild(itemList);
     bag.addEventListener('dragstart', (data) => {
         console.log(data.screenX, data.screenY);
@@ -110,7 +136,7 @@ function startGame () {
     background.style.display = "flex";
     // background.style.padding = "5%";
     background.style.flexDirection = "row";
-    background.style.justifyContent = "center";
+    background.style.justifyContent = "flex-end";
     const config = {
         type: Phaser.CANVAS,
         parent: 'phaser-example',
