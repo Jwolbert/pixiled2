@@ -23,6 +23,73 @@ function createMenu () {
     modal.appendChild(button);
     body.appendChild(modal);
     window.createItemContainer([1,2,3]);
+    window.createCharacterStats();
+}
+
+window.createCharacterStats = function () {
+    const statCard = document.createElement('div');
+        statCard.style.display = "flex"
+        statCard.style.flexDirection = "column";
+        statCard.style.gap = "1rem";
+        statCard.style.backgroundColor = "black";
+        statCard.style.border = "3px";
+        statCard.style.borderColor = "grey";
+        statCard.style.position = "absolute";
+        statCard.style.top = 200;
+        statCard.style.left = 75;
+        // statCard.style.backgroundImage = "url(../assets/images/scroll.png)";
+
+        const healthBar = document.createElement('div');
+            healthBar.style.backgroundColor = "red";
+            healthBar.style.marginTop = "1rem";
+            healthBar.className = "statBar";
+
+        const healthBarBorder = document.createElement('div');
+            healthBarBorder.className = "statBarBorder";
+
+        healthBarBorder.appendChild(healthBar);
+
+        const manaBar = document.createElement('div');
+            manaBar.style.backgroundColor = "blue";
+            manaBar.className = "statBar";
+
+        const manaBarBorder = document.createElement('div');
+            manaBarBorder.className = "statBarBorder";
+
+        manaBarBorder.appendChild(manaBar);
+
+        const staminaBar = document.createElement('div');
+            staminaBar.style.backgroundColor = "green";
+            staminaBar.style.marginBottom = "1rem";
+            staminaBar.className = "statBar";
+
+        const staminaBarBorder = document.createElement('div');
+            staminaBarBorder.className = "statBarBorder";
+
+        staminaBarBorder.appendChild(staminaBar);
+
+    statCard.appendChild(healthBarBorder);
+    statCard.appendChild(manaBarBorder);
+    statCard.appendChild(staminaBarBorder);
+
+    statCard.draggable = true;
+
+    let dX = 0;
+    let dY = 0;
+
+    statCard.addEventListener('dragstart', (data) => {
+        dX = data.screenX;
+        dY = data.screenY;
+    });
+    statCard.addEventListener('dragend', (data) => {
+        dX = data.screenX - dX;
+        dY = data.screenY - dY;
+        statCard.style.top = Number(statCard.style.top.replace("px", "")) + dY;
+        statCard.style.left = Number(statCard.style.left.replace("px", "")) + dX;
+    });
+
+    const body = document.body;
+    body.appendChild(statCard);
 }
 
 window.createItemContainer = function (items) {
@@ -34,8 +101,8 @@ window.createItemContainer = function (items) {
     bag.style.width = "21.5rem";
     bag.style.height = "21.5rem";
     // bag.style.height = 200;
-    bag.style.top = 0;
-    bag.style.left = 0;
+    bag.style.top = 500;
+    bag.style.left = 75;
     bag.draggable = true;
     bag.style.cursor = "move";
     const itemList = document.createElement('div');
@@ -56,6 +123,8 @@ window.createItemContainer = function (items) {
         item.style.width = 50;
         item.style.height = 50;
         item.style.backgroundColor = "red";
+        item.style.borderRadius = "3rem";
+        item.style.opacity = "0.5";
         itemList.appendChild(item);
         item.draggable = true;
         item.style.position = "relative"
@@ -136,12 +205,12 @@ function startGame () {
     background.style.display = "flex";
     // background.style.padding = "5%";
     background.style.flexDirection = "row";
-    background.style.justifyContent = "flex-end";
+    background.style.justifyContent = "center";
     const config = {
         type: Phaser.CANVAS,
         parent: 'phaser-example',
         width: 800,
-        height: 600,
+        height: 800,
         // zoom: 1.25,
         scene: [ Example ],
         // roundPixels: true,

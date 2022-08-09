@@ -116,7 +116,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 follow: this.gameObject,
                 particleClass: AnimatedParticle,
                 // blendMode: 'ADD',
-                emitZone: { type: 'random', source: new Phaser.Geom.Circle(0, 0, 16) },
+                emitZone: { type: 'random', source: new Phaser.Geom.Circle(0, 0, 4) },
                 deathZone: { type: 'onLeave', source: new Phaser.Geom.Circle(this.gameObject.x, this.gameObject.y, 48) },
                 maxParticles: 15,
             });
