@@ -33,6 +33,7 @@ export default class Player extends Entity {
             this.setAnimation('wait');
         }
         super.update();
+        this.updateStats();
     }
 
     velocityInput () {
@@ -62,5 +63,16 @@ export default class Player extends Entity {
                 source: this.id,
             };
         }
+    }
+
+    updateStats () {
+        const healthBar = document.querySelector("#healthBar");
+            healthBar.style.width = this.hp + "%";
+
+        const manaBar = document.querySelector("#manaBar");
+            manaBar.style.width = this.mana + "%";
+
+        const staminaBar = document.querySelector("#staminaBar");
+            staminaBar.style.width = this.stamina + "%";
     }
 }

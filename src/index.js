@@ -32,8 +32,8 @@ window.createCharacterStats = function () {
         statCard.style.flexDirection = "column";
         statCard.style.gap = "1rem";
         statCard.style.backgroundColor = "black";
-        statCard.style.border = "3px";
-        statCard.style.borderColor = "grey";
+        statCard.style.borderWidth = "3px";
+        statCard.style.borderColor = "gray";
         statCard.style.position = "absolute";
         statCard.style.top = 200;
         statCard.style.left = 75;
@@ -41,17 +41,19 @@ window.createCharacterStats = function () {
 
         const healthBar = document.createElement('div');
             healthBar.style.backgroundColor = "red";
-            healthBar.style.marginTop = "1rem";
             healthBar.className = "statBar";
+            healthBar.id = "healthBar";
 
         const healthBarBorder = document.createElement('div');
             healthBarBorder.className = "statBarBorder";
+            healthBarBorder.style.marginTop = "1rem";
 
         healthBarBorder.appendChild(healthBar);
 
         const manaBar = document.createElement('div');
             manaBar.style.backgroundColor = "blue";
             manaBar.className = "statBar";
+            manaBar.id = "manaBar";
 
         const manaBarBorder = document.createElement('div');
             manaBarBorder.className = "statBarBorder";
@@ -60,11 +62,12 @@ window.createCharacterStats = function () {
 
         const staminaBar = document.createElement('div');
             staminaBar.style.backgroundColor = "green";
-            staminaBar.style.marginBottom = "1rem";
             staminaBar.className = "statBar";
+            staminaBar.id = "staminaBar";
 
         const staminaBarBorder = document.createElement('div');
             staminaBarBorder.className = "statBarBorder";
+            staminaBarBorder.style.marginBottom = "1rem";
 
         staminaBarBorder.appendChild(staminaBar);
 
@@ -217,7 +220,7 @@ function startGame () {
         physics: {
             default: 'arcade',
             arcade: {
-                debug: false,
+                debug: true,
             }
         },
         // pixelArt: true,

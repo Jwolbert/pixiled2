@@ -82,7 +82,7 @@ export default {
         type: "attack",
         delay: 10,
         duration: 500,
-        collideHealth: 0,
+        collideHealth: 50,
         bounce: 1,
         effect: effects.chilled,
         selfTarget: false,

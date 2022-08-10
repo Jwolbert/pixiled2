@@ -17,6 +17,8 @@ export default class Entity {
     };
     effects = {};
     hp = 100;
+    mana = 100;
+    stamina = 100;
     effectTimer = 0;
     effectTimerMaximum = 100;
     speed = 75;
