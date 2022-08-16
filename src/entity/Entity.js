@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+import particles from "../configs/particles";
+
 export default class Entity {
     id;
     name;
@@ -23,8 +25,9 @@ export default class Entity {
     effectTimerMaximum = 100;
     speed = 75;
     direction;
+    scene;
 
-    constructor (name, gameObject, id)
+    constructor (name, gameObject, id, scene)
     {
         if (id) {
             this.id = id; 
@@ -38,6 +41,7 @@ export default class Entity {
         this.dead = false;
         this.x = gameObject.x;
         this.y = gameObject.y;
+        this.scene = scene;
     }
 
     getJSON () {
@@ -90,6 +94,7 @@ export default class Entity {
         if (this.effectTimer > 100) {
             Object.values(this.effects).forEach((effect, index) => {
                 if(effect.duration < 1) {
+                    effect.emitter.stop();
                     effect.expire.call(this);
                     if (this.effects.length <= 1) {
                         this.effects = {};
@@ -132,7 +137,61 @@ export default class Entity {
     addEffect (effect) {
         if (!this.effects[effect.name]) {
             effect.apply.call(this);
+            this.addEmitter(effect);
+            this.effects[effect.name] = effect;
+        } 
+        this.effects[effect.name].duration = effect.duration;
+    }
+
+    addEmitter (effect) {
+        if (!effect.particleName) return;
+        const particleAnimationName = effect.particleName;
+        class AnimatedParticle extends Phaser.GameObjects.Particles.Particle
+        {
+            anim;
+            constructor (emitter)
+            {
+                super(emitter);
+
+                this.t = 0;
+                this.i = 0;
+            }
+
+            update (delta, step, processors)
+            {
+                if (!this.anim) {
+                    this.anim = this.frame.texture.manager.game.anims.anims.entries[particleAnimationName];
+                    this.frame = this.anim.frames[Math.floor(Math.random() * this.anim.frames.length)].frame;
+                }
+                var result = super.update(delta, step, processors);
+
+                this.t += delta;
+
+                // console.log(animationName);
+                // console.log(this.frame.texture.manager.game.anims.anims);
+                // console.log(this.frame.texture.manager.game.anims.anims.entries[animationName]);
+                if (this.t >= this.anim.msPerFrame)
+                {
+
+                    if (this.i >= this.anim.frames.length)
+                    {
+                        this.i = 0;
+                    }
+
+                    this.frame = this.anim.frames[this.i].frame;
+
+                    this.i++;
+
+                    this.t -= this.anim.msPerFrame;
+                }
+
+                return result;
+            }
         }
-        this.effects[effect.name] = effect;
+
+        const particleManager = this.scene.add.particles(effect.particleSheet);
+        particleManager.setDepth(3);
+        // dynamicLayer.add(particleManager);
+        effect.emitter = particleManager.createEmitter({...particles[effect.name](this.gameObject).effected, particleClass: AnimatedParticle});
     }
 }

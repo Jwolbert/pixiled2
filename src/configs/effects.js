@@ -54,34 +54,36 @@ export default {
         id: "poisoned",
         name: "poisoned",
         selfTarget: true,
+        particleName: "poisonOrbParticles_particles",
+        particleSheet: "poisonOrbParticles",
         apply() {
             this.gameObject.setTint(0xff0000);
-            this.speed += 20;
             this.hp -= 1;
         },
         tick() {
             this.hp -= 1;
         },
         expire() {
-            this.speed -= 20;
         },
-        duration: 5,
+        duration: 2,
     },
     chilled: {
         id: "chilled",
         name: "chilled",
         selfTarget: false,
+        particleName: "iceOrbParticles_particles",
+        particleSheet: "iceOrbParticles",
         apply() {
             console.log("APPLY", this.gameObject);
             this.gameObject.setTint(0xff0000);
-            this.speed += 20;
+            this.speed -= 20;
             this.hp -= 1;
         },
         tick() {
             this.hp -= 1;
         },
         expire() {
-            this.speed -= 20;
+            this.speed += 20;
         },
         duration: 5,
     },

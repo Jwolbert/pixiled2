@@ -220,7 +220,7 @@ function startGame () {
         physics: {
             default: 'arcade',
             arcade: {
-                debug: true,
+                // debug: true,
             }
         },
         // pixelArt: true,

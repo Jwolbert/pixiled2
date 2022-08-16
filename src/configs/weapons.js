@@ -21,10 +21,14 @@ export default {
         name: "poisonOrbScroll",
         attackCooldown: 0,
         action: attacks.poisonOrb,
+        manaCost: 20,
+        staminaCost: 0,
     },
     iceOrbScroll: {
         name: "iceOrbScroll",
         attackCooldown: 0,
         action: attacks.iceOrb,
+        manaCost: 40,
+        staminaCost: 0,
     },
 }

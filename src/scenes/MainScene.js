@@ -140,7 +140,7 @@ export class Example extends Phaser.Scene
         this.physics.add.collider(this.character, this.mapLayer);
 
 
-        this.player = new Player('hatman', this.character, this.input);
+        this.player = new Player('hatman', this.character, this.input, this);
         //
 
         this.cameras.main.setZoom(1.5);
@@ -151,7 +151,7 @@ export class Example extends Phaser.Scene
             setDebugData(this.debugData);
             setEntities(this.entities);
         }
-        // this.websocket = new GameWebSocket(this.entities, this.player, this.physics, this.mapLayer, this.interactions, this.entitiesGroup, this.debugData, this.dynamicLayer, this);
+        this.websocket = new GameWebSocket(this.entities, this.player, this.physics, this.mapLayer, this.interactions, this.entitiesGroup, this.debugData, this.dynamicLayer, this);
         this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData, this.dynamicLayer, this.mapLayer);
         this.cameras.resize(this.game.config.width, this.game.config.height);
     }
