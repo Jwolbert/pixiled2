@@ -84,11 +84,7 @@ export default class Entity {
             this.dead = true;
         }
     }
-
-    clearEffects () {
-        this.gameObject.setTint(0xffffff);
-    }
-
+    
     tickEffect () {
         this.effectTimer += 1;
         if (this.effectTimer > 100) {
@@ -98,7 +94,6 @@ export default class Entity {
                     effect.expire.call(this);
                     if (this.effects.length <= 1) {
                         this.effects = {};
-                        this.clearEffects();
                     } else {
                         delete this.effects[effect.name];
                     }

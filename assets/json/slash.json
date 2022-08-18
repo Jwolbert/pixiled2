@@ -1,0 +1,21 @@
+{
+    "slash": {
+        "frameWidth": 24,
+        "frameHeight": 32,
+        "frameRate": 1,
+        "animations": {
+            "slash": {
+                "start": 25,
+                "end": 25
+            },
+            "pool": {
+                "start": 63,
+                "end": 63
+            },
+            "drops": {
+                "start": 61,
+                "end": 61
+            }
+        }
+    }
+}

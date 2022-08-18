@@ -12,6 +12,8 @@ export default function (name, entities, physics, attack, interactions, layer, a
     const particleAnimationNameExplode = attack.explosion;
     const particleAnimationNameAfter = attack.particles;
 
+    console.log(particleAnimationNameFlight,particleAnimationNameExplode,particleAnimationNameAfter);
+
     class Attack extends Entity {
         physics;
         entities;
@@ -120,7 +122,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 this.attack.delay -= 1;
             } else if (this.attack.duration) {
                 this.attack.duration -=1;
-                if (!this.attack.source) return; //remote attack wont have source
+                if (!this.attack.source || !this.attack.radius) return; //remote attack wont have source
                 const within = this.physics.overlapCirc(this.gameObject.getCenter().x, this.gameObject.getCenter().y, this.attack.radius);
                 within.forEach((body) => {
                     if (body.gameObject?.id) {
@@ -160,6 +162,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
         {
             if (!this.anim) {
                 this.anim = this.frame.texture.manager.game.anims.anims.entries[particleAnimationNameFlight];
+                console.log(this.anim, this.frame.texture.manager.game.anims.anims.entries);
                 this.frame = this.anim.frames[Math.floor(Math.random() * this.anim.frames.length)].frame;
             }
             var result = super.update(delta, step, processors);

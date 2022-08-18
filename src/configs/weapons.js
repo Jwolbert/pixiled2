@@ -6,6 +6,8 @@ export default {
         name: "dagger",
         attackCooldown: 0,
         action: attacks.slash,
+        manaCost: 0,
+        staminaCost: 20,
     },
     fireballScroll: {
         name: "fireballScroll",

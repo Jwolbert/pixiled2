@@ -31,8 +31,10 @@ export default class Player extends Entity {
         this.controls.inventory = new PlayerInventoryControls(input);
         this.type = "player";
         this.weapon = weapons["poisonOrbScroll"];
-        this.equipped.weapons.push(weapons["poisonOrbScroll"]);
-        this.equipped.weapons.push(weapons["iceOrbScroll"]);
+        // this.equipped.weapons.push(weapons["poisonOrbScroll"]);
+        // this.equipped.weapons.push(weapons["iceOrbScroll"]);
+        this.equipped.weapons = Object.values(weapons);
+        console.log(this.equipped.weapons);
         this.attackCooldown = this.weapon.cooldown;
     }
 
