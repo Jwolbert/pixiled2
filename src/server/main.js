@@ -24,6 +24,15 @@ app.post('/joinGame', (req, res) => {
         child.on('message', (message) => {
             console.log(message);
         });
+        child.on('exit', () => {
+            console.log("room closed");
+            currentWebsocketPort = 3333;
+        });
+        child.on('error', (e) => {
+            console.log(e);
+            console.log("room closed - error");
+            currentWebsocketPort = 3333;
+        });
     }
     const message = {};
     message.webSocketPort = 3333;

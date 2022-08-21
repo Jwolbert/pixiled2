@@ -8,6 +8,7 @@ const app = express();
 const server = require('http').createServer(app);
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({server: server});
+const inactivityTimeoutDuration = 15000;
 
 let numberOfClients = 0;
 
@@ -26,6 +27,17 @@ wss.on('connection', (ws) => {
         setInterval(() => {
             
             wss.state.totalUpdates++;
+
+            wss.clients.forEach((ws) => {
+                if(ws.socketState === ws.CLOSED) {
+                    wss.clients.delete(ws);
+                }
+            });
+
+            if (wss.clients.size === 0) {
+                console.log("room closing");
+                process.exit(0);
+            }
 
             wss.messages.forEach((message) => {
                 handleMessage(message);
@@ -79,6 +91,11 @@ wss.on('connection', (ws) => {
             wss.messages.push({owner: ws.owner, message});
             console.log("owner " + ws.owner.split("-")[0]);
         } else {
+            clearTimeout(ws.timeout);
+            ws.timeout = setTimeout(() => {
+                console.log(ws.owner + " closing");
+                ws.socketState = ws.CLOSED;
+            }, inactivityTimeoutDuration);
             wss.messages.push({owner: ws.owner, message});
         }
     });

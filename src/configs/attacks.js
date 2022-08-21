@@ -95,7 +95,7 @@ export default {
         type: "attack",
         delay: 1,
         duration: 1000,
-        collideHealth: 5,
+        collideHealth: 0,
         bounce: 1,
         effect: effects.drained,
         selfTarget: false,

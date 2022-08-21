@@ -5,14 +5,14 @@ export default {
         selfTarget: false,
         apply() {
             this.gameObject.setTint(0xff0000);
-            this.speed += 20;
+            this.speed += 10;
             this.hp -= 1;
         },
         tick() {
             this.hp -= 1;
         },
         expire() {
-            this.speed -= 20;
+            this.speed -= 10;
         },
         duration: 5,
     },
@@ -39,16 +39,15 @@ export default {
         selfTarget: false,
         apply() {
             this.gameObject.setTint(0xff0000);
-            this.speed += 20;
-            this.hp -= 1;
+            this.hp -= 5;
         },
         tick() {
-            this.hp -= 1;
+
         },
         expire() {
-            this.speed -= 20;
+
         },
-        duration: 5,
+        duration: 1,
     },
     poisoned: {
         id: "poisoned",
@@ -57,15 +56,14 @@ export default {
         particleName: "poisonOrbParticles_particles",
         particleSheet: "poisonOrbParticles",
         apply() {
-            this.gameObject.setTint(0xff0000);
-            this.hp -= 1;
+
         },
         tick() {
-            this.hp -= 1;
+            this.hp -= 3;
         },
         expire() {
         },
-        duration: 2,
+        duration: 5,
     },
     chilled: {
         id: "chilled",
@@ -77,14 +75,14 @@ export default {
             console.log("APPLY", this.gameObject);
             this.gameObject.setTint(0xff0000);
             this.speed -= 20;
-            this.hp -= 1;
+            this.hp -= 10;
         },
         tick() {
-            this.hp -= 1;
+
         },
         expire() {
             this.speed += 20;
         },
-        duration: 5,
+        duration: 3,
     },
 };

@@ -16,11 +16,11 @@ export default class Player extends Entity {
     maxHealth = 100;
     maxMana = 100;
     maxStamina = 100;
-    manaRegen = 1;
-    healthRegen = 1;
-    staminaRegen = 2;
+    manaRegen = 0.5;
+    healthRegen = 0.1;
+    staminaRegen = 0.5;
     regenCounter = 0;
-    regenRate = 20;
+    regenRate = 10;
 
     constructor (name, gameObject, input, scene)
     {
@@ -36,6 +36,12 @@ export default class Player extends Entity {
         this.equipped.weapons = Object.values(weapons);
         console.log(this.equipped.weapons);
         this.attackCooldown = this.weapon.cooldown;
+        console.log(scene);
+    }
+
+    destroy () {
+        super.destroy();
+        document.location.reload();
     }
 
     update () {
@@ -75,9 +81,10 @@ export default class Player extends Entity {
         }
         const input = this.controls.attack.get();
         if (input) {
-            if (this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost) return;
+            if (this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost || this.hp < this.weapon.healthCost) return;
             this.mana -= this.weapon.manaCost;
             this.stamina -= this.weapon.staminaCost;
+            this.hp -= this.weapon.healthCost;
             this.attackCooldown = this.weapon.cooldown;
             const location = {x: this.gameObject.x + input.location.x, y: this.gameObject.y + input.location.y};
             this.currentAction = {
@@ -103,7 +110,7 @@ export default class Player extends Entity {
 
         if (this.regenCounter++ > this.regenRate) {
             this.mana += this.manaRegen;
-            this.health += this.healthRegen;
+            this.hp += this.healthRegen;
             this.stamina += this.staminaRegen;
             this.regenCounter = 0;
         }

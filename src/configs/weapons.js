@@ -6,6 +6,7 @@ export default {
         name: "dagger",
         attackCooldown: 0,
         action: attacks.slash,
+        healthCost: 0,
         manaCost: 0,
         staminaCost: 20,
     },
@@ -17,12 +18,16 @@ export default {
     bloodOrbScroll: {
         name: "bloodOrbScroll",
         attackCooldown: 0,
-        action: attacks.bloodOrb
+        action: attacks.bloodOrb,
+        healthCost: 3,
+        manaCost: 0,
+        staminaCost: 0,
     },
     poisonOrbScroll: {
         name: "poisonOrbScroll",
         attackCooldown: 0,
         action: attacks.poisonOrb,
+        healthCost: 0,
         manaCost: 20,
         staminaCost: 0,
     },
@@ -30,6 +35,7 @@ export default {
         name: "iceOrbScroll",
         attackCooldown: 0,
         action: attacks.iceOrb,
+        healthCost: 0,
         manaCost: 40,
         staminaCost: 0,
     },
