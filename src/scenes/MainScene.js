@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Player from "../entity/player/Player";
+import Portal from "../entity/portal/Portal";
 import AnimationUtility from "../utility/AnimationUtility";
 import Attack from "../entity/action/attack/Attack";
 import GameWebSocket from "../websocket/GameWebSocket";
@@ -53,6 +54,7 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('poisonOrbParticles', 'assets/sheets/poisonOrbParticles.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('iceOrb', 'assets/sheets/iceOrb.png', { frameWidth: 52, frameHeight: 52 });
         this.load.spritesheet('iceOrbParticles', 'assets/sheets/iceOrbParticles.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('portals', 'assets/sheets/portals.png', { frameWidth: 48, frameHeight: 96 });
         this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
     }
 
@@ -64,7 +66,7 @@ export class Example extends Phaser.Scene
 
         //anims
         AnimationUtility.call(this, 
-            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles']
+            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles', 'portals']
             );
         console.log("anims", this.anims.anims);
 
@@ -130,7 +132,7 @@ export class Example extends Phaser.Scene
         // MOVE THIS INTO Player.js
 
         //game shit
-        this.character = this.physics.add.sprite(72, 72, 'mainCharacters2x').setScale(.5).setDepth(3);
+        this.character = this.physics.add.sprite(72, 72, 'mainCharacters2x').setScale(.5).setDepth(4);
         this.character.body.setSize(36, 40, true);
         this.character.body.setOffset(6, 24);
         // this.physics.add.collider(this.character, this.mapLayer);
@@ -140,7 +142,9 @@ export class Example extends Phaser.Scene
         this.physics.add.collider(this.character, this.mapLayer);
 
 
+        
         this.player = new Player('hatman', this.character, this.input, this);
+        this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3));
         //
 
         this.cameras.main.setZoom(1.5);

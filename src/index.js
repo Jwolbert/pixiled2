@@ -26,6 +26,26 @@ function createMenu () {
     window.createCharacterStats();
 }
 
+function createStatBarInternal (node) {
+    const internals = document.createElement('div');
+    const regenRate = document.createElement('div');
+    const remaining = document.createElement('div');
+    internals.style.display = "flex";
+    internals.style.justifyContent = "space-between";
+    internals.style.padding = "0 1rem";
+    internals.style.width = "218px";
+    regenRate.id = node.id + "Regen";
+    regenRate.style.color = "white";
+    remaining.id = node.id + "Remaining";
+    remaining.style.color = "white";
+    internals.appendChild(remaining);
+    internals.appendChild(regenRate);
+    node.appendChild(internals);
+    node.style.display = "flex";
+    node.style.flexDirection = "column";
+    node.style.justifyContent = "center";
+}
+
 window.createCharacterStats = function () {
     const statCard = document.createElement('div');
         statCard.style.display = "flex"
@@ -39,10 +59,14 @@ window.createCharacterStats = function () {
         statCard.style.left = 75;
         // statCard.style.backgroundImage = "url(../assets/images/scroll.png)";
 
+
+
+
         const healthBar = document.createElement('div');
             healthBar.style.backgroundColor = "red";
             healthBar.className = "statBar";
             healthBar.id = "healthBar";
+            createStatBarInternal(healthBar);
 
         const healthBarBorder = document.createElement('div');
             healthBarBorder.className = "statBarBorder";
@@ -54,6 +78,7 @@ window.createCharacterStats = function () {
             manaBar.style.backgroundColor = "blue";
             manaBar.className = "statBar";
             manaBar.id = "manaBar";
+            createStatBarInternal(manaBar);
 
         const manaBarBorder = document.createElement('div');
             manaBarBorder.className = "statBarBorder";
@@ -64,6 +89,7 @@ window.createCharacterStats = function () {
             staminaBar.style.backgroundColor = "green";
             staminaBar.className = "statBar";
             staminaBar.id = "staminaBar";
+            createStatBarInternal(staminaBar);
 
         const staminaBarBorder = document.createElement('div');
             staminaBarBorder.className = "statBarBorder";

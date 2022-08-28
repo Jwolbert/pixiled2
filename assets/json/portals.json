@@ -1,0 +1,14 @@
+{
+    "portals": {
+        "frameWidth": 48,
+        "frameHeight": 96,
+        "frameRate": 6,
+        "yoyo": false,
+        "animations": {
+            "portals": {
+                "start": 0,
+                "end": 14
+            }
+        }
+    }
+}

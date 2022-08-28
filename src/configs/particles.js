@@ -60,7 +60,7 @@ export default {
                 maxParticles: 1,
                 scale: { start: 0.2, end: 1, ease: 'Expo.easeOut' },
             },
-            after: {
+            fizzle: {
                 alpha: { start: 0, end: 1, ease: 'Expo.easeOut' },
                 quantity: 0,
                 frequency: 200,
@@ -79,7 +79,7 @@ export default {
         return {
         flightParticle: [0],
         explosionParticle: [1, 2],
-        afterParticle: [0],
+        fizzleParticle: [0],
         flight: {
             // alpha: { start: 1, end: 0.5, ease: 'Expo.easeOut' },
             quantity: 1,
@@ -107,7 +107,7 @@ export default {
             deathZone: { type: 'onLeave', source: new Phaser.Geom.Circle(gameObject?.x, gameObject?.y, 48) },
             maxParticles: 15,
         },
-        after: {
+        fizzle: {
             // alpha: { start: 1, end: 0.4, ease: 'Expo.easeOut' },
             quantity: 25,
             frequency: 0,
@@ -150,7 +150,7 @@ export default {
             deathZone: { type: 'onLeave', source: new Phaser.Geom.Circle(gameObject?.x, gameObject?.y, 48) },
             maxParticles: 10,
         },
-        after: {
+        fizzle: {
             scale: { start: 0.1, end: 1, ease: 'Expo.easeOut' },
             alpha: { start: 1, end: 0.1, ease: 'Expo.easeOut' },
             quantity: 2,
@@ -192,7 +192,7 @@ export default {
             deathZone: { type: 'onLeave', source: new Phaser.Geom.Circle(gameObject?.x, gameObject?.y, 48) },
             maxParticles: 15,
         },
-        after: {
+        fizzle: {
             // alpha: { start: 1, end: 0.4, ease: 'Expo.easeOut' },
             quantity: 40,
             frequency: 0,

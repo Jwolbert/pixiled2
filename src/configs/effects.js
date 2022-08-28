@@ -71,6 +71,7 @@ export default {
         selfTarget: false,
         particleName: "iceOrbParticles_particles",
         particleSheet: "iceOrbParticles",
+        reApply: true,
         apply() {
             console.log("APPLY", this.gameObject);
             this.gameObject.setTint(0xff0000);

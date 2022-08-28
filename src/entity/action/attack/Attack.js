@@ -10,9 +10,9 @@ export default function (name, entities, physics, attack, interactions, layer, a
 
     const particleAnimationNameFlight = attack.particles;
     const particleAnimationNameExplode = attack.explosion;
-    const particleAnimationNameAfter = attack.particles;
+    const particleAnimationNameFizzle = attack.particles;
 
-    console.log(particleAnimationNameFlight,particleAnimationNameExplode,particleAnimationNameAfter);
+    console.log(particleAnimationNameFlight,particleAnimationNameExplode,particleAnimationNameFizzle);
 
     class Attack extends Entity {
         physics;
@@ -24,7 +24,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
         collideHealth = 1;
         flightEmitter;
         explodeEmitter;
-        afterEmitter;
+        fizzleEmitter;
         exploded = false;
         fizzled = false;
     
@@ -54,12 +54,9 @@ export default function (name, entities, physics, attack, interactions, layer, a
             //this.gameObject.setCircle(attack.radius);
             this.speed = this.attack.speed;
             this.collideHealth = attack.collideHealth;
+            // console.log(this.flightEmitter);
+            // dynamicLayer.add(this.flightEmitter);
             if (this.attack.speed) {
-                this.gameObject.setCircle(attack.radius, 8, 8);
-                this.flightEmitter = particleManager.createEmitter({...particles[attack.name](this.gameObject).flight, particleClass: AnimatedParticleFlight});
-            
-                // console.log(this.flightEmitter);
-                // dynamicLayer.add(this.flightEmitter);
                 this.gameObject.setVelocityX(this.velocityX * attack.speed);
                 this.gameObject.setVelocityY(this.velocityY * attack.speed);
                 this.gameObject.setBounce(attack.bounce, attack.bounce);
@@ -70,6 +67,14 @@ export default function (name, entities, physics, attack, interactions, layer, a
                         this.explode();
                     }
                 });
+                this.gameObject.setCircle(attack.radius, 8, 8);
+                this.createFlightEmitter();
+            }
+        }
+
+        createFlightEmitter () {
+            if (this.attack.speed) {
+                this.flightEmitter = particleManager.createEmitter({...particles[attack.name](this.gameObject).flight, particleClass: AnimatedParticleFlight});
             }
         }
 
@@ -85,8 +90,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
 
         explode () {
             if (this.exploded) {
-                this.flightEmitter.remove();
-                this.explodeEmitter.remove();
+                this.fizzle();
                 return;
             }
             this.exploded = true;
@@ -94,7 +98,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
             this.attack.duration = attack.explodeDuration;
             this.attack.selfTarget = attack.explodeSelfTarget;
             this.explodeEmitter = particleManager.createEmitter({...particles[attack.name](this.gameObject).explosion, particleClass: AnimatedParticleExplosion});
-            this.afterEmitter = particleManager.createEmitter({...particles[attack.name](this.gameObject).after, particleClass: AnimatedParticleAfter});
+            this.fizzleEmitter = particleManager.createEmitter({...particles[attack.name](this.gameObject).fizzle, particleClass: AnimatedParticleFizzle});
             this.gameObject.body.stop();
             this.flightEmitter.stop();
         }
@@ -103,14 +107,14 @@ export default function (name, entities, physics, attack, interactions, layer, a
             if (this.fizzled) {
                 this.flightEmitter.remove();
                 this.explodeEmitter.remove();
-                this.afterEmitter.remove();
+                this.fizzleEmitter.remove();
                 this.dead = true;
                 return;
             }
             this.fizzled = true;
-            this.attack.radius = attack.afterRadius;
-            this.attack.duration = attack.afterDuration;
-            this.attack.selfTarget = attack.afterSelfTarget;
+            this.attack.radius = attack.fizzleRadius;
+            this.attack.duration = attack.fizzleDuration;
+            this.attack.selfTarget = attack.fizzleSelfTarget;
         }
     
         update () {
@@ -126,7 +130,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 const within = this.physics.overlapCirc(this.gameObject.getCenter().x, this.gameObject.getCenter().y, this.attack.radius);
                 within.forEach((body) => {
                     if (body.gameObject?.id) {
-                        if (this.entities[body.gameObject.id]?.type !== "attack" && ((body.gameObject.id !== this.attack.source) || this.attack.selfTarget)) {
+                        if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && (this.explode())))) {
                             this.interactions.push({
                                 source: this.attack.source,
                                 target: body.gameObject.id,
@@ -136,11 +140,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                     }
                 });
             } else {
-                if (this.exploded) {
-                    this.fizzle();
-                } else {
-                    this.explode();
-                }
+                this.explode();
             }
 
         }
@@ -234,7 +234,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
         }
     }
 
-    class AnimatedParticleAfter extends Phaser.GameObjects.Particles.Particle
+    class AnimatedParticleFizzle extends Phaser.GameObjects.Particles.Particle
     {
         anim;
         constructor (emitter)
@@ -248,7 +248,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
         update (delta, step, processors)
         {
             if (!this.anim) {
-                this.anim = this.frame.texture.manager.game.anims.anims.entries[particleAnimationNameAfter];
+                this.anim = this.frame.texture.manager.game.anims.anims.entries[particleAnimationNameFizzle];
                 this.frame = this.anim.frames[Math.floor(Math.random() * this.anim.frames.length)].frame;
             }
             var result = super.update(delta, step, processors);

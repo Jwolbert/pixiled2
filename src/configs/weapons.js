@@ -13,7 +13,10 @@ export default {
     fireballScroll: {
         name: "fireballScroll",
         attackCooldown: 0,
-        action: attacks.fireball
+        action: attacks.fireball,
+        healthCost: 0,
+        manaCost: 0,
+        staminaCost: 20,
     }, 
     bloodOrbScroll: {
         name: "bloodOrbScroll",

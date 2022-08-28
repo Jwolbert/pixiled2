@@ -2,6 +2,7 @@ import PlayerVelocityControls from "../../controls/PlayerVelocityControls";
 import PlayerAttackControls from "../../controls/PlayerAttackControls";
 import PlayerInventoryControls from "../../controls/PlayerInventoryControls";
 import Entity from "../Entity";
+import items from "../../configs/items"
 import weapons from "../../configs/weapons";
 export default class Player extends Entity {
     controls;
@@ -10,17 +11,18 @@ export default class Player extends Entity {
     weaponIndex = 0;
     equipped = {
         weapons: [],
-        items: {},
-        clothing: {},
+        items: [],
+        clothing: [],
     }
     maxHealth = 100;
     maxMana = 100;
     maxStamina = 100;
-    manaRegen = 0.5;
+    manaRegen = 0.2;
     healthRegen = 0.1;
-    staminaRegen = 0.5;
+    staminaRegen = 0.1;
     regenCounter = 0;
-    regenRate = 10;
+    regenRate = 1;
+    roundingConstant = 1000;
 
     constructor (name, gameObject, input, scene)
     {
@@ -31,6 +33,7 @@ export default class Player extends Entity {
         this.controls.inventory = new PlayerInventoryControls(input);
         this.type = "player";
         this.weapon = weapons["poisonOrbScroll"];
+        this.equipped.items.push(items.devRing.equip.call(this));
         // this.equipped.weapons.push(weapons["poisonOrbScroll"]);
         // this.equipped.weapons.push(weapons["iceOrbScroll"]);
         this.equipped.weapons = Object.values(weapons);
@@ -114,17 +117,20 @@ export default class Player extends Entity {
             this.stamina += this.staminaRegen;
             this.regenCounter = 0;
         }
-        this.mana = Math.min(this.maxMana, this.mana);
-        this.hp = Math.min(this.maxHealth, this.hp);
-        this.stamina = Math.min(this.maxStamina, this.stamina);
+        this.mana = Math.min(this.maxMana, this.mana.toFixed(2));
+        this.hp = Math.min(this.maxHealth, this.hp.toFixed(2));
+        this.stamina = Math.min(this.maxStamina, this.stamina.toFixed(2));
 
-        const healthBar = document.querySelector("#healthBar");
-            healthBar.style.width = this.hp + "%";
+        document.querySelector("#healthBar").style.width = this.hp + "%";
+        document.querySelector("#healthBarRegen").textContent = `+${this.healthRegen}`;
+        document.querySelector("#healthBarRemaining").textContent = `${this.hp.toFixed(0)} / ${this.maxHealth} `;
 
-        const manaBar = document.querySelector("#manaBar");
-            manaBar.style.width = this.mana + "%";
+        document.querySelector("#manaBar").style.width = this.mana + "%";
+        document.querySelector("#manaBarRegen").textContent = `+${this.manaRegen}`;
+        document.querySelector("#manaBarRemaining").textContent = `${this.mana.toFixed(0)} / ${this.maxMana} `;
 
-        const staminaBar = document.querySelector("#staminaBar");
-            staminaBar.style.width = this.stamina + "%";
+        document.querySelector("#staminaBar").style.width = this.stamina + "%";
+        document.querySelector("#staminaBarRegen").textContent = `+${this.staminaRegen}`;
+        document.querySelector("#staminaBarRemaining").textContent = `${this.stamina.toFixed(0)} / ${this.maxStamina} `;
     }
 }

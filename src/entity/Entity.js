@@ -134,7 +134,10 @@ export default class Entity {
             effect.apply.call(this);
             this.addEmitter(effect);
             this.effects[effect.name] = effect;
-        } 
+        } else if (effect.reApply) {
+            effect.expire.call(this);
+            effect.apply.call(this);
+        }
         this.effects[effect.name].duration = effect.duration;
     }
 
