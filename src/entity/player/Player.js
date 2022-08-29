@@ -26,7 +26,7 @@ export default class Player extends Entity {
 
     constructor (name, gameObject, input, scene)
     {
-        super(name, gameObject, window.id, scene);
+        super(name, gameObject, window.clientId, scene);
         this.controls = {};
         this.controls.velocity = new PlayerVelocityControls(input);
         this.controls.attack = new PlayerAttackControls(input);
@@ -40,6 +40,11 @@ export default class Player extends Entity {
         console.log(this.equipped.weapons);
         this.attackCooldown = this.weapon.cooldown;
         console.log(scene);
+    }
+
+    initPlayerPosition (JSON) {
+        this.gameObject.x = JSON.x;
+        this.gameObject.y = JSON.y;
     }
 
     destroy () {

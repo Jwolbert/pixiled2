@@ -12,6 +12,16 @@ const inactivityTimeoutDuration = 15000;
 
 let numberOfClients = 0;
 
+let players = [];
+
+const spawnPoints = [[144, 72], [144, 144]];
+
+process.on("message", function (message) {
+    if (message.player) {
+        players.push(message.player);
+    } 
+});
+
 wss.on('connection', (ws) => {
     ws.once('disconnect', function () {
         process.send(JSON.stringify({disconnected: ws.owner}));
@@ -87,6 +97,15 @@ wss.on('connection', (ws) => {
 
     ws.on('message', function incoming(message) {
         if (ws.owner === undefined) {
+            const newPlayerId = JSON.parse(message).owner;
+            const newPlayer = players.find((player) => {
+                return player.id === newPlayerId;
+            });
+            if (!newPlayer) throw Error("New player ID not found");
+            const outgoingMessage = {};
+            const spawnPoint = spawnPoints[0];
+            outgoingMessage.init = {x: spawnPoint[0], y: spawnPoint[1]};
+            ws.send(JSON.stringify(outgoingMessage));
             ws.owner = JSON.parse(message).owner;
             wss.messages.push({owner: ws.owner, message});
             console.log("owner " + ws.owner.split("-")[0]);

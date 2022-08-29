@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 setTimeout(() => {createMenu()}, 50);
 
+let config;
 
 function createMenu () {
     const body = document.body;
@@ -22,8 +23,6 @@ function createMenu () {
     button.appendChild(buttonText);
     modal.appendChild(button);
     body.appendChild(modal);
-    window.createItemContainer([1,2,3]);
-    window.createCharacterStats();
 }
 
 function createStatBarInternal (node) {
@@ -219,6 +218,13 @@ function sendId () {
     };
 }
 
+window.switchRoom = function (port) {
+    window.webSocketPort = port;
+    window.game.destroy();
+    window.game = new Phaser.Game(config);
+    console.log("room switch");
+}
+
 function startGame () {
     const background = document.body;
     const gameWindow = document.createElement("canvas");
@@ -235,7 +241,9 @@ function startGame () {
     // background.style.padding = "5%";
     background.style.flexDirection = "row";
     background.style.justifyContent = "center";
-    const config = {
+    window.createItemContainer([1,2,3]);
+    window.createCharacterStats();
+    config = {
         type: Phaser.CANVAS,
         parent: 'phaser-example',
         width: 800,
@@ -261,7 +269,7 @@ function startGame () {
         },
         canvas: document.getElementById('gameWindow'),
     };
-    new Phaser.Game(config);
+    window.game = new Phaser.Game(config);
     console.log("UI CREATED");
 }
 

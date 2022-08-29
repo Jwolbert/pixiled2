@@ -45,8 +45,15 @@ export default class GameWebSocket {
             // send client state
             this.update(true);
 
+
             // update client state
             const message = JSON.parse(event.data);
+
+            // player init
+            if (message.init) {
+                this.player.initPlayerPosition(message.init);
+            }
+
             if (debugData) {
                 debugData.websocketUpdates++;
                 if (message.requestsHandledPerSec) {

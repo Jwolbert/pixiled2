@@ -6,13 +6,16 @@ const { fork } = require('child_process');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require("body-parser");
+const Player = require("./ServerPlayer.js")
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
 
-let clients = [];
+const clients = [];
 let currentWebsocketPort = 3333;
+
+const rooms = [];
 
 app.post('/joinGame', (req, res) => {
     const { clientId } = req.body;
@@ -33,6 +36,18 @@ app.post('/joinGame', (req, res) => {
             console.log("room closed - error");
             currentWebsocketPort = 3333;
         });
+        const message = {};
+        const player = new Player('hatman');
+        player.updateWithJSON({id: clientId});
+        message.player = player;
+        child.send(message);
+        rooms.push(child);
+    } else {
+        const message = {};
+        const player = new Player('hatman');
+        player.updateWithJSON({id: clientId});
+        message.player = player;
+        rooms[0].send(message);
     }
     const message = {};
     message.webSocketPort = 3333;
