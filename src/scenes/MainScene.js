@@ -144,7 +144,7 @@ export class Example extends Phaser.Scene
 
         
         this.player = new Player('hatman', this.character, this.input, this);
-        this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3));
+        this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
 
         this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);

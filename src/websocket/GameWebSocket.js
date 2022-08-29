@@ -52,6 +52,7 @@ export default class GameWebSocket {
             // player init
             if (message.init) {
                 this.player.initPlayerPosition(message.init);
+                return;
             }
 
             if (debugData) {
