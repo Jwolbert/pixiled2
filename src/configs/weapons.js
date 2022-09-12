@@ -4,8 +4,18 @@ import attacks from "./attacks";
 export default {
     dagger: {
         name: "dagger",
+        type: "melee",
         attackCooldown: 0,
         action: attacks.slash,
+        healthCost: 0,
+        manaCost: 0,
+        staminaCost: 20,
+    },
+    vampireBite: {
+        name: "vampireBite",
+        type: "melee",
+        attackCooldown: 0,
+        action: attacks.vampireBite,
         healthCost: 0,
         manaCost: 0,
         staminaCost: 20,

@@ -6,6 +6,7 @@ let frameRateMin = 60;
 let frameRateCounter = 0;
 let debugData = {};
 let entities;
+let player;
 
 const profile = () => {
     if (debugCounter++ > debugFrequency) {
@@ -13,6 +14,9 @@ const profile = () => {
         const diffSec = (currentTime - previousTime) / 1000;
         previousTime = currentTime;
         debugCounter = 0;
+
+        const weapon = document.querySelector("#weaponId");
+        weapon.textContent = `Weapon: ${player.weapon.name}`;
 
         const fps = document.querySelector("#fpsMeter");
         const frameRate = debugFrequency / diffSec;
@@ -54,7 +58,7 @@ const profile = () => {
             }
             Object.keys(entities).forEach((id) => {
                 const entityNode = document.createElement("div");
-                entityNode.textContent = `ID: ${id.split("-")[0]} HP: ${entities[id].hp} TYPE: ${entities[id].type}`
+                entityNode.textContent = `ID: ${id.split("-")[0]} HP: ${entities[id].hp} TYPE: ${entities[id].type} SPEED: ${entities[id].speed}`
                 entityList.appendChild(entityNode);
             });
         }
@@ -80,6 +84,10 @@ const setEntities = (data) => {
     document.querySelector("#clientId");
 };
 
+const setPlayer = (data) => {
+    player = data;
+};
+
 function createDebugBox() {
     const debugBox = document.createElement("div");
     debugBox.style.backgroundColor = "grey";
@@ -96,6 +104,11 @@ function createDebugBox() {
     clientId.id = "clientId";
     clientId.textContent = `Client ID: ${this.player.id.split("-")[0]}`;
     debugBox.appendChild(clientId);
+    debugBox.appendChild(document.createElement("br"));
+
+    const weaponId = document.createElement("div");
+    weaponId.id = "weaponId";
+    debugBox.appendChild(weaponId);
     debugBox.appendChild(document.createElement("br"));
 
     const netStats = document.createElement("div");
@@ -155,4 +168,4 @@ function createDebugBox() {
     background.appendChild(debugBox);
 };
 
-export { profile, setDebugData, setEntities, createDebugBox };
+export { profile, setDebugData, setEntities, createDebugBox, setPlayer };

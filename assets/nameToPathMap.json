@@ -8,5 +8,7 @@
     "poisonOrbParticles": "poisonOrbParticles",
     "iceOrb": "iceOrb",
     "iceOrbParticles": "iceOrbParticles",
-    "portals": "portals"
+    "portals": "portals",
+    "vampire": "vampire",
+    "vampireBite": "vampireBite"
 }

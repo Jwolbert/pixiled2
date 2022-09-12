@@ -1,0 +1,26 @@
+{
+    "vampire": {
+        "animations": {
+            "down": {
+                "start": 0,
+                "end": 2
+            },
+            "right": {
+                "start": 3,
+                "end": 5
+            },
+            "up": {
+                "start": 9,
+                "end": 11
+            },
+            "left": {
+                "start": 6,
+                "end": 8
+            },
+            "wait": {
+                "start": 1,
+                "end": 1
+            }
+        }
+    }
+}

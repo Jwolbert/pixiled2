@@ -1,4 +1,42 @@
 export default {
+    teleport: {
+        id: "slashing",
+        name: "slashing",
+        selfTarget: false,
+        apply(attack) {
+            window.switchRoom(window.port)
+        },
+        tick() {
+            this.hp -= 1;
+        },
+        expire() {
+            this.gameObject.setBounce(0, 0);
+            this.blockMovement = false;
+        },
+        duration: 5,
+    },
+    slashing: {
+        id: "slashing",
+        name: "slashing",
+        selfTarget: false,
+        apply(attack) {
+            const direction = attack.direction * -1;
+            this.velocityX = Math.cos(direction);
+            this.velocityY = Math.sin(direction);
+            this.gameObject.setVelocityX(this.velocityX * attack.speed);
+            this.gameObject.setVelocityY(this.velocityY * attack.speed);
+            this.gameObject.setBounce(attack.bounce, attack.bounce);
+            this.blockMovement = true;
+        },
+        tick() {
+            this.hp -= 1;
+        },
+        expire() {
+            this.gameObject.setBounce(0, 0);
+            this.blockMovement = false;
+        },
+        duration: 5,
+    },
     bleed: {
         id: "bleed",
         name: "bleed",

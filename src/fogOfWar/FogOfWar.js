@@ -175,7 +175,7 @@ export default class FogOfWar {
             });
         }
 
-        this.ray.setOrigin(this.player.gameObject.x, this.player.gameObject.y);
+        this.ray.setOrigin(this.player.gameObject.x, this.player.gameObject.y + 6);
         this.intersections = this.ray.castCircle();
         if (this.debug) {
             this.debugData.fogOfWar = this.ray.getStats();

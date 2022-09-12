@@ -23,6 +23,9 @@ export default class Player extends Entity {
     regenCounter = 0;
     regenRate = 1;
     roundingConstant = 1000;
+    blockMovement = false;
+    blockMovementCounter = 0
+    blockMovementCounterMax = 50;
 
     constructor (name, gameObject, input, scene)
     {
@@ -32,7 +35,7 @@ export default class Player extends Entity {
         this.controls.attack = new PlayerAttackControls(input);
         this.controls.inventory = new PlayerInventoryControls(input);
         this.type = "player";
-        this.weapon = weapons["poisonOrbScroll"];
+        this.weapon = weapons.vampireBite;
         this.equipped.items.push(items.devRing.equip.call(this));
         // this.equipped.weapons.push(weapons["poisonOrbScroll"]);
         // this.equipped.weapons.push(weapons["iceOrbScroll"]);
@@ -56,16 +59,22 @@ export default class Player extends Entity {
         this.velocityInput();
         this.attackInput();
         this.inventoryInput();
-        if (this.velocityX > 0) {
-            this.setAnimation('right');
-        } else if (this.velocityX < 0) {
-            this.setAnimation('left');
-        } else if (this.velocityY > 0) {
-            this.setAnimation('down');
-        } else if (this.velocityY < 0) {
-            this.setAnimation('up');
-        } else {
+        let direction = Math.atan( this.velocityY / this.velocityX);
+        if (this.velocityX < 0) {
+            direction += Math.PI;
+        } else if (this.velocityX >= 0 && this.velocityY < 0) {
+            direction += Math.PI * 2;
+        }
+        if (isNaN(direction)) {
             this.setAnimation('wait');
+        } else if (direction >= Math.PI * (7 / 4) || direction <= Math.PI / 4) {
+            this.setAnimation('right');
+        } else if (direction > Math.PI / 4 && direction < Math.PI * (3 / 4)) {
+            this.setAnimation('down');
+        } else if (direction >= Math.PI * (3 / 4) && direction <= Math.PI * (5 / 4)) {
+            this.setAnimation('left');
+        } else if (direction > Math.PI * (5 / 4) && direction < Math.PI * (7 / 4)) {
+            this.setAnimation('up');
         }
         super.update();
         this.updateStats();
@@ -73,8 +82,18 @@ export default class Player extends Entity {
 
     velocityInput () {
         const input = this.controls.velocity.get();
-        this.velocityX = input.velocityX;
-        this.velocityY = input.velocityY;
+        if (this.blockMovement && !(input.velocityX + input.velocityY)) {
+            this.blockMovementCounter++;
+            this.velocityX = this.gameObject.body.velocity.x;
+            this.velocityY = this.gameObject.body.velocity.y;
+            return;
+        }
+        if(this.blockMovement && this.blockMovementCounter++ < this.blockMovementCounterMax) {
+            return;
+        }
+        if (input.velocityX + input.velocityY) this.debounce();
+        this.velocityX = input.velocityX * this.speed;
+        this.velocityY = input.velocityY * this.speed;
     }
 
     attackInput () {
@@ -101,6 +120,7 @@ export default class Player extends Entity {
                 location: location,
                 source: this.id,
             };
+            this.weapon.action.attacking?.apply.call(this,this.currentAction);
         }
     }
 
@@ -137,5 +157,11 @@ export default class Player extends Entity {
         document.querySelector("#staminaBar").style.width = this.stamina + "%";
         document.querySelector("#staminaBarRegen").textContent = `+${this.staminaRegen}`;
         document.querySelector("#staminaBarRemaining").textContent = `${this.stamina.toFixed(0)} / ${this.maxStamina} `;
+    }
+
+    debounce () {
+        this.gameObject.setBounce(0, 0);
+        this.blockMovement = false;
+        this.blockMovementCounter = 0;
     }
 }

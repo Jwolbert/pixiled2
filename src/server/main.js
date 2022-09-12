@@ -30,11 +30,13 @@ app.post('/joinGame', (req, res) => {
         child.on('exit', () => {
             console.log("room closed");
             currentWebsocketPort = 3333;
+            rooms.length = 0;
         });
         child.on('error', (e) => {
             console.log(e); 
             console.log("room closed - error");
             currentWebsocketPort = 3333;
+            rooms.length = 0;
         });
         const message = {};
         const player = new Player('hatman');
@@ -52,7 +54,9 @@ app.post('/joinGame', (req, res) => {
     const message = {};
     message.webSocketPort = 3333;
     message.numClients = clients.length;
-    res.send(JSON.stringify(message));
+    setTimeout(() => {
+        res.send(JSON.stringify(message));
+    }, 1000);
 });
 
 app.listen(port, () => {

@@ -17,6 +17,7 @@ let players = [];
 const spawnPoints = [[144, 72], [144, 144]];
 
 process.on("message", function (message) {
+    console.log(message.player.id);
     if (message.player) {
         players.push(message.player);
     } 
@@ -101,7 +102,7 @@ wss.on('connection', (ws) => {
             const newPlayer = players.find((player) => {
                 return player.id === newPlayerId;
             });
-            if (!newPlayer) throw Error("New player ID not found");
+            if (!newPlayer) throw Error(`New player ID ${newPlayerId} not found`);
             const outgoingMessage = {};
             const spawnPoint = spawnPoints[0];
             outgoingMessage.init = {x: spawnPoint[0], y: spawnPoint[1]};

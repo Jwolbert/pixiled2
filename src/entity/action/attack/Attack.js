@@ -1,12 +1,13 @@
 import Entity from "../../Entity";
 import Phaser from "phaser";
 import particles from "../../../configs/particles";
+import PlayerAttackControls from "../../../controls/PlayerAttackControls";
 
 export default function (name, entities, physics, attack, interactions, layer, add, anims, dynamicLayer) {
 
     const particleManager = add.particles(attack.particleSheet);
     particleManager.setDepth(3);
-    // dynamicLayer.add(particleManager);
+    dynamicLayer.add(particleManager);
 
     const particleAnimationNameFlight = attack.particles;
     const particleAnimationNameExplode = attack.explosion;
@@ -32,10 +33,11 @@ export default function (name, entities, physics, attack, interactions, layer, a
             super(
                 name,
                 physics.add.sprite(attack.location.x, attack.location.y, "bloodT")
-                    .setDepth(3)
-                    // .setRotation(attack.direction * -1) 
+                    .setDepth(attack.direction < Math.PI ? 3 : 4)
+                    .setRotation(attack.direction * -1 + Math.PI / 2) 
                     .setBodySize(attack.radius, attack.radius, true)
             );
+            console.log(attack.direction);
             this.anims = anims;
             this.layer = layer;
             this.entities = entities;
@@ -67,7 +69,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                         this.explode();
                     }
                 });
-                this.gameObject.setCircle(attack.radius, 8, 8);
+                // this.gameObject.setCircle(attack.radius, attack.radius, attack.radius);
                 this.createFlightEmitter();
             }
         }
@@ -91,8 +93,11 @@ export default function (name, entities, physics, attack, interactions, layer, a
         explode () {
             if (this.exploded) {
                 this.fizzle();
+                console.log("fizzle");
                 return;
             }
+            this.gameObject.play(`${attack.name}_${attack.explodeAnimation}`);
+            this.entities[attack.source]?.debounce();
             this.exploded = true;
             this.attack.radius = attack.explodeRadius;
             this.attack.duration = attack.explodeDuration;
@@ -119,7 +124,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
     
         update () {
             // attack params are updated after exploding
-            if (this.exploded) {
+            if (this.exploded && !attack.visibleAfterExplode) {
                 this.gameObject.alpha -= 0.1;
             }
             if (this.attack.delay) {
@@ -128,8 +133,12 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 this.attack.duration -=1;
                 if (!this.attack.source || !this.attack.radius) return; //remote attack wont have source
                 const within = this.physics.overlapCirc(this.gameObject.getCenter().x, this.gameObject.getCenter().y, this.attack.radius);
+                let attached = this.exploded;
                 within.forEach((body) => {
                     if (body.gameObject?.id) {
+                        if (this.attack.attached && body.gameObject.id === this.attack.source) {
+                            attached = true;
+                        }
                         if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && (this.explode())))) {
                             this.interactions.push({
                                 source: this.attack.source,
@@ -139,6 +148,9 @@ export default function (name, entities, physics, attack, interactions, layer, a
                         }
                     }
                 });
+                if (this.attack.attached && !attached) {
+                    this.explode();
+                }
             } else {
                 this.explode();
             }

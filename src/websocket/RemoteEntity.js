@@ -24,8 +24,8 @@ export default class RemoteEntity extends Entity {
     }
 
     update () {
-        this.gameObject.setVelocityX(this.velocityX * this.speed);
-        this.gameObject.setVelocityY(this.velocityY * this.speed);
+        this.gameObject.setVelocityX(this.velocityX);
+        this.gameObject.setVelocityY(this.velocityY);
         this.tickEffect();
     }
 

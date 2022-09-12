@@ -31,6 +31,50 @@ export default {
             // scale: 0.25,
         },
     }},
+    vampireBite: function(gameObject) {
+        return {
+            flight: {
+                // alpha: { start: 1, end: 0.5, ease: 'Expo.easeOut' },
+                quantity: 0,
+                frequency: 200,
+                angle: { min: 0, max: 360 },
+                // alpha: { min: 0, max: 1 },
+                speed: 20,
+                // gravityY: 100,
+                lifespan: { min: 1500, max: 2000 },
+                follow: gameObject,
+                // blendMode: 'SCREEN',
+                // scale: 0.25,
+            },
+            explosion: {
+                alpha: 0.5,
+                quantity: 1,
+                frequency: 1,
+                angle: { min: 0, max: 360 },
+                speed: 0,
+                lifespan: { min: 1600, max: 2000 },
+                gravityY: 0,
+                follow: gameObject,
+                // blendMode: 'ADD',
+                deathZone: { type: 'onLeave', source: new Phaser.Geom.Circle(gameObject?.x, gameObject?.y, 48) },
+                maxParticles: 1,
+                scale: { start: 0.2, end: 1, ease: 'Expo.easeOut' },
+            },
+            fizzle: {
+                alpha: { start: 0, end: 1, ease: 'Expo.easeOut' },
+                quantity: 0,
+                frequency: 200,
+                angle: { min: 0, max: 360 },
+                speed: 0,
+                lifespan: { min: 12400, max: 13000 },
+                follow: gameObject,
+                // blendMode: 'ADD',
+                emitZone: { type: 'random', source: new Phaser.Geom.Circle(0, 0, 32) },
+                deathZone: { type: 'onLeave', source: new Phaser.Geom.Circle(gameObject?.x, gameObject?.y, 48) },
+                maxParticles: 1,
+            },
+        }
+    },
     slash: function(gameObject) {
         return {
             flight: {

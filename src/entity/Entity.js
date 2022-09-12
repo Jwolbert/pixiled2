@@ -77,8 +77,10 @@ export default class Entity {
     {
         this.x = this.gameObject.x;
         this.y = this.gameObject.y;
-        this.gameObject.setVelocityX(this.velocityX * this.speed);
-        this.gameObject.setVelocityY(this.velocityY * this.speed);
+        if (!this.blockMovement) {
+            this.gameObject.setVelocityX(this.velocityX);
+            this.gameObject.setVelocityY(this.velocityY);
+        }
         this.tickEffect();
         if (this.hp < 1) {
             this.dead = true;

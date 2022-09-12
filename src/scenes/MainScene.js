@@ -4,7 +4,7 @@ import Portal from "../entity/portal/Portal";
 import AnimationUtility from "../utility/AnimationUtility";
 import Attack from "../entity/action/attack/Attack";
 import GameWebSocket from "../websocket/GameWebSocket";
-import { profile, setDebugData, setEntities, createDebugBox } from "../debug/debug";
+import { profile, setDebugData, setEntities, createDebugBox, setPlayer } from "../debug/debug";
 import FogOfWar from "../fogOfWar/FogOfWar";
 
 export class Example extends Phaser.Scene
@@ -46,11 +46,13 @@ export class Example extends Phaser.Scene
         this.load.image('ruins', 'assets/sheets/jawbreaker_tiles-extruded.png');
         //this.load.spritesheet('mainCharacters', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('mainCharacters2x', 'assets/sheets/mainCharacters2x.png', { frameWidth: 48, frameHeight: 64 });
+        this.load.spritesheet('vampire', 'assets/sheets/vampire.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('slash', 'assets/sheets/slash.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('fireballSprite', 'assets/sheets/fireballSprite.png', { frameWidth: 64, frameHeight: 32 });
         this.load.spritesheet('bloodOrb', 'assets/sheets/bloodOrb.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('bloodOrbParticles', 'assets/sheets/bloodOrbParticles.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('poisonOrb', 'assets/sheets/poisonOrb.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('vampireBite', 'assets/sheets/vampireBite.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('poisonOrbParticles', 'assets/sheets/poisonOrbParticles.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('iceOrb', 'assets/sheets/iceOrb.png', { frameWidth: 52, frameHeight: 52 });
         this.load.spritesheet('iceOrbParticles', 'assets/sheets/iceOrbParticles.png', { frameWidth: 16, frameHeight: 16 });
@@ -66,7 +68,7 @@ export class Example extends Phaser.Scene
 
         //anims
         AnimationUtility.call(this, 
-            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles', 'portals']
+            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles', 'portals', 'vampire', 'vampireBite']
             );
         console.log("anims", this.anims.anims);
 
@@ -132,27 +134,30 @@ export class Example extends Phaser.Scene
         // MOVE THIS INTO Player.js
 
         //game shit
-        this.character = this.physics.add.sprite(72, 72, 'mainCharacters2x').setScale(.5).setDepth(4);
-        this.character.body.setSize(36, 40, true);
-        this.character.body.setOffset(6, 24);
+        this.character = this.physics.add.sprite(72, 72, 'vampire').setScale(1).setDepth(4);
+        this.character.body.setSize(18, 20, true);
+        this.character.setCircle(10, 6, 14);
+        console.log(this.character, "CENETER")
         // this.physics.add.collider(this.character, this.mapLayer);
         console.log(this.character);
 
         // this.entitiesGroup.add(this.character);
         this.physics.add.collider(this.character, this.mapLayer);
 
-
+        this.dynamicLayer.add(this.character);
         
-        this.player = new Player('hatman', this.character, this.input, this);
+        this.player = new Player('vampire', this.character, this.input, this);
         this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
 
         this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);
         this.entities[this.player.getId()] = this.player;
+        // this.entities[this.portal.getId()] = this.portal;
         if (this.debug) {
             createDebugBox.call(this);
             setDebugData(this.debugData);
             setEntities(this.entities);
+            setPlayer(this.player);
         }
         this.websocket = new GameWebSocket(this.entities, this.player, this.physics, this.mapLayer, this.interactions, this.entitiesGroup, this.debugData, this.dynamicLayer, this);
         this.fogOfWar = new FogOfWar(this.raycasterPlugin, this, this.entities, this.entitiesGroup, this.graphics, this.map, this.physics, this.player, this.debug, this.debugData, this.dynamicLayer, this.mapLayer);

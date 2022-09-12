@@ -38,15 +38,15 @@ export default function(scene, newRemoteEntityJson) {
             this.positionBuffer.push({x: this.x, y: this.y});
             this.positionBufferSumX += this.x;
             this.positionBufferSumY += this.y;
-            this.gameObject.setVelocityX(this.velocityX * this.speed);
-            this.gameObject.setVelocityY(this.velocityY * this.speed);
         }
     }
 
     let newEntity;
     if (newRemoteEntityJson.type === "player") {
-        const newEntitySprite = scene.physics.add.sprite(48, 48, 'mainCharacters').setScale(.5).setDepth(3);
+        const newEntitySprite = scene.physics.add.sprite(48, 48, 'mainCharacters').setDepth(3);
+        newEntitySprite.setCircle(10, 6, 14);
         scene.physics.add.collider(newEntitySprite, scene.mapLayer);
+        scene.physics.add.collider(newEntitySprite, scene.character);
         scene.dynamicLayer.add(newEntitySprite);
         newEntity = new RemotePlayer(newRemoteEntityJson, newEntitySprite, newRemoteEntityJson.id);
     } else if (newRemoteEntityJson.type === "attack") {
