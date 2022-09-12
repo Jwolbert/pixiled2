@@ -6,6 +6,7 @@ import Attack from "../entity/action/attack/Attack";
 import GameWebSocket from "../websocket/GameWebSocket";
 import { profile, setDebugData, setEntities, createDebugBox, setPlayer } from "../debug/debug";
 import FogOfWar from "../fogOfWar/FogOfWar";
+import SoundManager from "../utility/SoundManager";
 
 export class Example extends Phaser.Scene
 {
@@ -58,6 +59,22 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('iceOrbParticles', 'assets/sheets/iceOrbParticles.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('portals', 'assets/sheets/portals.png', { frameWidth: 48, frameHeight: 96 });
         this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
+
+        this.load.audio('theme', ['assets/sounds/vampireSpireTheme.wav'],{
+            instances: 1
+        });
+        this.load.audio('step', ['assets/sounds/stepGravel.wav'],{
+            instances: 1
+        });
+        this.load.audio('step2', ['assets/sounds/stepGravel2.wav'],{
+            instances: 1
+        });
+        this.load.audio('step3', ['assets/sounds/stepGravel3.wav'],{
+            instances: 1
+        });
+        this.load.audio('step4', ['assets/sounds/stepGravel4.wav'],{
+            instances: 1
+        });
     }
 
     create ()
@@ -65,6 +82,22 @@ export class Example extends Phaser.Scene
         if(this.debug) {
             console.log("STARTING_SCENE");
         }
+
+        // sounds
+        const theme = this.sound.add('theme', { loop: true });
+        const step = this.sound.add('step', { loop: false });
+        const step2 = this.sound.add('step2', { loop: false });
+        const step3 = this.sound.add('step3', { loop: false });
+        const step4 = this.sound.add('step4', { loop: false });
+
+        theme.play();
+        step.play();
+        window.SoundManager = new SoundManager();
+
+        window.SoundManager.add("step", step);
+        window.SoundManager.add("step", step2);
+        window.SoundManager.add("step", step3);
+        window.SoundManager.add("step", step4);
 
         //anims
         AnimationUtility.call(this, 

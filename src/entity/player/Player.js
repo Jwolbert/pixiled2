@@ -26,6 +26,7 @@ export default class Player extends Entity {
     blockMovement = false;
     blockMovementCounter = 0
     blockMovementCounterMax = 50;
+    walkingInterval = undefined;
 
     constructor (name, gameObject, input, scene)
     {
@@ -75,6 +76,18 @@ export default class Player extends Entity {
             this.setAnimation('left');
         } else if (direction > Math.PI * (5 / 4) && direction < Math.PI * (7 / 4)) {
             this.setAnimation('up');
+        }
+        if (this.currentAnimation !== 'wait' && !this.walkingInterval) {
+            console.log("sounds");
+            window.SoundManager.play('step');
+            this.walkingInterval = setInterval(() => {
+                console.log("interval");
+                window.SoundManager.play('step');
+            }, 500);
+            console.log(this.walkingInterval);
+        } else if (this.currentAnimation === 'wait') {
+            clearInterval(this.walkingInterval);
+            this.walkingInterval = undefined;
         }
         super.update();
         this.updateStats();
