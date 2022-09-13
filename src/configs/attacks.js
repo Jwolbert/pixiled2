@@ -34,7 +34,7 @@ export default {
         radius: 16,
         dimX: 32,
         dimY: 32,
-        speed: 300,
+        speed: 200,
         cooldown: 25,
         name: "vampireBite",
         animation: "vampireCharge",

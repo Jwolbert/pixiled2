@@ -23,6 +23,7 @@ export default class Entity {
     stamina = 100;
     effectTimer = 0;
     effectTimerMaximum = 100;
+    defaultSpeed = 75;
     speed = 75;
     direction;
     scene;

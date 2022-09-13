@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import particles from "../../../configs/particles";
 import PlayerAttackControls from "../../../controls/PlayerAttackControls";
 
-export default function (name, entities, physics, attack, interactions, layer, add, anims, dynamicLayer) {
+export default function (name, entities, physics, attack, interactions, layer, add, anims, dynamicLayer, id) {
 
     const particleManager = add.particles(attack.particleSheet);
     particleManager.setDepth(3);
@@ -86,6 +86,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 location: attack.location,
                 direction: attack.direction,
                 name: attack.name,
+                source: attack.source,
             };
             return JSON;
         };
@@ -131,7 +132,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 this.attack.delay -= 1;
             } else if (this.attack.duration) {
                 this.attack.duration -=1;
-                if (!this.attack.source || !this.attack.radius) return; //remote attack wont have source
+                // if (!this.attack.source || !this.attack.radius) return; //remote attack wont have source
                 const within = this.physics.overlapCirc(this.gameObject.getCenter().x, this.gameObject.getCenter().y, this.attack.radius);
                 let attached = this.exploded;
                 within.forEach((body) => {
@@ -139,7 +140,9 @@ export default function (name, entities, physics, attack, interactions, layer, a
                         if (this.attack.attached && body.gameObject.id === this.attack.source) {
                             attached = true;
                         }
+                        console.log(body.gameObject.id, this.attack.source);
                         if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && (this.explode())))) {
+                            if (!this.attack.source || !this.attack.radius) return; //remote attack wont have source
                             this.interactions.push({
                                 source: this.attack.source,
                                 target: body.gameObject.id,
@@ -149,6 +152,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                     }
                 });
                 if (this.attack.attached && !attached) {
+                    console.log("attttaacccchhh");
                     this.explode();
                 }
             } else {

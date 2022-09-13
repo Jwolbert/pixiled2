@@ -176,5 +176,6 @@ export default class Player extends Entity {
         this.gameObject.setBounce(0, 0);
         this.blockMovement = false;
         this.blockMovementCounter = 0;
+        this.speed = this.defaultSpeed;
     }
 }

@@ -26,6 +26,7 @@ export default {
             this.gameObject.setVelocityX(this.velocityX * attack.speed);
             this.gameObject.setVelocityY(this.velocityY * attack.speed);
             this.gameObject.setBounce(attack.bounce, attack.bounce);
+            this.speed = attack.speed;
             this.blockMovement = true;
         },
         tick() {
@@ -34,6 +35,7 @@ export default {
         expire() {
             this.gameObject.setBounce(0, 0);
             this.blockMovement = false;
+            this.speed = this.defaultSpeed;
         },
         duration: 5,
     },
