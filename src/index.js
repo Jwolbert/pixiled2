@@ -8,23 +8,141 @@ import { v4 as uuidv4 } from 'uuid';
 setTimeout(() => {createMenu()}, 50);
 
 let config;
-window.character = document.location.search.includes("bloodLord") ? "vampire" : "hatman";
 const audio = new Audio('/assets/sounds/start.wav');
 audio.volume = 0.1;
 function createMenu () {
     const body = document.body;
     const modal = document.createElement('div');
+    const modalRow0 = document.createElement('div');
+    modalRow0.className = "modalRow";
+    modalRow0.textContent = "PIXILED v0.1"
+    modalRow0.style.color = "red";
+    modalRow0.style.fontSize = "1.5rem";
+    const modalRow1 = document.createElement('div');
+    modalRow1.className = "modalRow";
+    const modalRow2 = document.createElement('div');
+    modalRow2.className = "modalRow";
+    const modalRow3 = document.createElement('div');
+    modalRow3.className = "modalRow";
     modal.className = 'modal';
     modal.id = 'menuModal';
-    modal.textContent = "hello"
-    const button = document.createElement('div');
-    button.className = 'button';
-    button.onclick = sendId;
-    const buttonText = document.createElement('span');
-    buttonText.textContent = 'Start game';
-    button.appendChild(buttonText);
-    modal.appendChild(button);
+    const vampireButton = document.createElement('div');
+    vampireButton.className = 'button';
+    vampireButton.style.backgroundColor = "red";
+    vampireButton.onclick = pickBloodWizard;
+    const vampireButtonText = document.createElement('span');
+    const vampireButtonSubText = document.createElement('span');
+    vampireButtonText.textContent = 'Blood Wizard';
+    vampireButtonText.style.color = "white";
+    vampireButtonSubText.textContent = 'Click to play';
+    vampireButtonSubText.style.color = "white";
+    vampireButtonSubText.style.fontSize = "16px";
+    vampireButton.appendChild(vampireButtonText);
+    vampireButton.appendChild(document.createElement('br'));
+    vampireButton.appendChild(vampireButtonSubText);
+    const shadeButton = document.createElement('div');
+    shadeButton.className = 'button';
+    shadeButton.style.backgroundColor = "midnightblue";
+    shadeButton.onclick = pickShade;
+    const shadeButtonText = document.createElement('span');
+    const shadeButtonSubText = document.createElement('span');
+    shadeButtonText.textContent = 'Toxic Shade';
+    shadeButtonSubText.textContent = 'Click to play';
+    shadeButtonText.style.color = "lawngreen";
+    shadeButtonSubText.style.color = "lawngreen";
+    shadeButtonSubText.style.fontSize = "16px";
+    shadeButton.appendChild(shadeButtonText);
+    shadeButton.appendChild(document.createElement('br'));
+    shadeButton.appendChild(shadeButtonSubText);
+
+    const controlBox = document.createElement('div');
+    controlBox.className = "controlBox";
+    const controlBoxText = document.createElement('span');
+    controlBoxText.textContent = "Controls";
+    const controlBoxLine1 = document.createElement('span');
+    controlBoxLine1.textContent = "Movement: WASD Keys";
+    const controlBoxLine2 = document.createElement('span');
+    controlBoxLine2.textContent = "Primary attack: left mouse click/hold";
+    const controlBoxLine3 = document.createElement('span');
+    controlBoxLine3.textContent = "Secondar attack: right mouse click/hold";
+    const controlBoxLine4 = document.createElement('span');
+    controlBoxLine4.textContent = "Special ability: E Key";
+    controlBox.appendChild(controlBoxText);
+    controlBox.appendChild(document.createElement('br'));
+    controlBox.appendChild(controlBoxLine1);
+    controlBox.appendChild(document.createElement('br'));
+    controlBox.appendChild(controlBoxLine2);
+    controlBox.appendChild(document.createElement('br'));
+    controlBox.appendChild(controlBoxLine3);
+    controlBox.appendChild(document.createElement('br'));
+    controlBox.appendChild(controlBoxLine4);
+
+    const vampireBox = document.createElement('div');
+    vampireBox.className = "vampireBox";
+    const vampireBoxText = document.createElement('span');
+    vampireBoxText.textContent = "Equipment";
+    vampireBoxText.style.fontSize = "1.5rem";
+    vampireBoxText.style.textDecoration = "underline";
+    const vampireBoxLine1 = document.createElement('span');
+    vampireBoxLine1.textContent = "Primary: Vampiric Maw";
+    const vampireBoxLine2 = document.createElement('span');
+    vampireBoxLine2.textContent = "Secondary: Blood Orb Scroll";
+    const vampireBoxLine3 = document.createElement('span');
+    vampireBoxLine3.textContent = "Special ability: Blood Mist Form";
+    vampireBox.appendChild(vampireBoxText);
+    vampireBox.appendChild(document.createElement('br'));
+    vampireBox.appendChild(vampireBoxLine1);
+    vampireBox.appendChild(document.createElement('br'));
+    vampireBox.appendChild(vampireBoxLine2);
+    vampireBox.appendChild(document.createElement('br'));
+    vampireBox.appendChild(vampireBoxLine3);
+
+    const shadeBox = document.createElement('div');
+    shadeBox.className = "shadeBox";
+    const shadeBoxText = document.createElement('span');
+    shadeBoxText.textContent = "Equipment";
+    shadeBoxText.style.fontSize = "1.5rem";
+    shadeBoxText.style.textDecoration = "underline";
+    const shadeBoxLine1 = document.createElement('span');
+    shadeBoxLine1.textContent = "Primary: Automatic Crossbow";
+    const shadeBoxLine2 = document.createElement('span');
+    shadeBoxLine2.textContent = "Secondary: Sabotage Kit (Poison)";
+    const shadeBoxLine3 = document.createElement('span');
+    shadeBoxLine3.textContent = "Special ability: Invisibility Potion";
+    const shadeBoxLine4 = document.createElement('span');
+    shadeBoxLine4.textContent = "(Hint: Sabo kit traps are invisible to enemies)";
+    shadeBox.appendChild(shadeBoxText);
+    shadeBox.appendChild(document.createElement('br'));
+    shadeBox.appendChild(shadeBoxLine1);
+    shadeBox.appendChild(document.createElement('br'));
+    shadeBox.appendChild(shadeBoxLine2);
+    shadeBox.appendChild(document.createElement('br'));
+    shadeBox.appendChild(shadeBoxLine3);
+    shadeBox.appendChild(document.createElement('br'));
+    shadeBox.appendChild(shadeBoxLine4);
+
+    controlBox.style.fontSize = "16px";
+
+    modalRow1.appendChild(vampireButton);
+    modalRow1.appendChild(shadeButton);
+    modalRow2.appendChild(vampireBox);
+    modalRow2.appendChild(shadeBox);
+    modalRow3.appendChild(controlBox);
+    modal.appendChild(modalRow0);
+    modal.appendChild(modalRow1);
+    modal.appendChild(modalRow2);
+    modal.appendChild(modalRow3);
     body.appendChild(modal);
+}
+
+function pickShade () {
+    window.character = "hatman";
+    sendId();
+}
+
+function pickBloodWizard () {
+    window.character = "vampire";
+    sendId();
 }
 
 function createStatBarInternal (node) {
@@ -247,7 +365,7 @@ function startGame () {
         width: 800,
         height: 800,
         scene: [ Example ],
-        roundPixels: true,
+//        roundPixels: true,
         physics: {
             default: 'arcade',
             arcade: {

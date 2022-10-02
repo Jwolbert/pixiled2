@@ -18,6 +18,9 @@ const profile = () => {
         const weapon = document.querySelector("#weaponId");
         weapon.textContent = `Weapon: ${player.weapon.name}`;
 
+        const position = document.querySelector("#position");
+        position.textContent = `Position: ${player.gameObject.x}, ${player.gameObject.y}`;
+
         const fps = document.querySelector("#fpsMeter");
         const frameRate = debugFrequency / diffSec;
         if (frameRateCounter++ > 10) {
@@ -109,6 +112,11 @@ function createDebugBox() {
     const weaponId = document.createElement("div");
     weaponId.id = "weaponId";
     debugBox.appendChild(weaponId);
+    debugBox.appendChild(document.createElement("br"));
+
+    const position = document.createElement("div");
+    position.id = "position";
+    debugBox.appendChild(position);
     debugBox.appendChild(document.createElement("br"));
 
     const netStats = document.createElement("div");

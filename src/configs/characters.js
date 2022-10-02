@@ -7,6 +7,7 @@ export default {
         weapons: [weapons.bow, weapons.sabotageKitPoison],
         items: [],
         ability: effects.fade,
+        visible: true,
     },
     "vampire": {
         weapons: [weapons.vampireBite, weapons.bloodOrbScroll],

@@ -162,7 +162,7 @@ export default {
         radius: 8,
         dimX: 32,
         dimY: 32,
-        speed: 100,
+        speed: 150,
         cooldown: 25,
         name: "bloodOrb",
         animation: "bloodOrb",

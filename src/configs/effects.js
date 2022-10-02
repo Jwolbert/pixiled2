@@ -42,7 +42,6 @@ export default {
             this.gameObject.setAlpha(1);
             this.blockMovement = false;
             this.speed = this.defaultSpeed;
-            console.log("expire");
         },
         duration: 50,
     },
@@ -68,7 +67,7 @@ export default {
         reApply: true,
         selfTarget: false,
         apply() {
-            this.hp -= 8;
+            this.hp -= 9;
         },
         tick() {
 
@@ -137,7 +136,7 @@ export default {
 
         },
         tick() {
-            this.hp -= 1;
+            this.hp -= 1.5;
         },
         expire() {
         },

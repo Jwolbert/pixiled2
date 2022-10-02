@@ -14,7 +14,7 @@ let numberOfClients = 0;
 
 let players = [];
 
-const spawnPoints = [[144, 72], [144, 144]];
+const spawnPoints = [[144, 144], [240, 540], [840, 870], [650, 260], [350, 255], [100,  760]];
 
 process.on("message", function (message) {
     console.log(message.player.id);
@@ -104,7 +104,7 @@ wss.on('connection', (ws) => {
             });
             if (!newPlayer) throw Error(`New player ID ${newPlayerId} not found`);
             const outgoingMessage = {};
-            const spawnPoint = spawnPoints[0];
+            const spawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
             outgoingMessage.init = {x: spawnPoint[0], y: spawnPoint[1]};
             ws.send(JSON.stringify(outgoingMessage));
             ws.owner = JSON.parse(message).owner;

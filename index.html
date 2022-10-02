@@ -6,15 +6,47 @@
         height: 100%;
         background-color: black;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        gap: 2rem;
         padding: 2rem;
+    }
+    .modalRow {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+        flex-wrap: wrap;
     }
     .button {
         padding: 1rem;
-        height: 5rem;
+        height: 6rem;
         background-color: rgb(255, 138, 28);
         font-size: 3rem;
         cursor: pointer;
+        text-align: center;
+        min-width: 300px;
+    }
+    .controlBox {
+        min-width: 300px;
+        text-align: center;
+        height: 6rem;
+        padding: 1rem;
+        background-color: whitesmoke;
+    }
+    .shadeBox {
+        padding: 1rem;
+        min-width: 300px;
+        text-align: justify;
+        height: 6rem;
+        background-color: midnightblue;
+        color: lawngreen;
+    }
+    .vampireBox {
+        padding: 1rem;
+        min-width: 300px;
+        text-align: justify;
+        height: 6rem;
+        background-color: red;
+        color: white;
     }
     .buttonText {
         display: block;

@@ -61,55 +61,58 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('arrow', 'assets/sheets/arrow.png', { frameWidth: 20, frameHeight: 10 });
         this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
 
-        this.load.audio('theme', ['assets/sounds/vampireSpireTheme.wav'],{
+        this.load.audio('theme', ['assets/sounds/vampireSpireTheme.mp3'],{
             instances: 1
         });
-        this.load.audio('step', ['assets/sounds/stepGravel.wav'],{
+        this.load.audio('step', ['assets/sounds/stepGravel.mp3'],{
             instances: 1
         });
-        this.load.audio('step2', ['assets/sounds/stepGravel2.wav'],{
+        this.load.audio('step2', ['assets/sounds/stepGravel2.mp3'],{
             instances: 1
         });
-        this.load.audio('step3', ['assets/sounds/stepGravel3.wav'],{
+        this.load.audio('step3', ['assets/sounds/stepGravel3.mp3'],{
             instances: 1
         });
-        this.load.audio('step4', ['assets/sounds/stepGravel4.wav'],{
+        this.load.audio('step4', ['assets/sounds/stepGravel4.mp3'],{
             instances: 1
         });
-        this.load.audio('bloodForm', ['assets/sounds/bloodForm.wav'],{
+        this.load.audio('bloodForm', ['assets/sounds/bloodForm.mp3'],{
             instances: 1
         });
-        this.load.audio('bloodOrb', ['assets/sounds/bloodOrb.wav'],{
+        this.load.audio('bloodOrb', ['assets/sounds/bloodOrb.mp3'],{
             instances: 1
         });
-        this.load.audio('poisonOrb', ['assets/sounds/poisonOrb.wav'],{
+        this.load.audio('poisonOrb', ['assets/sounds/poisonOrb.mp3'],{
             instances: 1
         });
-        this.load.audio('bloodOrbImpact', ['assets/sounds/bloodOrbImpact.wav'],{
+        this.load.audio('bloodOrbImpact', ['assets/sounds/bloodOrbImpact.mp3'],{
             instances: 1
         });
-        this.load.audio('vampireBite', ['assets/sounds/vampireBite.wav'],{
+        this.load.audio('vampireBite', ['assets/sounds/vampireBite.mp3'],{
             instances: 1
         });
-        this.load.audio('vampireCharge', ['assets/sounds/vampireCharge.wav'],{
+        this.load.audio('vampireCharge', ['assets/sounds/vampireCharge.mp3'],{
             instances: 1
         });
-        this.load.audio('vampireMiss', ['assets/sounds/vampireMiss.wav'],{
+        this.load.audio('vampireMiss', ['assets/sounds/vampireMiss.mp3'],{
             instances: 1
         });
-        this.load.audio('bow', ['assets/sounds/bow.wav'],{
+        this.load.audio('bow', ['assets/sounds/bow.mp3'],{
             instances: 1
         });
-        this.load.audio('arrowImpact', ['assets/sounds/arrowImpact.wav'],{
+        this.load.audio('arrowImpact', ['assets/sounds/arrowImpact.mp3'],{
             instances: 1
         });
-        this.load.audio('arrowHit', ['assets/sounds/arrowHit.wav'],{
+        this.load.audio('arrowHit', ['assets/sounds/arrowHit.mp3'],{
             instances: 1
         });
-        this.load.audio('reload', ['assets/sounds/reload.wav'],{
+        this.load.audio('reload', ['assets/sounds/reload.mp3'],{
             instances: 1
         });
-        this.load.audio('fade', ['assets/sounds/fade.wav'],{
+        this.load.audio('fade', ['assets/sounds/fade.mp3'],{
+            instances: 1
+        });
+        this.load.audio('abilityReady', ['assets/sounds/abilityReady.mp3'],{
             instances: 1
         });
     }
@@ -138,6 +141,7 @@ export class Example extends Phaser.Scene
         const arrowHit = this.sound.add('arrowHit', { loop: false, volume: 0.4 });
         const reload = this.sound.add('reload', { loop: false, volume: 0.4 });
         const poisonOrb = this.sound.add('poisonOrb', { loop: false, volume: 0.4 });
+        const abilityReady = this.sound.add('abilityReady', { loop: false, volume: 0.4 });
 
         theme.play();
         step.play();
@@ -159,6 +163,7 @@ export class Example extends Phaser.Scene
         window.SoundManager.add("arrowHit", arrowHit);
         window.SoundManager.add("reload", reload);
         window.SoundManager.add("poisonOrb", poisonOrb);
+        window.SoundManager.add("abilityReady", abilityReady);
 
         //anims
         AnimationUtility.call(this, 
@@ -229,7 +234,6 @@ export class Example extends Phaser.Scene
         } else {
             this.character.setCircle(10, 2, 14);
         }
-        this.character.setCircle
         // this.physics.add.collider(this.character, this.mapLayer);
 
         // this.entitiesGroup.add(this.character);

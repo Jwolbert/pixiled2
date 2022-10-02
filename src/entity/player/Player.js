@@ -97,7 +97,7 @@ export default class Player extends Entity {
         }
         super.update();
         this.updateStats();
-        if (this.gameObject.alpha < 0.25) {
+        if (characters[this.name].visible && this.gameObject.alpha < 0.25) {
             this.gameObject.alpha = 0.25;
         }
     }
@@ -174,7 +174,12 @@ export default class Player extends Entity {
 
     abilityInput () {
         const control = this.controls.ability.get();
-        if (this.abilityCooldown-- > 0) return;
+        if (this.abilityCooldown === 0) {
+            window.SoundManager.play("abilityReady");
+        }
+        if (this.abilityCooldown-- > 0) {
+            return;
+        }
         if (control && this.ability) {
             if (this.abilityActive) {
                 super.removeEffect(this.ability.name);
