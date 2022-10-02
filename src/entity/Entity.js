@@ -184,15 +184,11 @@ export default class Entity {
                 if (!this.anim) {
                     this.anim = this.frame.texture.manager.game.anims.anims.entries[particleAnimationName];
                     this.frame = this.anim.frames[Math.floor(Math.random() * this.anim.frames.length)].frame;
-                    console.log("anim", this.anim);
                 }
                 var result = super.update(delta, step, processors);
 
                 this.t += delta;
 
-                // console.log(animationName);
-                // console.log(this.frame.texture.manager.game.anims.anims);
-                // console.log(this.frame.texture.manager.game.anims.anims.entries[animationName]);
                 if (this.t >= this.anim.msPerFrame)
                 {
 

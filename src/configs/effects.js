@@ -117,8 +117,7 @@ export default {
         name: "drained",
         selfTarget: false,
         apply() {
-            this.gameObject.setTint(0xff0000);
-            this.hp -= 5;
+            this.hp -= 10;
         },
         tick() {
 

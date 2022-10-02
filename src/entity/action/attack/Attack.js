@@ -49,8 +49,13 @@ export default function (name, entities, physics, attack, interactions, layer, a
             this.direction = attack.direction * -1;
             this.velocityX = Math.cos(this.direction);
             this.velocityY = Math.sin(this.direction);
-            this.gameObject.setCircle(attack.radius, attack.dimX * (this.velocityX + Math.abs(this.velocityY)) / 4, attack.dimY * (this.velocityY + Math.abs(this.velocityX)) / 4);
-
+            if (attack.dimX !== attack.dimY) {
+                this.gameObject.setCircle(attack.radius, attack.dimX * (this.velocityX + Math.abs(this.velocityY)) / 4, attack.dimY * (this.velocityY + Math.abs(this.velocityX)) / 4);
+            } else if (attack.melee) {
+                this.gameObject.setCircle(attack.radius, attack.dimX / 4, attack.dimY / 2);
+            } else {
+                this.gameObject.setCircle(attack.radius, attack.dimX / 4, attack.dimY / 4);
+            }
             this.anims = anims;
             this.layer = layer;
             this.entities = entities;
@@ -199,6 +204,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
     class AnimatedParticleFlight extends Phaser.GameObjects.Particles.Particle
     {
         anim;
+        yo = false;
         constructor (emitter)
         {
             super(emitter);
@@ -223,14 +229,26 @@ export default function (name, entities, physics, attack, interactions, layer, a
             if (this.t >= this.anim.msPerFrame)
             {
 
-                if (this.i >= this.anim.frames.length)
+                if (!this.yo && this.i >= this.anim.frames.length)
                 {
+                    if (this.anim.yoyo) {
+                        this.yo = true;
+                        this.i = this.anim.frames.length - 1;
+                    } else {
+                        this.i = 0;
+                    }
+                } else if(this.yo && this.i < 0) {
+                    this.yo = false;
                     this.i = 0;
                 }
 
                 this.frame = this.anim.frames[this.i].frame;
 
-                this.i++;
+                if (this.yo) {
+                    this.i--;
+                } else {
+                    this.i++;
+                }
 
                 this.t -= this.anim.msPerFrame;
             }
@@ -242,6 +260,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
     class AnimatedParticleExplosion extends Phaser.GameObjects.Particles.Particle
     {
         anim;
+        yo = false;
         constructor (emitter)
         {
             super(emitter);
@@ -266,14 +285,26 @@ export default function (name, entities, physics, attack, interactions, layer, a
             if (this.t >= this.anim.msPerFrame)
             {
 
-                if (this.i >= this.anim.frames.length)
+                if (!this.yo && this.i >= this.anim.frames.length)
                 {
+                    if (this.anim.yoyo) {
+                        this.yo = true;
+                        this.i = this.anim.frames.length - 1;
+                    } else {
+                        this.i = 0;
+                    }
+                } else if(this.yo && this.i < 0) {
+                    this.yo = false;
                     this.i = 0;
                 }
 
                 this.frame = this.anim.frames[this.i].frame;
 
-                this.i++;
+                if (this.yo) {
+                    this.i--;
+                } else {
+                    this.i++;
+                }
 
                 this.t -= this.anim.msPerFrame;
             }
@@ -285,6 +316,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
     class AnimatedParticleFizzle extends Phaser.GameObjects.Particles.Particle
     {
         anim;
+        yo = false;
         constructor (emitter)
         {
             super(emitter);
@@ -309,14 +341,26 @@ export default function (name, entities, physics, attack, interactions, layer, a
             if (this.t >= this.anim.msPerFrame)
             {
 
-                if (this.i >= this.anim.frames.length)
+                if (!this.yo && this.i >= this.anim.frames.length)
                 {
+                    if (this.anim.yoyo) {
+                        this.yo = true;
+                        this.i = this.anim.frames.length - 1;
+                    } else {
+                        this.i = 0;
+                    }
+                } else if(this.yo && this.i < 0) {
+                    this.yo = false;
                     this.i = 0;
                 }
 
                 this.frame = this.anim.frames[this.i].frame;
 
-                this.i++;
+                if (this.yo) {
+                    this.i--;
+                } else {
+                    this.i++;
+                }
 
                 this.t -= this.anim.msPerFrame;
             }
