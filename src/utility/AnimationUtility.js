@@ -1,4 +1,4 @@
-export default function (listOfNames) {
+export default function (listOfNames, debug) {
     const animationConfig = {
         key: 'down',
         yoyo: true,
@@ -11,7 +11,7 @@ export default function (listOfNames) {
         const path = pathMap[name];
         const data = require(`../../assets/json/${path}.json`);
         Object.keys(data[name].animations).forEach((animation) => {
-            console.log('animation name', name + "_" + animation)
+            if(debug) console.log('animation name', name + "_" + animation);
             const config = {
                 key: name + "_" + animation,
                 frames: this.anims.generateFrameNumbers(path, data[name].animations[animation]),

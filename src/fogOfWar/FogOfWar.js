@@ -108,8 +108,6 @@ export default class FogOfWar {
             this.raycaster.mapGameObjects(this.currentlyMapped);
         }
 
-        console.log(this.tilemapLayer);
-
         // map all tiles by 
         const mapByLayer = false;
         if (mapByLayer) {
@@ -123,8 +121,6 @@ export default class FogOfWar {
                 this.raycaster.mapGameObjects(this.currentlyMapped);
             }
         }
-
-        console.log(this.raycaster);
 
         // TODO: get this working
         // let x = this.physics.add.overlap(this.ray, this.entitiesGroup, function(rayCircle, target){

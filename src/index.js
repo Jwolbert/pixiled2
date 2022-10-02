@@ -8,7 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 setTimeout(() => {createMenu()}, 50);
 
 let config;
-
+window.character = document.location.search.includes("bloodLord") ? "vampire" : "hatman";
+const audio = new Audio('/assets/sounds/start.wav');
+audio.volume = 0.1;
 function createMenu () {
     const body = document.body;
     const modal = document.createElement('div');
@@ -176,17 +178,14 @@ window.createItemContainer = function (items) {
     });
     bag.appendChild(itemList);
     bag.addEventListener('dragstart', (data) => {
-        console.log(data.screenX, data.screenY);
         dX = data.screenX;
         dY = data.screenY;
     });
     bag.addEventListener('dragend', (data) => {
-        console.log(data.screenX, data.screenY);
         dX = data.screenX - dX;
         dY = data.screenY - dY;
         bag.style.top = Number(bag.style.top.replace("px", "")) + dY;
         bag.style.left = Number(bag.style.left.replace("px", "")) + dX;
-        console.log(bag.style.top, bag.style.left);
     });
     const body = document.body;
     body.appendChild(bag);
@@ -198,6 +197,7 @@ function destroyMenu () {
 }
 
 function sendId () {
+    audio.play();
     const oReq = new XMLHttpRequest();
     oReq.open("POST", "http://" + window.location.hostname + ":4444/joinGame");
     oReq.setRequestHeader('Content-Type', 'application/json');
@@ -228,8 +228,6 @@ window.switchRoom = function (port) {
 function startGame () {
     const background = document.body;
     const gameWindow = document.createElement("canvas");
-    console.log(document);
-    console.log(background);
     gameWindow.id = "gameWindow";
     gameWindow.oncontextmenu = function () {
         return false;
@@ -248,16 +246,15 @@ function startGame () {
         parent: 'phaser-example',
         width: 800,
         height: 800,
-        // zoom: 1.25,
         scene: [ Example ],
-        // roundPixels: true,
+        roundPixels: true,
         physics: {
             default: 'arcade',
             arcade: {
-                debug: false,
+                debug: true,
             }
         },
-        // pixelArt: true,
+        pixelArt: true,
         plugins: {
             scene: [
                 {
@@ -270,6 +267,5 @@ function startGame () {
         canvas: document.getElementById('gameWindow'),
     };
     window.game = new Phaser.Game(config);
-    console.log("UI CREATED");
 }
 

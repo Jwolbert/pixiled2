@@ -1,4 +1,17 @@
 export default {
+    slashing: function(gameObject) {
+        return {
+        effected: {
+            alpha: { start: 0.9, end: 0.1, ease: 'Expo.easeOut' },
+            quantity: 1,
+            frequency: 50,
+            angle: { min: 0, max: 360 },
+            speed: 8,
+            // gravityY: 100,
+            lifespan: { min: 1500, max: 1500 },
+            follow: gameObject,
+        },
+    }},
     poisoned: function(gameObject) {
         return {
         effected: {

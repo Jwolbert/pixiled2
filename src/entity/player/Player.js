@@ -4,10 +4,13 @@ import PlayerInventoryControls from "../../controls/PlayerInventoryControls";
 import Entity from "../Entity";
 import items from "../../configs/items"
 import weapons from "../../configs/weapons";
+import characters from "../../configs/characters";
 export default class Player extends Entity {
     controls;
     weapon;
-    attackCooldown;
+    primaryWeapon;
+    secondaryWeapon;
+    attackCooldown = 0;
     weaponIndex = 0;
     equipped = {
         weapons: [],
@@ -17,33 +20,33 @@ export default class Player extends Entity {
     maxHealth = 100;
     maxMana = 100;
     maxStamina = 100;
-    manaRegen = 0.2;
+    manaRegen = 0.3;
     healthRegen = 0.1;
-    staminaRegen = 0.1;
+    staminaRegen = 0.5;
     regenCounter = 0;
     regenRate = 1;
     roundingConstant = 1000;
     blockMovement = false;
     blockMovementCounter = 0
     blockMovementCounterMax = 50;
+    blockMovementEffectName = null;
     walkingInterval = undefined;
 
-    constructor (name, gameObject, input, scene)
+    constructor (name, gameObject, input, scene, interactions)
     {
-        super(name, gameObject, window.clientId, scene);
+        super(name, gameObject, window.clientId, scene, interactions);
         this.controls = {};
         this.controls.velocity = new PlayerVelocityControls(input);
         this.controls.attack = new PlayerAttackControls(input);
         this.controls.inventory = new PlayerInventoryControls(input);
         this.type = "player";
-        this.weapon = weapons.vampireBite;
-        this.equipped.items.push(items.devRing.equip.call(this));
-        // this.equipped.weapons.push(weapons["poisonOrbScroll"]);
-        // this.equipped.weapons.push(weapons["iceOrbScroll"]);
-        this.equipped.weapons = Object.values(weapons);
-        console.log(this.equipped.weapons);
-        this.attackCooldown = this.weapon.cooldown;
-        console.log(scene);
+        this.primaryWeapon = characters[this.name].weapons[0];
+        this.secondaryWeapon = characters[this.name].weapons[1];
+        this.weapon = this.primaryWeapon;
+        characters[this.name].items.forEach((item) => {
+            this.equipped.items.push(item.equip.call(this));
+        });
+        this.equipped.weapons = characters[this.name].weapons;
     }
 
     initPlayerPosition (JSON) {
@@ -77,7 +80,7 @@ export default class Player extends Entity {
         } else if (direction > Math.PI * (5 / 4) && direction < Math.PI * (7 / 4)) {
             this.setAnimation('up');
         }
-        if (this.currentAnimation !== 'wait' && !this.walkingInterval) {
+        if (this.currentAnimation !== 'wait' && !this.walkingInterval && !this.blockMovement) {
             console.log("sounds");
             window.SoundManager.play('step');
             this.walkingInterval = setInterval(() => {
@@ -85,7 +88,7 @@ export default class Player extends Entity {
                 window.SoundManager.play('step');
             }, 500);
             console.log(this.walkingInterval);
-        } else if (this.currentAnimation === 'wait') {
+        } else if (this.currentAnimation === 'wait' || this.blockMovement) {
             clearInterval(this.walkingInterval);
             this.walkingInterval = undefined;
         }
@@ -121,11 +124,12 @@ export default class Player extends Entity {
         }
         const input = this.controls.attack.get();
         if (input) {
+            this.weapon = input.button === "left" ? this.primaryWeapon : this.secondaryWeapon;
             if (this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost || this.hp < this.weapon.healthCost) return;
             this.mana -= this.weapon.manaCost;
             this.stamina -= this.weapon.staminaCost;
             this.hp -= this.weapon.healthCost;
-            this.attackCooldown = this.weapon.cooldown;
+            this.attackCooldown = this.weapon.attackCooldown;
             const location = {x: this.gameObject.x + input.location.x, y: this.gameObject.y + input.location.y};
             this.currentAction = {
                 ...this.weapon.action,
@@ -133,7 +137,15 @@ export default class Player extends Entity {
                 location: location,
                 source: this.id,
             };
-            this.weapon.action.attacking?.apply.call(this,this.currentAction);
+            if (this.weapon.action.attacking) {
+                this.blockMovementEffectName = this.weapon.action.attacking.name;
+                super.addEffect({...this.weapon.action.attacking}, this.currentAction);
+                this.interactions.push({
+                    source: this.id,
+                    target: this.id,
+                    effect: this.weapon.action.attacking.id,
+                });
+            }
         }
     }
 
@@ -173,6 +185,7 @@ export default class Player extends Entity {
     }
 
     debounce () {
+        super.removeEffect(this.blockMovementEffectName);
         this.gameObject.setBounce(0, 0);
         this.blockMovement = false;
         this.blockMovementCounter = 0;

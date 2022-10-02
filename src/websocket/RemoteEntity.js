@@ -8,8 +8,8 @@ export default class RemoteEntity extends Entity {
     positionBufferSumX;
     positionBufferSumY;
 
-    constructor (JSON, gameObject, id) {
-        super(JSON.name, gameObject, id);
+    constructor (JSON, gameObject, id, scene) {
+        super(JSON.name, gameObject, id, scene);
         this.type = JSON.type;
         this.gameObject.setX(JSON.x);
         this.gameObject.setY(JSON.y);
@@ -62,5 +62,22 @@ export default class RemoteEntity extends Entity {
 
     debounce () {
 
+    }
+
+    addEffect (effect) {
+        console.log("effect", effect);
+        if (effect.source) {
+            if (!this.effects[effect.name]) {
+                this.addEmitter(effect);
+                this.effects[effect.name] = effect;
+            }
+            this.effects[effect.name].duration = effect.duration;
+        } else {
+            if (this.effects[effect.name]) {
+                const myEffect = this.effects[effect.name];
+                myEffect?.emitter?.stop();
+                delete this.effects[effect.name];
+            }
+        }
     }
 };

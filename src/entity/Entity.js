@@ -22,13 +22,15 @@ export default class Entity {
     mana = 100;
     stamina = 100;
     effectTimer = 0;
-    effectTimerMaximum = 100;
+    effectTimerMaximum = 25;
     defaultSpeed = 75;
     speed = 75;
     direction;
     scene;
+    blockMovement = false;
+    interactions;
 
-    constructor (name, gameObject, id, scene)
+    constructor (name, gameObject, id, scene, interactions)
     {
         if (id) {
             this.id = id; 
@@ -38,11 +40,11 @@ export default class Entity {
         this.name = name;
         this.gameObject = gameObject;
         this.gameObject.id = this.id;
-        console.log("GAMEOBJECT ID", this.gameObject.id);
         this.dead = false;
         this.x = gameObject.x;
         this.y = gameObject.y;
         this.scene = scene;
+        this.interactions = interactions;
     }
 
     getJSON () {
@@ -90,10 +92,10 @@ export default class Entity {
     
     tickEffect () {
         this.effectTimer += 1;
-        if (this.effectTimer > 100) {
+        if (this.effectTimer > this.effectTimerMaximum) {
             Object.values(this.effects).forEach((effect, index) => {
                 if(effect.duration < 1) {
-                    effect.emitter.stop();
+                    effect?.emitter?.stop();
                     effect.expire.call(this);
                     if (this.effects.length <= 1) {
                         this.effects = {};
@@ -113,6 +115,9 @@ export default class Entity {
         if (this.currentAnimation !== animation) {
             this.gameObject.play(this.name + '_' + animation);
             this.currentAnimation = animation;
+            if (this.blockMovement) {
+                this.gameObject.stop();
+            }
         }
     }
 
@@ -132,16 +137,31 @@ export default class Entity {
         return action;
     }
 
-    addEffect (effect) {
+    addEffect (effect, addon) {
+        if (!effect.source && !addon) return;
         if (!this.effects[effect.name]) {
-            effect.apply.call(this);
+            effect.apply.call(this, addon);
             this.addEmitter(effect);
             this.effects[effect.name] = effect;
         } else if (effect.reApply) {
             effect.expire.call(this);
-            effect.apply.call(this);
+            effect.apply.call(this, addon);
         }
         this.effects[effect.name].duration = effect.duration;
+    }
+
+    removeEffect (effectName) {
+        if (this.effects[effectName]) {
+            const effect = this.effects[effectName];
+            effect.expire.call(this);
+            effect?.emitter?.stop();
+            this.interactions.push({
+                source: undefined,
+                target: this.id,
+                effect: effect.id,
+            });
+            delete this.effects[effectName];
+        }
     }
 
     addEmitter (effect) {
@@ -150,6 +170,7 @@ export default class Entity {
         class AnimatedParticle extends Phaser.GameObjects.Particles.Particle
         {
             anim;
+            yo = false;
             constructor (emitter)
             {
                 super(emitter);
@@ -163,6 +184,7 @@ export default class Entity {
                 if (!this.anim) {
                     this.anim = this.frame.texture.manager.game.anims.anims.entries[particleAnimationName];
                     this.frame = this.anim.frames[Math.floor(Math.random() * this.anim.frames.length)].frame;
+                    console.log("anim", this.anim);
                 }
                 var result = super.update(delta, step, processors);
 
@@ -174,14 +196,26 @@ export default class Entity {
                 if (this.t >= this.anim.msPerFrame)
                 {
 
-                    if (this.i >= this.anim.frames.length)
+                    if (!this.yo && this.i >= this.anim.frames.length)
                     {
+                        if (this.anim.yoyo) {
+                            this.yo = true;
+                            this.i = this.anim.frames.length - 1;
+                        } else {
+                            this.i = 0;
+                        }
+                    } else if(this.yo && this.i < 0) {
+                        this.yo = false;
                         this.i = 0;
                     }
 
                     this.frame = this.anim.frames[this.i].frame;
 
-                    this.i++;
+                    if (this.yo) {
+                        this.i--;
+                    } else {
+                        this.i++;
+                    }
 
                     this.t -= this.anim.msPerFrame;
                 }
@@ -192,7 +226,7 @@ export default class Entity {
 
         const particleManager = this.scene.add.particles(effect.particleSheet);
         particleManager.setDepth(3);
-        // dynamicLayer.add(particleManager);
+        this.scene.dynamicLayer.add(particleManager);
         effect.emitter = particleManager.createEmitter({...particles[effect.name](this.gameObject).effected, particleClass: AnimatedParticle});
     }
 }

@@ -6,8 +6,17 @@ export default {
         equip() {
             this.manaRegen += 5;
             this.staminaRegen += 5;
-            this.healthRegen += 1;
+            this.healthRegen += 0;
             return selfRef.devRing;
         },
-    }
+    },
+    bloodChalice: {
+        name: "bloodChalice",
+        equip() {
+            this.manaRegen += 0.2;
+            this.staminaRegen += 3;
+            this.healthRegen += 0.1;
+            return selfRef.bloodChalice;
+        },
+    },
 }

@@ -1,0 +1,13 @@
+{
+    "arrow": {
+        "frameWidth": 20,
+        "frameHeight": 10,
+        "yoyo": true,
+        "animations": {
+            "arrow": {
+                "start": 0,
+                "end": 3
+            }
+        }
+    }
+}

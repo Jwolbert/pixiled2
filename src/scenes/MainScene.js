@@ -45,8 +45,8 @@ export class Example extends Phaser.Scene
     {
         //this.load.spritesheet('hatman', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
         this.load.image('ruins', 'assets/sheets/jawbreaker_tiles-extruded.png');
-        //this.load.spritesheet('mainCharacters', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
-        this.load.spritesheet('mainCharacters2x', 'assets/sheets/mainCharacters2x.png', { frameWidth: 48, frameHeight: 64 });
+        this.load.spritesheet('mainCharacters', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
+        // this.load.spritesheet('mainCharacters2x', 'assets/sheets/mainCharacters2x.png', { frameWidth: 48, frameHeight: 64 });
         this.load.spritesheet('vampire', 'assets/sheets/vampire.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('slash', 'assets/sheets/slash.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('fireballSprite', 'assets/sheets/fireballSprite.png', { frameWidth: 64, frameHeight: 32 });
@@ -58,6 +58,7 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('iceOrb', 'assets/sheets/iceOrb.png', { frameWidth: 52, frameHeight: 52 });
         this.load.spritesheet('iceOrbParticles', 'assets/sheets/iceOrbParticles.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('portals', 'assets/sheets/portals.png', { frameWidth: 48, frameHeight: 96 });
+        this.load.spritesheet('arrow', 'assets/sheets/arrow.png', { frameWidth: 20, frameHeight: 10 });
         this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
 
         this.load.audio('theme', ['assets/sounds/vampireSpireTheme.wav'],{
@@ -101,9 +102,8 @@ export class Example extends Phaser.Scene
 
         //anims
         AnimationUtility.call(this, 
-            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles', 'portals', 'vampire', 'vampireBite']
-            );
-        console.log("anims", this.anims.anims);
+            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles', 'portals', 'vampire', 'vampireBite', 'arrow']
+            , this.debug);
 
         // map
         const map = this.make.tilemap({ key: 'map' });
@@ -155,12 +155,7 @@ export class Example extends Phaser.Scene
         this.staticLayer.setMask(mask);
         */
 
-
-        console.log(map);
         this.map = map;
-        
-        console.log(this);
-
         this.entitiesGroup = this.physics.add.group();
 
 
@@ -169,18 +164,19 @@ export class Example extends Phaser.Scene
         //game shit
         this.character = this.physics.add.sprite(72, 72, 'vampire').setScale(1).setDepth(4);
         this.character.body.setSize(18, 20, true);
-        this.character.setCircle(10, 6, 14);
-        console.log(this.character, "CENETER")
+        if (window.character === "vampire") {
+            this.character.setCircle(10, 6, 14);
+        } else {
+            this.character.setCircle(10, 2, 14);
+        }
+        this.character.setCircle
         // this.physics.add.collider(this.character, this.mapLayer);
-        console.log(this.character);
 
         // this.entitiesGroup.add(this.character);
         this.physics.add.collider(this.character, this.mapLayer);
-
         this.dynamicLayer.add(this.character);
-        
-        this.player = new Player('vampire', this.character, this.input, this);
-        this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
+        this.player = new Player(window.character, this.character, this.input, this, this.interactions);
+        // this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
 
         this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);

@@ -1,5 +1,5 @@
 {
-    "hatman": "mainCharacters2x",
+    "hatman": "mainCharacters",
     "slash": "slash",
     "fireball": "fireballSprite",
     "bloodOrb": "bloodOrb",
@@ -10,5 +10,6 @@
     "iceOrbParticles": "iceOrbParticles",
     "portals": "portals",
     "vampire": "vampire",
-    "vampireBite": "vampireBite"
+    "vampireBite": "vampireBite",
+    "arrow": "arrow"
 }
