@@ -44,7 +44,7 @@ export default {
             this.speed = this.defaultSpeed;
             console.log("expire");
         },
-        duration: 5,
+        duration: 50,
     },
     bitten: {
         id: "bitten",
@@ -53,6 +53,22 @@ export default {
         selfTarget: false,
         apply() {
             this.hp -= 20;
+        },
+        tick() {
+
+        },
+        expire() {
+
+        },
+        duration: 1,
+    },
+    shot: {
+        id: "shot",
+        name: "shot",
+        reApply: true,
+        selfTarget: false,
+        apply() {
+            this.hp -= 8;
         },
         tick() {
 
@@ -122,11 +138,11 @@ export default {
 
         },
         tick() {
-            this.hp -= 8;
+            this.hp -= 1;
         },
         expire() {
         },
-        duration: 6,
+        duration: 30,
     },
     fade: {
         id: "fade",
@@ -134,10 +150,9 @@ export default {
         // particleName: "bloodOrbParticles_particles",
         // particleSheet: "bloodOrbParticles",
         selfTarget: true,
+        cancelOnAttack: true,
         apply() {
-            this.gameObject.setAlpha(0.9);
             this.speed += 25;
-            this.blockMovement = true;
         },
         tick() {
             this.gameObject.alpha -= 0.1;
@@ -146,8 +161,9 @@ export default {
         expire() {
             this.gameObject.setAlpha(1);
             this.speed = this.defaultSpeed;
+            this.abilityCooldown = 500;
         },
-        duration: 50,
+        duration: 100,
     },
     bloodForm: {
         id: "bloodForm",
@@ -155,18 +171,21 @@ export default {
         particleName: "bloodOrbParticles_particles",
         particleSheet: "bloodOrbParticles",
         selfTarget: true,
+        requiresMana: true,
+        cancelOnAttack: true,
         apply() {
             this.gameObject.setAlpha(0);
             this.gameObject.stop();
-            this.speed += 50;
+            this.speed += 75;
         },
         tick() {
-            this.health -= 2;
+            this.hp -= 2;
             this.mana -= 4;
         },
         expire() {
             this.speed = this.defaultSpeed;
             this.gameObject.setAlpha(1);
+            this.mana = 0;
         },
         duration: 200,
     },

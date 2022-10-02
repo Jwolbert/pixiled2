@@ -26,7 +26,7 @@ export default {
         attackCooldown: 50,
         action: attacks.poisonOrb,
         healthCost: 0,
-        manaCost: 50,
+        manaCost: 70,
         staminaCost: 10,
     },
     vampireBite: {

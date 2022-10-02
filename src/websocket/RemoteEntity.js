@@ -7,6 +7,7 @@ export default class RemoteEntity extends Entity {
     positionBufferSize = 2;
     positionBufferSumX;
     positionBufferSumY;
+    deadReck = 200;
 
     constructor (JSON, gameObject, id, scene) {
         super(JSON.name, gameObject, id, scene);
@@ -58,6 +59,11 @@ export default class RemoteEntity extends Entity {
         this.velocityY = Math.log10(Math.abs(difY) + 1) * difYSign * this.speed * 1.5;
         this.gameObject.setVelocityX(this.velocityX);
         this.gameObject.setVelocityY(this.velocityY);
+        console.log(Math.abs(difX) + Math.abs(difY), this.deadReck);
+        if ((Math.abs(difX) + Math.abs(difY)) > 30) {
+            this.gameObject.setX(JSON.x);
+            this.gameObject.setY(JSON.y);
+        }
     }
 
     debounce () {
@@ -65,7 +71,6 @@ export default class RemoteEntity extends Entity {
     }
 
     addEffect (effect) {
-        console.log("effect", effect);
         if (effect.source) {
             if (!this.effects[effect.name]) {
                 this.addEmitter(effect);

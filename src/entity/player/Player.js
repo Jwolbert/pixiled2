@@ -1,9 +1,8 @@
 import PlayerVelocityControls from "../../controls/PlayerVelocityControls";
 import PlayerAttackControls from "../../controls/PlayerAttackControls";
 import PlayerInventoryControls from "../../controls/PlayerInventoryControls";
+import PlayerAbilityControls from "../../controls/PlayerAbilityControls";
 import Entity from "../Entity";
-import items from "../../configs/items"
-import weapons from "../../configs/weapons";
 import characters from "../../configs/characters";
 export default class Player extends Entity {
     controls;
@@ -31,6 +30,9 @@ export default class Player extends Entity {
     blockMovementCounterMax = 50;
     blockMovementEffectName = null;
     walkingInterval = undefined;
+    ability = undefined;
+    abilityActive = false;
+    abilityCooldown = 0;
 
     constructor (name, gameObject, input, scene, interactions)
     {
@@ -39,6 +41,7 @@ export default class Player extends Entity {
         this.controls.velocity = new PlayerVelocityControls(input);
         this.controls.attack = new PlayerAttackControls(input);
         this.controls.inventory = new PlayerInventoryControls(input);
+        this.controls.ability = new PlayerAbilityControls(input);
         this.type = "player";
         this.primaryWeapon = characters[this.name].weapons[0];
         this.secondaryWeapon = characters[this.name].weapons[1];
@@ -47,6 +50,7 @@ export default class Player extends Entity {
             this.equipped.items.push(item.equip.call(this));
         });
         this.equipped.weapons = characters[this.name].weapons;
+        this.ability = characters[this.name].ability;
     }
 
     initPlayerPosition (JSON) {
@@ -63,6 +67,7 @@ export default class Player extends Entity {
         this.velocityInput();
         this.attackInput();
         this.inventoryInput();
+        this.abilityInput();
         let direction = Math.atan( this.velocityY / this.velocityX);
         if (this.velocityX < 0) {
             direction += Math.PI;
@@ -106,8 +111,9 @@ export default class Player extends Entity {
         }
         if(this.blockMovement && this.blockMovementCounter++ < this.blockMovementCounterMax) {
             return;
+        } else if (this.blockMovement && (input.velocityX + input.velocityY) !== 0) {
+            this.debounce();
         }
-        if (input.velocityX + input.velocityY) this.debounce();
         this.velocityX = input.velocityX * this.speed;
         this.velocityY = input.velocityY * this.speed;
     }
@@ -124,8 +130,17 @@ export default class Player extends Entity {
         }
         const input = this.controls.attack.get();
         if (input) {
-            this.weapon = input.button === "left" ? this.primaryWeapon : this.secondaryWeapon;
             if (this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost || this.hp < this.weapon.healthCost) return;
+            this.weapon = input.button === "left" ? this.primaryWeapon : this.secondaryWeapon;
+            if (input.button === "left") {
+                this.weapon = this.primaryWeapon;
+                if (this.abilityActive) {
+                    super.removeEffect(this.ability.name);
+                    this.abilityActive = false;
+                }
+            } else {
+                this.weapon = this.secondaryWeapon
+            }
             this.mana -= this.weapon.manaCost;
             this.stamina -= this.weapon.staminaCost;
             this.hp -= this.weapon.healthCost;
@@ -156,6 +171,25 @@ export default class Player extends Entity {
             if (this.weaponIndex < 0) this.weaponIndex = this.equipped.weapons.length;
             console.log(this.weaponIndex, control);
             this.weapon = this.equipped.weapons[this.weaponIndex % this.equipped.weapons.length];
+        }
+    }
+
+    abilityInput () {
+        const control = this.controls.ability.get();
+        if (this.abilityCooldown-- > 0) return;
+        if (control && this.ability) {
+            if (this.abilityActive) {
+                super.removeEffect(this.ability.name);
+                this.abilityActive = false;
+            } else {
+                super.addEffect({...this.ability}, true);
+                this.interactions.push({
+                    source: this.id,
+                    target: this.id,
+                    effect: this.ability.id,
+                });
+                this.abilityActive = true;
+            }
         }
     }
 

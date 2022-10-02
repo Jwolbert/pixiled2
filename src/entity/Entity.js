@@ -22,7 +22,7 @@ export default class Entity {
     mana = 100;
     stamina = 100;
     effectTimer = 0;
-    effectTimerMaximum = 25;
+    effectTimerMaximum = 10;
     defaultSpeed = 75;
     speed = 75;
     direction;
@@ -94,7 +94,7 @@ export default class Entity {
         this.effectTimer += 1;
         if (this.effectTimer > this.effectTimerMaximum) {
             Object.values(this.effects).forEach((effect, index) => {
-                if(effect.duration < 1) {
+                if(effect.duration < 1 || (effect.requiresMana && this.mana < 0)) {
                     effect?.emitter?.stop();
                     effect.expire.call(this);
                     if (this.effects.length <= 1) {

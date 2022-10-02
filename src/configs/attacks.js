@@ -52,7 +52,7 @@ export default {
         collideHealth: 0,
         bounce: 1,
         attacking: undefined,
-        effect: effects.bitten,
+        effect: effects.shot,
         selfTarget: false,
         explodes: true,
         explodeRadius: 0,

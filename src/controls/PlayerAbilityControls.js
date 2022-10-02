@@ -6,7 +6,7 @@ export default class PlayerInventoryControls {
     constructor (input) {
         this.input = input;
         this.input.keyboard.on('keydown', (event) => {
-            if (event.keyCode === 32) {
+            if (event.keyCode === 69) {
                 this.activate = true;
             }
         });
