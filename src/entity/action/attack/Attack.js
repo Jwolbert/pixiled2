@@ -79,6 +79,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 // if (!this.attack.source) return;
                 this.physics.add.collider(this.gameObject, this.layer, () => {
                     if (this.collideHealth-- <= 0) {
+                        window.SoundManager.play(attack.missSound);
                         this.explode();
                     }
                 });
@@ -88,6 +89,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
             if (!this.attack.source && this.attack.hidden) {
                 this.gameObject.alpha = 0;
             }
+            window.SoundManager.play(attack.sound);
         }
 
         createFlightEmitter () {
@@ -180,7 +182,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                         if (this.attack.attached && body.gameObject.id === this.attack.source) {
                             attached = true;
                         }
-                        if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && (this.explode())))) {
+                        if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && (window.SoundManager.play(attack.hitSound) && this.explode())))) {
                             this.interactions.push({
                                 source: this.attack.source,
                                 target: body.gameObject.id,
@@ -191,9 +193,11 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 });
                 if (this.attack.attached && !attached) {
                     console.log("attttaacccchhh");
+                    window.SoundManager.play(attack.missSound);
                     this.explode();
                 }
             } else {
+                if (!this.exploded) window.SoundManager.play(attack.missSound);
                 this.explode();
             }
 

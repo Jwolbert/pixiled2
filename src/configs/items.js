@@ -14,7 +14,7 @@ export default {
         name: "bloodChalice",
         equip() {
             this.manaRegen += 0.2;
-            this.staminaRegen += 3;
+            this.staminaRegen += 2;
             this.healthRegen += 0.1;
             return selfRef.bloodChalice;
         },

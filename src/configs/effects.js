@@ -117,7 +117,7 @@ export default {
         name: "drained",
         selfTarget: false,
         apply() {
-            this.hp -= 10;
+            this.hp -= 20;
         },
         tick() {
 
@@ -152,6 +152,7 @@ export default {
         cancelOnAttack: true,
         apply() {
             this.speed += 25;
+            window.SoundManager.play("fade");
         },
         tick() {
             this.gameObject.alpha -= 0.1;
@@ -176,15 +177,17 @@ export default {
             this.gameObject.setAlpha(0);
             this.gameObject.stop();
             this.speed += 75;
+            this.silent = true;
+            window.SoundManager.play("bloodForm");
         },
         tick() {
-            this.hp -= 2;
-            this.mana -= 4;
+            this.mana -= 5;
         },
         expire() {
             this.speed = this.defaultSpeed;
             this.gameObject.setAlpha(1);
-            this.mana = 0;
+            if (this.mana < 0) this.mana = 0;
+            this.silent = false;
         },
         duration: 200,
     },

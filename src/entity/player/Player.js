@@ -33,6 +33,7 @@ export default class Player extends Entity {
     ability = undefined;
     abilityActive = false;
     abilityCooldown = 0;
+    silent = false;
 
     constructor (name, gameObject, input, scene, interactions)
     {
@@ -85,20 +86,20 @@ export default class Player extends Entity {
         } else if (direction > Math.PI * (5 / 4) && direction < Math.PI * (7 / 4)) {
             this.setAnimation('up');
         }
-        if (this.currentAnimation !== 'wait' && !this.walkingInterval && !this.blockMovement) {
-            console.log("sounds");
+        if (this.currentAnimation !== 'wait' && !this.walkingInterval && !this.blockMovement && !this.silent) {
             window.SoundManager.play('step');
             this.walkingInterval = setInterval(() => {
-                console.log("interval");
                 window.SoundManager.play('step');
             }, 500);
-            console.log(this.walkingInterval);
-        } else if (this.currentAnimation === 'wait' || this.blockMovement) {
+        } else if (this.currentAnimation === 'wait' || this.blockMovement || this.silent) {
             clearInterval(this.walkingInterval);
             this.walkingInterval = undefined;
         }
         super.update();
         this.updateStats();
+        if (this.gameObject.alpha < 0.25) {
+            this.gameObject.alpha = 0.25;
+        }
     }
 
     velocityInput () {
@@ -130,16 +131,13 @@ export default class Player extends Entity {
         }
         const input = this.controls.attack.get();
         if (input) {
-            if (this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost || this.hp < this.weapon.healthCost) return;
             this.weapon = input.button === "left" ? this.primaryWeapon : this.secondaryWeapon;
+            if (this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost || this.hp < this.weapon.healthCost) return;
             if (input.button === "left") {
-                this.weapon = this.primaryWeapon;
                 if (this.abilityActive) {
                     super.removeEffect(this.ability.name);
                     this.abilityActive = false;
                 }
-            } else {
-                this.weapon = this.secondaryWeapon
             }
             this.mana -= this.weapon.manaCost;
             this.stamina -= this.weapon.staminaCost;

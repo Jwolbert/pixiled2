@@ -56,8 +56,8 @@ window.createCharacterStats = function () {
         statCard.style.borderWidth = "3px";
         statCard.style.borderColor = "gray";
         statCard.style.position = "absolute";
-        statCard.style.top = 200;
-        statCard.style.left = 75;
+        statCard.style.top = 10;
+        statCard.style.left = 10;
         // statCard.style.backgroundImage = "url(../assets/images/scroll.png)";
 
 
@@ -239,7 +239,7 @@ function startGame () {
     // background.style.padding = "5%";
     background.style.flexDirection = "row";
     background.style.justifyContent = "center";
-    window.createItemContainer([1,2,3]);
+    // window.createItemContainer([1,2,3]);
     window.createCharacterStats();
     config = {
         type: Phaser.CANVAS,
@@ -251,7 +251,7 @@ function startGame () {
         physics: {
             default: 'arcade',
             arcade: {
-                debug: true,
+                debug: false,
             }
         },
         pixelArt: true,

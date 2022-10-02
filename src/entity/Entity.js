@@ -57,6 +57,8 @@ export default class Entity {
             velocityY: this.velocityY,
             dead: this.dead,
             hp: this.hp,
+            mana: this.mana,
+            stamina: this.stamina,
             owner: this.owner,
             currentAnimation: this.currentAnimation,
             type: this.type,

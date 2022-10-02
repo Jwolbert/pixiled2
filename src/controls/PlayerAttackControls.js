@@ -31,27 +31,6 @@ export default class PlayerAttackControls {
         this.input.on('gameout', () => {
             this.attacking = false;
         });
-
-        // this.input.on('pointerdown', (pointer) => {
-        //     if (this.attacking) {
-        //         return;
-        //     }
-        //     console.log("click:", pointer.x, pointer.y);
-        //     const dx = pointer.x - this.screenWidth / 2;
-        //     const dy = this.screenHeight / 2 - pointer.y;
-        //     console.log("delta", dx, dy);
-        //     this.direction = Math.atan( dy / dx);
-        //     if (dx < 0) {
-        //         this.direction += Math.PI;
-        //     } else if (dx >= 0 && dy < 0) {
-        //         this.direction += Math.PI * 2;
-        //     }
-        //     this.location = {x: Math.cos(this.direction) * this.range, y: -1 * Math.sin(this.direction) * this.range}
-        //     // this.direction += Math.PI;
-        //     // this.direction *= -1;
-        //     console.log("control direction", this.direction);
-        //     this.attacking = true;
-        // });
     }
 
     calculateLocation (pointer) {
@@ -66,7 +45,6 @@ export default class PlayerAttackControls {
         this.location = {x: Math.cos(this.direction) * this.range, y: -1 * Math.sin(this.direction) * this.range}
         // this.direction += Math.PI;
         // this.direction *= -1;
-        console.log("control direction", this.direction);
     }
 
     get () {

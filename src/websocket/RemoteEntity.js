@@ -24,6 +24,8 @@ export default class RemoteEntity extends Entity {
         }
         super.updateWithJSON(JSON);
         this.hp = JSON.hp;
+        this.mana = JSON.mana;
+        this.stamina = JSON.stamina;
         this.speed = JSON.speed;
         this.updatePositionWithBuffer(JSON);
     }
@@ -59,7 +61,6 @@ export default class RemoteEntity extends Entity {
         this.velocityY = Math.log10(Math.abs(difY) + 1) * difYSign * this.speed * 1.5;
         this.gameObject.setVelocityX(this.velocityX);
         this.gameObject.setVelocityY(this.velocityY);
-        console.log(Math.abs(difX) + Math.abs(difY), this.deadReck);
         if ((Math.abs(difX) + Math.abs(difY)) > 30) {
             this.gameObject.setX(JSON.x);
             this.gameObject.setY(JSON.y);
@@ -74,12 +75,14 @@ export default class RemoteEntity extends Entity {
         if (effect.source) {
             if (!this.effects[effect.name]) {
                 this.addEmitter(effect);
+                effect.apply.call(this);
                 this.effects[effect.name] = effect;
             }
             this.effects[effect.name].duration = effect.duration;
         } else {
             if (this.effects[effect.name]) {
                 const myEffect = this.effects[effect.name];
+                myEffect.expire.call(this);
                 myEffect?.emitter?.stop();
                 delete this.effects[effect.name];
             }

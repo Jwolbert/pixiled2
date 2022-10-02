@@ -21,7 +21,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = true; // DEBUGGGGGGG
+    debug = false; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -76,6 +76,42 @@ export class Example extends Phaser.Scene
         this.load.audio('step4', ['assets/sounds/stepGravel4.wav'],{
             instances: 1
         });
+        this.load.audio('bloodForm', ['assets/sounds/bloodForm.wav'],{
+            instances: 1
+        });
+        this.load.audio('bloodOrb', ['assets/sounds/bloodOrb.wav'],{
+            instances: 1
+        });
+        this.load.audio('poisonOrb', ['assets/sounds/poisonOrb.wav'],{
+            instances: 1
+        });
+        this.load.audio('bloodOrbImpact', ['assets/sounds/bloodOrbImpact.wav'],{
+            instances: 1
+        });
+        this.load.audio('vampireBite', ['assets/sounds/vampireBite.wav'],{
+            instances: 1
+        });
+        this.load.audio('vampireCharge', ['assets/sounds/vampireCharge.wav'],{
+            instances: 1
+        });
+        this.load.audio('vampireMiss', ['assets/sounds/vampireMiss.wav'],{
+            instances: 1
+        });
+        this.load.audio('bow', ['assets/sounds/bow.wav'],{
+            instances: 1
+        });
+        this.load.audio('arrowImpact', ['assets/sounds/arrowImpact.wav'],{
+            instances: 1
+        });
+        this.load.audio('arrowHit', ['assets/sounds/arrowHit.wav'],{
+            instances: 1
+        });
+        this.load.audio('reload', ['assets/sounds/reload.wav'],{
+            instances: 1
+        });
+        this.load.audio('fade', ['assets/sounds/fade.wav'],{
+            instances: 1
+        });
     }
 
     create ()
@@ -85,11 +121,23 @@ export class Example extends Phaser.Scene
         }
 
         // sounds
-        const theme = this.sound.add('theme', { loop: true });
-        const step = this.sound.add('step', { loop: false });
-        const step2 = this.sound.add('step2', { loop: false });
-        const step3 = this.sound.add('step3', { loop: false });
-        const step4 = this.sound.add('step4', { loop: false });
+        const theme = this.sound.add('theme', { loop: true, volume: 0.5 });
+        const step = this.sound.add('step', { loop: false, volume: 0.5 });
+        const step2 = this.sound.add('step2', { loop: false, volume: 0.5 });
+        const step3 = this.sound.add('step3', { loop: false, volume: 0.5 });
+        const step4 = this.sound.add('step4', { loop: false, volume: 0.5 });
+        const bloodForm = this.sound.add('bloodForm', { loop: false, volume: 0.4 });
+        const bloodOrb = this.sound.add('bloodOrb', { loop: false, volume: 0.4 });
+        const bloodOrbImpact = this.sound.add('bloodOrbImpact', { loop: false, volume: 0.4 });
+        const vampireBite = this.sound.add('vampireBite', { loop: false, volume: 0.4 });
+        const vampireCharge = this.sound.add('vampireCharge', { loop: false, volume: 0.4 });
+        const vampireMiss = this.sound.add('vampireMiss', { loop: false, volume: 0.3 });
+        const bow = this.sound.add('bow', { loop: false, volume: 0.8 });
+        const fade = this.sound.add('fade', { loop: false, volume: 0.4 });
+        const arrowImpact = this.sound.add('arrowImpact', { loop: false, volume: 0.4 });
+        const arrowHit = this.sound.add('arrowHit', { loop: false, volume: 0.4 });
+        const reload = this.sound.add('reload', { loop: false, volume: 0.4 });
+        const poisonOrb = this.sound.add('poisonOrb', { loop: false, volume: 0.4 });
 
         theme.play();
         step.play();
@@ -99,6 +147,18 @@ export class Example extends Phaser.Scene
         window.SoundManager.add("step", step2);
         window.SoundManager.add("step", step3);
         window.SoundManager.add("step", step4);
+        window.SoundManager.add("bloodForm", bloodForm);
+        window.SoundManager.add("bloodOrb", bloodOrb);
+        window.SoundManager.add("bloodOrbImpact", bloodOrbImpact);
+        window.SoundManager.add("vampireBite", vampireBite);
+        window.SoundManager.add("vampireCharge", vampireCharge);
+        window.SoundManager.add("vampireMiss", vampireMiss);
+        window.SoundManager.add("bow", bow);
+        window.SoundManager.add("fade", fade);
+        window.SoundManager.add("arrowImpact", arrowImpact);
+        window.SoundManager.add("arrowHit", arrowHit);
+        window.SoundManager.add("reload", reload);
+        window.SoundManager.add("poisonOrb", poisonOrb);
 
         //anims
         AnimationUtility.call(this, 
