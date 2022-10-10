@@ -14,7 +14,8 @@ export default class NpcMap {
                 return row.map((col) => {
                     return {
                         index: col.index,
-                        // collide: col.collideDown && col.collideUp && col.collideLeft && col.collideRight,
+                        collide: col.collideDown && col.collideUp && col.collideLeft && col.collideRight,
+                        neighbors: [],
                         cost: {},
                         state: {},
                     };
@@ -23,6 +24,18 @@ export default class NpcMap {
             tileHeight: map.tileHeight,
             tileWidth: map.tileWidth,
         }
+    }
+
+    d (targetEntity, souceEntity) {
+        const open = [];
+        const initX = Math.round(targetEntity.gameObject.x / 32);
+        const initY = Math.round(targetEntity.gameObject.x / 32);
+        queue.push({
+            open: true,
+            x: initX,
+            y: initY,
+        });
+        const directions = [[1,0], [1,1], [0,1], [-1,1], [-1,0], [-1,-1], [0,-1], [1,-1]];
     }
 
     dStar (targetEntity, souceEntity) {

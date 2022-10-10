@@ -1,12 +1,13 @@
 import Phaser from "phaser";
-import Player from "../entity/player/Player";
-import Portal from "../entity/portal/Portal";
-import AnimationUtility from "../utility/AnimationUtility";
-import Attack from "../entity/action/attack/Attack";
-import GameWebSocket from "../websocket/GameWebSocket";
-import { profile, setDebugData, setEntities, createDebugBox, setPlayer } from "../debug/debug";
-import FogOfWar from "../fogOfWar/FogOfWar";
-import SoundManager from "../utility/SoundManager";
+import Player from "../entity/player/Player.js";
+import Npc from "../entity/npc/Npc.js";
+import Portal from "../entity/portal/Portal.js";
+import AnimationUtility from "../utility/AnimationUtility.js";
+import Attack from "../entity/action/attack/Attack.js";
+import GameWebSocket from "../websocket/GameWebSocket.js";
+import { profile, setDebugData, setEntities, createDebugBox, setPlayer } from "../debug/debug.js";
+import FogOfWar from "../fogOfWar/FogOfWar.js";
+import SoundManager from "../utility/SoundManager.js";
 
 export class Example extends Phaser.Scene
 {
@@ -21,7 +22,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = false; // DEBUGGGGGGG
+    debug = true; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -48,6 +49,7 @@ export class Example extends Phaser.Scene
         this.load.spritesheet('mainCharacters', 'assets/sheets/mainCharacters.png', { frameWidth: 24, frameHeight: 32 });
         // this.load.spritesheet('mainCharacters2x', 'assets/sheets/mainCharacters2x.png', { frameWidth: 48, frameHeight: 64 });
         this.load.spritesheet('vampire', 'assets/sheets/vampire.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('iceMage', 'assets/sheets/iceMage.png', { frameWidth: 24, frameHeight: 33 });
         this.load.spritesheet('slash', 'assets/sheets/slash.png', { frameWidth: 24, frameHeight: 32 });
         this.load.spritesheet('fireballSprite', 'assets/sheets/fireballSprite.png', { frameWidth: 64, frameHeight: 32 });
         this.load.spritesheet('bloodOrb', 'assets/sheets/bloodOrb.png', { frameWidth: 32, frameHeight: 32 });
@@ -167,7 +169,7 @@ export class Example extends Phaser.Scene
 
         //anims
         AnimationUtility.call(this, 
-            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles', 'portals', 'vampire', 'vampireBite', 'arrow']
+            ['hatman', 'slash', 'fireball', 'bloodOrb', 'bloodOrbParticles', 'poisonOrb', 'poisonOrbParticles', 'iceOrb', 'iceOrbParticles', 'portals', 'vampire', 'vampireBite', 'arrow', 'iceMage']
             , this.debug);
 
         // map
@@ -240,11 +242,15 @@ export class Example extends Phaser.Scene
         this.physics.add.collider(this.character, this.mapLayer);
         this.dynamicLayer.add(this.character);
         this.player = new Player(window.character, this.character, this.input, this, this.interactions);
+        this.entities[this.player.getId()] = this.player;
         // this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
 
-        this.cameras.main.setZoom(1.5);
+        this.npcChar = this.physics.add.sprite(72, 72, 'iceMage').setScale(1).setDepth(4);
+        this.npc = new Npc("iceMage", this.npcChar, this, this.interactions);
+        this.entities[this.npc.getId()] = this.npc;
+
+        this.cameras.main.setZoom(2);
         this.cameras.main.startFollow(this.character);
-        this.entities[this.player.getId()] = this.player;
         // this.entities[this.portal.getId()] = this.portal;
         if (this.debug) {
             createDebugBox.call(this);

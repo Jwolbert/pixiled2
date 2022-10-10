@@ -1,0 +1,30 @@
+{
+    "iceMage": {
+        "yoyo": false,
+        "frameRate": 6,
+        "frameWidth": 24,
+        "frameHeight": 33,
+        "animations": {
+            "up": {
+                "start": 3,
+                "end": 5
+            },
+            "right": {
+                "start": 15,
+                "end": 17
+            },
+            "left": {
+                "start": 39,
+                "end": 41
+            },
+            "down": {
+                "start": 27,
+                "end": 29
+            },
+            "wait": {
+                "start": 28,
+                "end": 28
+            }
+        }
+    }
+}
