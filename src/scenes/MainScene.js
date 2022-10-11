@@ -231,6 +231,7 @@ export class Example extends Phaser.Scene
         //game shit
         this.character = this.physics.add.sprite(72, 72, 'vampire').setScale(1).setDepth(4);
         this.character.body.setSize(18, 20, true);
+        console.log(this.character.body.center.x);
         if (window.character === "vampire") {
             this.character.setCircle(10, 6, 14);
         } else {
@@ -245,9 +246,12 @@ export class Example extends Phaser.Scene
         this.entities[this.player.getId()] = this.player;
         // this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
 
-        this.npcChar = this.physics.add.sprite(72, 72, 'iceMage').setScale(1).setDepth(4);
-        this.npc = new Npc("iceMage", this.npcChar, this, this.interactions);
-        this.entities[this.npc.getId()] = this.npc;
+        setTimeout(() => {
+            this.npcChar = this.physics.add.sprite(72, 72, 'iceMage').setScale(1).setDepth(4);
+            this.npcChar.setCircle(7, 5, 12);
+            this.npc = new Npc("iceMage", this.npcChar, this, this.interactions);
+            this.entities[this.npc.getId()] = this.npc;
+        }, 3000);
 
         this.cameras.main.setZoom(2);
         this.cameras.main.startFollow(this.character);

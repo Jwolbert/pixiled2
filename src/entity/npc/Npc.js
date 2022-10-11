@@ -38,7 +38,7 @@ export default class Npc extends Entity {
     {
         super(name, gameObject, undefined, scene, interactions);
         this.controls = {};
-        this.controls.velocity = new NpcVelocityControls(gameObject, new NpcMap(scene.map));
+        this.controls.velocity = new NpcVelocityControls(gameObject, new NpcMap(scene, this));
         // this.controls.attack = new PlayerAttackControls(input);
         // this.controls.inventory = new PlayerInventoryControls(input);
         // this.controls.ability = new PlayerAbilityControls(input);

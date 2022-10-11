@@ -11,7 +11,7 @@ export default {
     },
     "vampire": {
         weapons: [weapons.vampireBite, weapons.bloodOrbScroll],
-        items: [items.bloodChalice],
+        items: [items.bloodChalice, items.devRing],
         ability: effects.bloodForm,
     },
     "iceMage": {

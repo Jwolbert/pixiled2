@@ -4,6 +4,7 @@ export default {
     devRing: {
         name: "devRing",
         equip() {
+            this.speed += 200;
             this.manaRegen += 5;
             this.staminaRegen += 5;
             this.healthRegen += 0;
