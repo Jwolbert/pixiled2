@@ -27,14 +27,12 @@ export default class NpcMap {
                 this.graphics = scene.add.graphics({ lineStyle: { width: 2, color: 0xff00ff }, fillStyle: { color: 0xffffff } });
                 const circle = new Phaser.Geom.Circle(node.x * this.gridSize + this.gridSize / 2, node.y * this.gridSize + this.gridSize / 2, 5);
                 this.graphics.strokeCircleShape(circle);
+                console.log(node);
             }
-            console.log(node);
         });
-        console.log(this.mapInfo);
     }
 
     createMapInfo (map) {
-        console.log(map);
         const mapInfo = {
             tiles: map.layers[0].data
             .map((row, y) => {
@@ -63,18 +61,16 @@ export default class NpcMap {
     dijkstra (targetEntity, sourceEntity) {
         const tiles = this.mapInfo.tiles;
         const open = [];
-        const startX = Math.floor(targetEntity.gameObject.body.center.x / 32);
-        const startY = Math.floor(targetEntity.gameObject.body.center.y / 32);
-        const endX = Math.floor(sourceEntity.gameObject.body.center.x / 32);
-        const endY = Math.floor(sourceEntity.gameObject.body.center.y / 32);
+        const startX = Math.floor(sourceEntity.gameObject.body.center.x / 32);
+        const startY = Math.floor(sourceEntity.gameObject.body.center.y / 32);
+        const endX = Math.floor(targetEntity.gameObject.body.center.x / 32);
+        const endY = Math.floor(targetEntity.gameObject.body.center.y / 32);
         const start = tiles[startY][startX];
-        console.log(startX, startY, endX, endY);
         start.cost = 0;
         open.push(start);
         while(open.length) {
             const next = open.shift();
             if (next.x === endX && next.y === endY) {
-                console.log("Path finding complete");
                 return this.getPath(next, startX, startY);
             }
             const neighbors = this.getNeighbors(next);
