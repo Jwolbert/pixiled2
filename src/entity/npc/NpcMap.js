@@ -25,7 +25,7 @@ export default class NpcMap {
         this.dijkstra(scene.player, identityEntity).forEach((node) => {
             if (this.debug) {
                 this.graphics = scene.add.graphics({ lineStyle: { width: 2, color: 0xff00ff }, fillStyle: { color: 0xffffff } });
-                const circle = new Phaser.Geom.Circle(node.y * this.gridSize + this.gridSize / 2, node.x * this.gridSize + this.gridSize / 2, 5);
+                const circle = new Phaser.Geom.Circle(node.x * this.gridSize + this.gridSize / 2, node.y * this.gridSize + this.gridSize / 2, 5);
                 this.graphics.strokeCircleShape(circle);
             }
             console.log(node);
@@ -37,9 +37,9 @@ export default class NpcMap {
         console.log(map);
         const mapInfo = {
             tiles: map.layers[0].data
-            .map((row, x) => {
-                return row.map((col, y) => {
-                    if (this.debug) {
+            .map((row, y) => {
+                return row.map((col, x) => {
+                    if (this.debug && !(col.collideDown && col.collideUp && col.collideLeft && col.collideRight)) {
                         const circle = new Phaser.Geom.Circle(x * this.gridSize + this.gridSize / 2, y * this.gridSize + this.gridSize / 2, 10);
                         this.graphics.strokeCircleShape(circle);
                     }
@@ -67,7 +67,7 @@ export default class NpcMap {
         const startY = Math.floor(targetEntity.gameObject.body.center.y / 32);
         const endX = Math.floor(sourceEntity.gameObject.body.center.x / 32);
         const endY = Math.floor(sourceEntity.gameObject.body.center.y / 32);
-        const start = tiles[startX][startY];
+        const start = tiles[startY][startX];
         console.log(startX, startY, endX, endY);
         start.cost = 0;
         open.push(start);
@@ -79,6 +79,7 @@ export default class NpcMap {
             }
             const neighbors = this.getNeighbors(next);
             neighbors.forEach((neighbor) => {
+                // neighbor = [neighbor object, cost to traverse from next]
                 if (!neighbor.visited && neighbor[0].cost > (next.cost + neighbor[1])) {
                     neighbor[0].cost = next.cost + neighbor[1];
                     open.push(neighbor[0]);
@@ -91,7 +92,7 @@ export default class NpcMap {
     directions = [[1,0,1], [1,1,1.414], [0,1,1], [-1,1,1.414], [-1,0,1], [-1,-1,1.414], [0,-1,1], [1,-1,1.414]];
     getNeighbors(next) {
         return this.directions.reduce((neighbors, direction) => {
-            const neighbor = this.mapInfo.tiles[next.x + direction[0]][next.y + direction[1]];
+            const neighbor = this.mapInfo.tiles[next.y + direction[0]][next.x + direction[1]];
             if (neighbor && !neighbor.collide)
             {
                 neighbors.push([neighbor, direction[2]]);
@@ -107,62 +108,17 @@ export default class NpcMap {
         let steps = 0;
         while (next.x !== startX || next.y !== startY) {
             next = this.getNeighbors(next).reduce((lowestNeighbor, neighbor) => {
-                if (steps > 198) {
-                    console.log(neighbor);
-                }
                 if (!lowestNeighbor || lowestNeighbor.cost > neighbor[0].cost) {
                     return neighbor[0];
                 }
                 return lowestNeighbor;
             }, undefined);
             shortestPath.push(next);
-            console.log(next);
-            if (steps++ > 200) return [];
+            if (steps++ > 1000) {
+                console.log("Unable to create path");
+                return [];
+            }
         }
         return shortestPath;
-    }
-
-    isPassable(x, y) {
-        if (x >= this.mapInfo.dimX[0] &&
-             x < this.mapInfo.dimX[1] &&
-              y >= this.mapInfo.dimY[0] &&
-               y < this.mapInfo.dimY[1] &&
-                !this.mapInfo.tiles[x][y].collide
-            ) {
-                return true;
-        }
-        return false;
-    }
-
-    dStar (targetEntity, souceEntity) {
-        // we build a dStar map from targetEntity
-        // and end once we reach sourceEntity
-        const queue = [];
-        console.log(Math.round(targetEntity.gameObject.x / 32), Math.round(targetEntity.gameObject.y / 32));
-        const initX = Math.round(targetEntity.gameObject.x / 32);
-        const initY = Math.round(targetEntity.gameObject.x / 32);
-        queue.push({
-            open: true,
-            x: initX,
-            y: initY,
-        });
-        const directions = [[1,0], [1,1], [0,1], [-1,1], [-1,0], [-1,-1], [0,-1], [1,-1]];
-        this.mapInfo[initX][initY].cost[targetEntity.id] = 0;
-        this.mapInfo[initX][initY].open[targetEntity.id] = true;
-        while(queue.length > 0) {
-            const currentLocation = queue.pop();
-            current = this.mapInfo[currentLocation.x][currentLocation.y].cost[targetEntity.id]
-            const currentCost = current.cost[targetEntity.id];
-            const nearbyTiles = [];
-            directions.forEach((direction) => {
-                const neighbor = this.mapInfo[current.x + direction[0]][current.y + direction[1]];
-                const neighborCost = neighbor.cost[targetEntity.id];
-                if(neighborCost ?? 0 < currentCost) {
-                    neighbor.cost[targetEntity.id] = currentCost += 1;
-                } else if (neighborCost ?? 0 < currentCost)
-                nearbyTiles
-            });
-            this.mapInfo[initX][initY].cost[targetEntity.id]
-        }
     }
 }
