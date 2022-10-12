@@ -33,6 +33,7 @@ export default class Npc extends Entity {
     abilityActive = false;
     abilityCooldown = 0;
     silent = false;
+    speed = 50;
 
     constructor (name, gameObject, scene, interactions)
     {
@@ -98,17 +99,17 @@ export default class Npc extends Entity {
 
     velocityInput () {
         const input = this.controls.velocity.get();
-        if (this.blockMovement && !(input.velocityX + input.velocityY)) {
-            this.blockMovementCounter++;
-            this.velocityX = this.gameObject.body.velocity.x;
-            this.velocityY = this.gameObject.body.velocity.y;
-            return;
-        }
-        if(this.blockMovement && this.blockMovementCounter++ < this.blockMovementCounterMax) {
-            return;
-        } else if (this.blockMovement && (input.velocityX + input.velocityY) !== 0) {
-            this.debounce();
-        }
+        // if (this.blockMovement && !(input.velocityX + input.velocityY)) {
+        //     this.blockMovementCounter++;
+        //     this.velocityX = this.gameObject.body.velocity.x;
+        //     this.velocityY = this.gameObject.body.velocity.y;
+        //     return;
+        // }
+        // if(this.blockMovement && this.blockMovementCounter++ < this.blockMovementCounterMax) {
+        //     return;
+        // } else if (this.blockMovement && (input.velocityX + input.velocityY) !== 0) {
+        //     this.debounce();
+        // }
         this.velocityX = input.velocityX * this.speed;
         this.velocityY = input.velocityY * this.speed;
     }

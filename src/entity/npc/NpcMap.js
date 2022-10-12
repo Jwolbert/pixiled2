@@ -2,10 +2,13 @@ import Phaser from "phaser";
 
 export default class NpcMap {
     mapInfo;
-    graphics;
+    passableTileGraphics;
+    pathGraphics;
+    identityEntity;
     scene;
     gridSize = 32;
     debug = false;
+    currentPath;
 
     constructor (scene, identityEntity) {
         // from scene.js ...
@@ -16,20 +19,38 @@ export default class NpcMap {
         // const tiles = map.addTilesetImage('jawbreaker_tiles', 'ruins', 32, 32, 1, 2);
         // map.setCollision(colisionList);
         // this.map = map;
-        if (scene.debug) {
-            this.debug = true;
-            this.graphics = scene.add.graphics({ lineStyle: { width: 2, color: 0x00ff00 }, fillStyle: { color: 0xff00ff } });
-        }
-        this.mapInfo = this.createMapInfo(scene.map);
         this.scene = scene;
-        this.dijkstra(scene.player, identityEntity).forEach((node) => {
-            if (this.debug) {
-                this.graphics = scene.add.graphics({ lineStyle: { width: 2, color: 0xff00ff }, fillStyle: { color: 0xffffff } });
-                const circle = new Phaser.Geom.Circle(node.x * this.gridSize + this.gridSize / 2, node.y * this.gridSize + this.gridSize / 2, 5);
-                this.graphics.strokeCircleShape(circle);
-                console.log(node);
+        this.identityEntity = identityEntity;
+        setInterval(() => {
+            if (scene.debug) {
+                if (this.passableTileGraphics) {
+                    this.passableTileGraphics.destroy(); 
+                }
+                if (this.pathGraphics) {
+                    this.pathGraphics.destroy();
+                }
+                this.debug = true;
+                this.passableTileGraphics = scene.add.graphics({ lineStyle: { width: 2, color: 0x00ff00 }, fillStyle: { color: 0xff00ff } });
+                this.pathGraphics = scene.add.graphics({ lineStyle: { width: 2, color: 0xff00ff }, fillStyle: { color: 0xffffff } });
             }
-        });
+            this.mapInfo = this.createMapInfo(scene.map);
+            this.currentPath = this.dijkstra(this.scene.player, this.identityEntity).map((node) => {
+                if (this.debug) {
+                    const circle = new Phaser.Geom.Circle(node.x * this.gridSize + this.gridSize / 2, node.y * this.gridSize + this.gridSize / 2, 5);
+                    this.pathGraphics.strokeCircleShape(circle);
+                    // console.log(node);
+                }
+                return {
+                    ...node,
+                    pixelX: node.x * this.gridSize + this.gridSize / 2,
+                    pixelY: node.y * this.gridSize + this.gridSize / 2,
+                }
+            });
+        }, 1000);
+    }
+
+    get () {
+        return this.currentPath;
     }
 
     createMapInfo (map) {
@@ -39,7 +60,7 @@ export default class NpcMap {
                 return row.map((col, x) => {
                     if (this.debug && !(col.collideDown && col.collideUp && col.collideLeft && col.collideRight)) {
                         const circle = new Phaser.Geom.Circle(x * this.gridSize + this.gridSize / 2, y * this.gridSize + this.gridSize / 2, 10);
-                        this.graphics.strokeCircleShape(circle);
+                        this.passableTileGraphics.strokeCircleShape(circle);
                     }
                     return {
                         x,
@@ -47,6 +68,7 @@ export default class NpcMap {
                         collide: col.collideDown && col.collideUp && col.collideLeft && col.collideRight,
                         cost: 9999,
                         visited: false,
+                        terminal: false,
                     };
                 });
             }),
@@ -68,9 +90,14 @@ export default class NpcMap {
         const start = tiles[startY][startX];
         start.cost = 0;
         open.push(start);
+        let steps = 0;
         while(open.length) {
             const next = open.shift();
             if (next.x === endX && next.y === endY) {
+                if (this.debug) {
+                    console.log("Dijkstra steps: ", steps);
+                }
+                next.terminal = true;
                 return this.getPath(next, startX, startY);
             }
             const neighbors = this.getNeighbors(next);
@@ -82,6 +109,7 @@ export default class NpcMap {
                 }
             });
             next.visited = true;
+            steps++;
         }
     }
 
@@ -115,6 +143,7 @@ export default class NpcMap {
                 return [];
             }
         }
+        next.terminal = true;
         return shortestPath;
     }
 }

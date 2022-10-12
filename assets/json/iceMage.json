@@ -1,6 +1,6 @@
 {
     "iceMage": {
-        "yoyo": false,
+        "yoyo": true,
         "frameRate": 6,
         "frameWidth": 24,
         "frameHeight": 33,
