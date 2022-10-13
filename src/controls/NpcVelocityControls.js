@@ -1,6 +1,9 @@
 export default class NpcVelocityControls {
     npcMap;
     gameObject;
+    closestGroupSize = 3;
+    standoff = 0.1;
+    costStepMax = 3;
 
     constructor (gameObject, npcMap) 
     {
@@ -8,63 +11,57 @@ export default class NpcVelocityControls {
         this.gameObject = gameObject;
     }
 
-    getClosestLowestCostNode(path) {
+    getClosestLowestCostNodes(path) {
+        let closest = [];
+        // clone path
         path.forEach((node) => {
-            node.difX = node.pixelX - this.gameObject.x;
-            node.difY = node.pixelY - this.gameObject.y;
-            node.dif = Math.abs(node.difX) + Math.abs(node.difY);
+            closest.push({
+                difX: node.pixelX - this.gameObject.body.center.x,
+                difY: node.pixelY - this.gameObject.body.center.y,
+                dif: Math.abs(node.pixelX - this.gameObject.body.center.x) + Math.abs(node.pixelY - this.gameObject.body.center.y),
+                cost: node.cost,
+            });
         });
-        path.sort((a, b) => {
-            if (a.dif > b.dif) {
-                return 1;
+        // get cost of node closest to npc
+        const closestCost = closest.reduce((last, next) => {
+            if (last.dif > next.dif) {
+                return next;
             }
-            return -1;
-        });
-        const top3 = path.slice(0,3);
-        top3.sort((a, b) => {
+            return last;
+        }, {dif: 9999}).cost;
+        //filter out nodes which are too far along path
+        closest = closest.filter((node) => {
+            return node.cost < (closestCost + this.costStepMax);
+        })
+        //sort by descending cost
+        closest.sort((a, b) => {
             if (a.cost < b.cost) {
                 return 1;
             }
             return -1;
         });
-        return top3[0];
+        closest = closest.slice(0, this.closestGroupSize - 1);
+        return closest;
     }
 
+    sumVelocity = (sum, node, index) => {
+        const stepDown = this.closestGroupSize / (index + 1);
+        return [
+            sum[0] + (Math.log10(Math.abs(node.difX) + 1) * Math.sign(node.difX)) / stepDown,
+            sum[1] + (Math.log10(Math.abs(node.difY) + 1) * Math.sign(node.difY)) / stepDown
+        ];
+    };
     get () {
         const path = this.npcMap.get();
-        console.log(path);
         if (!path) {
             return {velocityX: 0, velocityY: 0};
         }
-        const nextNode = this.getClosestLowestCostNode(path);
-        if (nextNode.terminal) {
+        
+        const closest = this.getClosestLowestCostNodes(path);
+        let [velocityX, velocityY] = closest.reduce(this.sumVelocity, [0, 0]);
+        if (this.standoff > (Math.abs(velocityX) + Math.abs(velocityY))) {
             return {velocityX: 0, velocityY: 0};
         }
-        const difX = nextNode.difX;
-        const difY = nextNode.difY;
-        const difXSign = Math.sign(difX);
-        const difYSign = Math.sign(difY);
-        let velocityX = Math.log10(Math.abs(difX) + 1) * difXSign;
-        let velocityY = Math.log10(Math.abs(difY) + 1) * difYSign;
-
-        // if (this.cursors.left.isDown)
-        // {
-        //     velocityX = -1;
-        // }
-        // else if (this.cursors.right.isDown)
-        // {
-        //     velocityX = 1;
-        // }
-
-        // if (this.cursors.up.isDown)
-        // {
-        //     velocityY = -1;
-        // }
-        // else if (this.cursors.down.isDown)
-        // {
-        //     velocityY = 1;
-        // }
-
         return {velocityX, velocityY};
     }
 }

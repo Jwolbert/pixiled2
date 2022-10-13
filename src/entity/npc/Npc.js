@@ -33,7 +33,7 @@ export default class Npc extends Entity {
     abilityActive = false;
     abilityCooldown = 0;
     silent = false;
-    speed = 50;
+    speed = 100;
 
     constructor (name, gameObject, scene, interactions)
     {
@@ -96,6 +96,10 @@ export default class Npc extends Entity {
             this.gameObject.alpha = 0.25;
         }
     }
+    destroy () {
+        clearInterval(this.walkingInterval);
+        super.destroy();
+    }
 
     velocityInput () {
         const input = this.controls.velocity.get();
@@ -110,6 +114,7 @@ export default class Npc extends Entity {
         // } else if (this.blockMovement && (input.velocityX + input.velocityY) !== 0) {
         //     this.debounce();
         // }
+
         this.velocityX = input.velocityX * this.speed;
         this.velocityY = input.velocityY * this.speed;
     }

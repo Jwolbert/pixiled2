@@ -22,7 +22,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = false; // DEBUGGGGGGG
+    debug = true; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -145,7 +145,7 @@ export class Example extends Phaser.Scene
         const poisonOrb = this.sound.add('poisonOrb', { loop: false, volume: 0.4 });
         const abilityReady = this.sound.add('abilityReady', { loop: false, volume: 0.4 });
 
-        theme.play();
+        // theme.play();
         step.play();
         window.SoundManager = new SoundManager();
 
@@ -251,7 +251,7 @@ export class Example extends Phaser.Scene
             this.npc = new Npc("iceMage", this.npcChar, this, this.interactions);
             this.entities[this.npc.getId()] = this.npc;
             this.physics.add.collider(this.npcChar, this.mapLayer);
-            this.dynamicLayer.add(this.npcChar);
+            // this.dynamicLayer.add(this.npcChar);
         }, 3000);
 
         this.cameras.main.setZoom(2);

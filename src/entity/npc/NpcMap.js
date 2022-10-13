@@ -9,6 +9,8 @@ export default class NpcMap {
     gridSize = 32;
     debug = false;
     currentPath;
+    timeoutId = undefined;
+    timeoutMultiple = 75;
 
     constructor (scene, identityEntity) {
         // from scene.js ...
@@ -21,7 +23,7 @@ export default class NpcMap {
         // this.map = map;
         this.scene = scene;
         this.identityEntity = identityEntity;
-        setInterval(() => {
+        const loop = () => {
             if (scene.debug) {
                 if (this.passableTileGraphics) {
                     this.passableTileGraphics.destroy(); 
@@ -46,7 +48,9 @@ export default class NpcMap {
                     pixelY: node.y * this.gridSize + this.gridSize / 2,
                 }
             });
-        }, 1000);
+            setTimeout(loop, this.timeoutMultiple * this.currentPath.length);
+        }
+        loop();
     }
 
     get () {
@@ -113,7 +117,8 @@ export default class NpcMap {
         }
     }
 
-    directions = [[1,0,1], [1,1,1.414], [0,1,1], [-1,1,1.414], [-1,0,1], [-1,-1,1.414], [0,-1,1], [1,-1,1.414]];
+    // directions = [[1,0,1], [1,1,1.414], [0,1,1], [-1,1,1.414], [-1,0,1], [-1,-1,1.414], [0,-1,1], [1,-1,1.414]];
+    directions = [[1,0,1], [0,1,1], [-1,0,1], [0,-1,1]];
     getNeighbors(next) {
         return this.directions.reduce((neighbors, direction) => {
             const neighbor = this.mapInfo.tiles[next.y + direction[0]][next.x + direction[1]];
