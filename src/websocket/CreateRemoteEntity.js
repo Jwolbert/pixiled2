@@ -16,7 +16,7 @@ export default function(scene, newRemoteEntityJson) {
     }
 
     let newEntity;
-    if (newRemoteEntityJson.type === "player") {
+    if (newRemoteEntityJson.type === "player" || newRemoteEntityJson.type === "npc") {
         const newEntitySprite = scene.physics.add.sprite(48, 48, 'mainCharacters').setDepth(3);
         if (newRemoteEntityJson.name === "vampire") {
             newEntitySprite.setCircle(10, 6, 14);

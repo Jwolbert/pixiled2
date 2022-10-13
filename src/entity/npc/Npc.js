@@ -33,7 +33,7 @@ export default class Npc extends Entity {
     abilityActive = false;
     abilityCooldown = 0;
     silent = false;
-    speed = 100;
+    speed = 50;
 
     constructor (name, gameObject, scene, interactions)
     {
