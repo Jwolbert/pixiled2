@@ -63,11 +63,16 @@ export default function (name, entities, physics, attack, interactions, layer, a
             this.interactions = interactions;
             this.attack = attack;
             this.attack.landed = false;
-            this.gameObject.play(`${attack.name}_${attack.animation}`);
-            this.gameObject.alpha = 0.9;
-            this.name = attack.name;
-            this.currentAnimation = attack.animation;
-            this.speed = this.attack.speed;
+            if (!attack.fake) {
+                this.gameObject.play(`${attack.name}_${attack.animation}`);
+                this.gameObject.alpha = 0.9;
+                this.name = attack.name;
+                this.currentAnimation = attack.animation;
+                this.speed = this.attack.speed;
+            } else {
+                this.gameObject.alpha = 0;
+                this.attack.speed *= 3;
+            }
             this.collideHealth = attack.collideHealth;
             // console.log(this.flightEmitter);
             // dynamicLayer.add(this.flightEmitter);
@@ -79,7 +84,9 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 // if (!this.attack.source) return;
                 this.physics.add.collider(this.gameObject, this.layer, () => {
                     if (this.collideHealth-- <= 0) {
-                        window.SoundManager.play(attack.missSound);
+                        if (!attack.fake) {
+                            window.SoundManager.play(attack.missSound);
+                        }
                         this.explode();
                     }
                 });
@@ -89,7 +96,9 @@ export default function (name, entities, physics, attack, interactions, layer, a
             if (!this.attack.source && this.attack.hidden) {
                 this.gameObject.alpha = 0;
             }
-            window.SoundManager.play(attack.sound);
+            if (!attack.fake) {
+                window.SoundManager.play(attack.sound);
+            }
         }
 
         createFlightEmitter () {
@@ -121,10 +130,22 @@ export default function (name, entities, physics, attack, interactions, layer, a
             }
         }
 
-        explode () {
+        explode (hit) {
+            if (this.attack.fake && this.exploded) return;
             if (this.exploded) {
                 this.fizzle();
                 // console.log("fizzle");
+                return;
+            }
+            if (this.attack.fake) {
+                this.dead = true;
+                this.flightEmitter?.stop();
+                this.explodeEmitter?.stop();
+                this.fizzleEmitter?.stop();
+                this.exploded = true;
+                if (hit) {
+                    this.attack.fakeCallback();
+                }
                 return;
             }
             this.gameObject.alpha = 0.9;
@@ -182,7 +203,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                         if (this.attack.attached && body.gameObject.id === this.attack.source) {
                             attached = true;
                         }
-                        if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && (window.SoundManager.play(attack.hitSound) && this.explode())))) {
+                        if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && ((this.attack.fake || window.SoundManager.play(attack.hitSound)) && this.explode(true))))) {
                             this.interactions.push({
                                 source: this.attack.source,
                                 target: body.gameObject.id,

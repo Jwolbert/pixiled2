@@ -22,7 +22,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = false; // DEBUGGGGGGG
+    debug = true; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -247,8 +247,9 @@ export class Example extends Phaser.Scene
 
         setTimeout(() => {
             this.npcChar = this.physics.add.sprite(72, 72, 'iceMage').setScale(1).setDepth(4);
-            this.npcChar.setCircle(7, 5, 12);
-            this.npc = new Npc("iceMage", this.npcChar, this, this.interactions);
+            // this.npcChar.setCircle(7, 5, 12);
+            this.npcChar.setCircle(10, 2, 14);
+            this.npc = new Npc("hatman", this.npcChar, this, this.interactions);
             this.physics.add.collider(this.character, this.npcChar);
             this.entities[this.npc.getId()] = this.npc;
             this.physics.add.collider(this.npcChar, this.mapLayer);

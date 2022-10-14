@@ -1,6 +1,7 @@
 import Entity from "../Entity";
 import NpcMap from "./NpcMap";
 import NpcVelocityControls from "../../controls/NpcVelocityControls";
+import NpcAttackControls from "../../controls/NpcAttackControls";
 import characters from "../../configs/characters";
 
 export default class Npc extends Entity {
@@ -33,14 +34,15 @@ export default class Npc extends Entity {
     abilityActive = false;
     abilityCooldown = 0;
     silent = false;
-    speed = 50;
+    speed = 25;
+    input;
 
     constructor (name, gameObject, scene, interactions)
     {
         super(name, gameObject, undefined, scene, interactions);
         this.controls = {};
         this.controls.velocity = new NpcVelocityControls(gameObject, new NpcMap(scene, this));
-        // this.controls.attack = new PlayerAttackControls(input);
+        this.controls.attack = new NpcAttackControls(scene.player, this);
         // this.controls.inventory = new PlayerInventoryControls(input);
         // this.controls.ability = new PlayerAbilityControls(input);
         this.type = "npc";
@@ -61,7 +63,7 @@ export default class Npc extends Entity {
 
     update () {
         this.velocityInput();
-        // this.attackInput();
+        this.attackInput();
         // this.inventoryInput();
         // this.abilityInput();
         let direction = Math.atan( this.velocityY / this.velocityX);
@@ -103,20 +105,44 @@ export default class Npc extends Entity {
 
     velocityInput () {
         const input = this.controls.velocity.get();
-        // if (this.blockMovement && !(input.velocityX + input.velocityY)) {
-        //     this.blockMovementCounter++;
-        //     this.velocityX = this.gameObject.body.velocity.x;
-        //     this.velocityY = this.gameObject.body.velocity.y;
-        //     return;
-        // }
-        // if(this.blockMovement && this.blockMovementCounter++ < this.blockMovementCounterMax) {
-        //     return;
-        // } else if (this.blockMovement && (input.velocityX + input.velocityY) !== 0) {
-        //     this.debounce();
-        // }
-
         this.velocityX = input.velocityX * this.speed;
         this.velocityY = input.velocityY * this.speed;
+    }
+
+    attackInput () {
+        if (this.attackCooldown > 0) {
+            this.attackCooldown -= 1;
+            return;
+        }
+        this.input = this.controls.attack.get();
+        this.attack();
+    }
+
+    attack (notFake) {
+        if (!this.input) return;
+        // this.weapon = input.button === "left" ? this.primaryWeapon : this.secondaryWeapon;
+        if (notFake && this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost || this.hp < this.weapon.healthCost) return;
+        if (false) {
+            if (this.abilityActive) {
+                super.removeEffect(this.ability.name);
+                this.abilityActive = false;
+            }
+        }
+        if (notFake) {
+            this.mana -= this.weapon.manaCost;
+            this.stamina -= this.weapon.staminaCost;
+            this.hp -= this.weapon.healthCost;
+        }
+        this.attackCooldown = this.weapon.attackCooldown;
+        const location = {x: this.gameObject.x + this.input.location.x, y: this.gameObject.y + this.input.location.y};
+        this.currentAction = {
+            ...this.weapon.action,
+            direction: this.input.direction,
+            location: location,
+            source: this.id,
+            fake: !notFake,
+            fakeCallback: () => {this.attack(true);},
+        };
     }
 
     debounce () {
