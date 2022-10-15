@@ -4,12 +4,17 @@ export default class NpcAttackControls {
     range = 10;
     target;
     source;
-
+    behaviors = {aggressive: 0, passive: 1};
+    currentBehavior = this.behaviors.aggressive;
 
     constructor (target, source) 
     {
         this.target = target;
         this.source = source;
+    }
+
+    setBehavior (behavior) {
+        this.currentBehavior = this.behaviors[behavior];
     }
 
     calculateLocation () {
@@ -27,6 +32,7 @@ export default class NpcAttackControls {
     }
 
     get () {
+        if (this.currentBehavior === this.behaviors.passive) return;
         this.calculateLocation();
         const control = {
             type: "attack",

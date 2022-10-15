@@ -36,12 +36,15 @@ export default class Npc extends Entity {
     silent = false;
     speed = 25;
     input;
+    npcMap;
 
     constructor (name, gameObject, scene, interactions)
     {
         super(name, gameObject, undefined, scene, interactions);
         this.controls = {};
-        this.controls.velocity = new NpcVelocityControls(gameObject, new NpcMap(scene, this));
+        this.npcMap = new NpcMap(scene, this);
+        this.npcMap.setTarget(undefined);
+        this.controls.velocity = new NpcVelocityControls(gameObject, this.npcMap, scene);
         this.controls.attack = new NpcAttackControls(scene.player, this);
         // this.controls.inventory = new PlayerInventoryControls(input);
         // this.controls.ability = new PlayerAbilityControls(input);
@@ -54,6 +57,8 @@ export default class Npc extends Entity {
         });
         this.equipped.weapons = characters[this.name].weapons;
         this.ability = characters[this.name].ability;
+
+        this.controls.attack.setBehavior("passive");
     }
 
     initPlayerPosition (JSON) {
@@ -115,6 +120,9 @@ export default class Npc extends Entity {
             return;
         }
         this.input = this.controls.attack.get();
+        if (!this.input) {
+            return;
+        }
         this.attack();
     }
 

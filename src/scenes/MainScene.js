@@ -32,6 +32,7 @@ export class Example extends Phaser.Scene
     staticLayerWalls;
     borderLayer;
     particles;
+    npcGroup;
 
     constructor (websocket)
     {
@@ -224,6 +225,7 @@ export class Example extends Phaser.Scene
 
         this.map = map;
         this.entitiesGroup = this.physics.add.group();
+        this.npcGroup = this.physics.add.group();
 
 
         // MOVE THIS INTO Player.js
@@ -245,7 +247,9 @@ export class Example extends Phaser.Scene
         this.entities[this.player.getId()] = this.player;
         // this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
 
-        setTimeout(() => {
+        const npcMax = 50;
+        let npcCount = 0;
+        const createNpc = () => {
             this.npcChar = this.physics.add.sprite(72, 72, 'iceMage').setScale(1).setDepth(4);
             // this.npcChar.setCircle(7, 5, 12);
             this.npcChar.setCircle(10, 2, 14);
@@ -253,8 +257,14 @@ export class Example extends Phaser.Scene
             this.physics.add.collider(this.character, this.npcChar);
             this.entities[this.npc.getId()] = this.npc;
             this.physics.add.collider(this.npcChar, this.mapLayer);
+            this.physics.add.collider(this.npcChar, this.npcGroup);
+            this.npcGroup.add(this.npcChar);
             this.dynamicLayer.add(this.npcChar);
-        }, 3000);
+            if (npcCount++ < npcMax) {
+                setTimeout(createNpc, Math.round(Math.random() * 2000));
+            }
+        };
+        setTimeout(createNpc, Math.round(Math.random() * 5000));
 
         this.cameras.main.setZoom(2);
         this.cameras.main.startFollow(this.character);

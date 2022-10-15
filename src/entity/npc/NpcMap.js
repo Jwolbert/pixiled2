@@ -5,14 +5,19 @@ export default class NpcMap {
     passableTileGraphics;
     pathGraphics;
     identityEntity;
+    targetEntity;
     scene;
     gridSize = 32;
     debug = false;
     currentPath;
     timeoutId = undefined;
     timeoutMultiple = 75;
+    randomRange = 6;
+    randomMin = 4;
+    loop;
+    drawGrid;
 
-    constructor (scene, identityEntity) {
+    constructor (scene, identityEntity, drawGrid) {
         // from scene.js ...
         // this.load.image('ruins', 'assets/sheets/jawbreaker_tiles-extruded.png');
         // this.load.tilemapTiledJSON('map', 'assets/json/smallRuins.json');
@@ -23,7 +28,9 @@ export default class NpcMap {
         // this.map = map;
         this.scene = scene;
         this.identityEntity = identityEntity;
-        const loop = () => {
+        this.targetEntity = this.scene.player;
+        this.drawGrid = drawGrid;
+        this.loop = () => {
             if (scene.debug) {
                 if (this.passableTileGraphics) {
                     this.passableTileGraphics.destroy(); 
@@ -36,7 +43,7 @@ export default class NpcMap {
                 this.pathGraphics = scene.add.graphics({ lineStyle: { width: 2, color: 0xff00ff }, fillStyle: { color: 0xffffff } });
             }
             this.mapInfo = this.createMapInfo(scene.map);
-            this.currentPath = this.dijkstra(this.scene.player, this.identityEntity).map((node) => {
+            this.currentPath = this.dijkstra(this.targetEntity, this.identityEntity).map((node) => {
                 if (this.debug) {
                     const circle = new Phaser.Geom.Circle(node.x * this.gridSize + this.gridSize / 2, node.y * this.gridSize + this.gridSize / 2, 5);
                     this.pathGraphics.strokeCircleShape(circle);
@@ -48,13 +55,19 @@ export default class NpcMap {
                     pixelY: node.y * this.gridSize + this.gridSize / 2,
                 }
             });
-            setTimeout(loop, this.timeoutMultiple * this.currentPath.length);
+            if (this.targetEntity) {
+                setTimeout(this.loop, this.timeoutMultiple * this.currentPath.length);
+            }
         }
-        loop();
     }
 
     get () {
         return this.currentPath;
+    }
+
+    setTarget (target) {
+        this.targetEntity = target;
+        this.loop();
     }
 
     createMapInfo (map) {
@@ -62,7 +75,7 @@ export default class NpcMap {
             tiles: map.layers[0].data
             .map((row, y) => {
                 return row.map((col, x) => {
-                    if (this.debug && !(col.collideDown && col.collideUp && col.collideLeft && col.collideRight)) {
+                    if (this.drawGrid && !(col.collideDown && col.collideUp && col.collideLeft && col.collideRight)) {
                         const circle = new Phaser.Geom.Circle(x * this.gridSize + this.gridSize / 2, y * this.gridSize + this.gridSize / 2, 10);
                         this.passableTileGraphics.strokeCircleShape(circle);
                     }
@@ -89,8 +102,20 @@ export default class NpcMap {
         const open = [];
         const startX = Math.floor(sourceEntity.gameObject.body.center.x / 32);
         const startY = Math.floor(sourceEntity.gameObject.body.center.y / 32);
-        const endX = Math.floor(targetEntity.gameObject.body.center.x / 32);
-        const endY = Math.floor(targetEntity.gameObject.body.center.y / 32);
+        let endX;
+        let endY;
+        if (!this.targetEntity) {
+            // random
+            endX = startX + (this.randomRange * this.randomMin / 2 - Math.round(Math.random() * this.randomRange)  * this.randomMin);
+            endY = startY + (this.randomRange * this.randomMin / 2 - Math.round(Math.random() * this.randomRange)  * this.randomMin);
+            while (!tiles[endY]?.[endX] || tiles[endY][endX].collide) {
+                endX = startX + (this.randomRange * this.randomMin / 2 - Math.round(Math.random() * this.randomRange)  * this.randomMin);
+                endY = startY + (this.randomRange * this.randomMin / 2 - Math.round(Math.random() * this.randomRange)  * this.randomMin);
+            }
+        } else {
+            endX = Math.floor(targetEntity.gameObject.body.center.x / 32);
+            endY = Math.floor(targetEntity.gameObject.body.center.y / 32);
+        }
         const start = tiles[startY][startX];
         start.cost = 0;
         open.push(start);

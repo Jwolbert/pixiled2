@@ -14,8 +14,8 @@ let numberOfClients = 0;
 
 let players = [];
 
-const spawnPoints = [[144, 144], [240, 540], [840, 870], [650, 260], [350, 255], [100,  760]];
-// const spawnPoints = [[144, 144]];
+// const spawnPoints = [[144, 144], [240, 540], [840, 870], [650, 260], [350, 255], [100,  760]];
+const spawnPoints = [[144, 144]];
 process.on("message", function (message) {
     console.log(message.player.id);
     if (message.player) {
