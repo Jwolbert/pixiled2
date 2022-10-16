@@ -37,6 +37,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
         fizzleEmitter;
         exploded = false;
         fizzled = false;
+        priority = 99999;
     
         constructor (name, entities, physics, attack, interactions, layer, anims) {
             super(
@@ -144,7 +145,8 @@ export default function (name, entities, physics, attack, interactions, layer, a
                 this.fizzleEmitter?.stop();
                 this.exploded = true;
                 if (hit) {
-                    this.attack.fakeCallback();
+                    console.log(hit);
+                    this.attack.fakeCallback(hit);
                 }
                 return;
             }
@@ -203,7 +205,7 @@ export default function (name, entities, physics, attack, interactions, layer, a
                         if (this.attack.attached && body.gameObject.id === this.attack.source) {
                             attached = true;
                         }
-                        if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && ((this.attack.fake || window.SoundManager.play(attack.hitSound)) && this.explode(true))))) {
+                        if (this.entities[body.gameObject.id]?.type !== "attack" && (this.attack.selfTarget || (body.gameObject.id !== this.attack.source && ((this.attack.fake || window.SoundManager.play(attack.hitSound)) && this.explode(body.gameObject.id))))) {
                             this.interactions.push({
                                 source: this.attack.source,
                                 target: body.gameObject.id,

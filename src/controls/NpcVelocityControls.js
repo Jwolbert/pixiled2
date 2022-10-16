@@ -4,23 +4,39 @@ export default class NpcVelocityControls {
     closestGroupSize = 3;
     pathRefreshVelocity = 0.1;
     costStepMax = 3;
-    waitTime = 3000;
+    waitTime = 500;
     behaviors = {follow: 0, random: 1, stop: 2, run: 3};
     currentBehavior = this.behaviors.random;
-    detectionRadius = 10 + Math.random() * 5;
-    standoffDistance = this.detectionRadius * 3 / 4;
+    detectionRadius = 30;
+    standoffDistance = this.detectionRadius * 4 / 5;
     deflectionVelocity = 1;
     scene;
+    entities;
+    priority;
+    debug;
 
-    constructor (gameObject, npcMap, scene) 
+    constructor (gameObject, npcMap, scene, priority) 
     {
+        this.debug = scene.debug;
+        this.priority = priority;
         this.npcMap = npcMap;
         this.gameObject = gameObject;
         this.scene = scene;
+        this.entities = scene.entities;
     }
 
     setBehavior (behavior) {
+        if (this.currentBehavior === behavior) {
+            return;
+        }
         this.currentBehavior = this.behaviors[behavior];
+        if (this.currentBehavior === this.behaviors.random) {
+            this.npcMap.setTarget(undefined);
+        }
+    }
+
+    setPath (path) {
+        this.npcMap.setPath(path);
     }
     
     getClosestLowestCostNodes(path) {
@@ -69,12 +85,14 @@ export default class NpcVelocityControls {
     standOffGraphics;
     detectionGraphics;
     get () {
-        if (this.detectionGraphics) {
-            this.detectionGraphics.destroy();
+        if (this.debug) {
+            if (this.detectionGraphics) {
+                this.detectionGraphics.destroy();
+            }
+            this.detectionGraphics = this.scene.add.graphics({ lineStyle: { width: 2, color: 0xf0ffff }, fillStyle: { color: 0xffffff } });
+            const circle3 = new Phaser.Geom.Circle(this.gameObject.body.center.x, this.gameObject.body.center.y, this.detectionRadius);
+            this.detectionGraphics.strokeCircleShape(circle3);
         }
-        this.detectionGraphics = this.scene.add.graphics({ lineStyle: { width: 2, color: 0xf0ffff }, fillStyle: { color: 0xffffff } });
-        const circle3 = new Phaser.Geom.Circle(this.gameObject.body.center.x, this.gameObject.body.center.y, this.detectionRadius);
-        this.detectionGraphics.strokeCircleShape(circle3);
         const within = this.scene.physics.overlapCirc(this.gameObject.getCenter().x, this.gameObject.getCenter().y, this.detectionRadius);
         let deflectionVelocityX = 0;
         let deflectionVelocityY = 0;
@@ -85,14 +103,23 @@ export default class NpcVelocityControls {
         if (!path) {
             return {velocityX: 0, velocityY: 0};
         }
-        const closestNode = this.getClosestLowestCostNodes(path);
-        let [velocityX, velocityY] = closestNode.reduce(this.sumVelocity, [0, 0]);
 
+        // path following
+        const closestNodes = this.getClosestLowestCostNodes(path);
+        let [velocityX, velocityY] = closestNodes.reduce(this.sumVelocity, [0, 0]);
+
+        // collision avoidance
         const closest = within.reduce((closestBody, body) => {
-            if ((body.velocity.x != 0 ||
-                 body.velocity.y != 0) &&
-                  body.gameObject?.id &&
-                   body.gameObject.id !== this.gameObject.id) {
+            console.log("id", this.entities[body.gameObject.id]);
+            if (this.entities[body.gameObject.id]?.priority > this.priority) {
+                this.entities[body.gameObject.id]?.npcMap?.setPath(this.npcMap.get());
+            }
+            if (body.gameObject.id !== this.gameObject.id &&
+                body.gameObject?.id && 
+                this.entities[body.gameObject.id]?.priority < this.priority &&
+                (body.velocity.x != 0 ||
+                 body.velocity.y != 0)
+                 ) {
                     if (!closestBody) {
                         return body;
                     }
@@ -113,12 +140,14 @@ export default class NpcVelocityControls {
             const difY = closest.center.y - this.gameObject.body.center.y;
             const diagLen = Math.sqrt(Math.pow(difX, 2) + Math.pow(difY, 2));
             if ((diagLen > this.standoffDistance)) {
-                if (this.standOffGraphics) {
-                    this.standOffGraphics.destroy();
+                if (this.debug) {
+                    if (this.standOffGraphics) {
+                        this.standOffGraphics.destroy();
+                    }
+                    this.standOffGraphics = this.scene.add.graphics({ lineStyle: { width: 2, color: 0x0fffff }, fillStyle: { color: 0xffffff } });
+                    const circle4 = new Phaser.Geom.Circle(this.gameObject.body.center.x, this.gameObject.body.center.y, this.standoffDistance);
+                    this.standOffGraphics.strokeCircleShape(circle4); 
                 }
-                this.standOffGraphics = this.scene.add.graphics({ lineStyle: { width: 2, color: 0x0fffff }, fillStyle: { color: 0xffffff } });
-                const circle4 = new Phaser.Geom.Circle(this.gameObject.body.center.x, this.gameObject.body.center.y, this.standoffDistance);
-                this.standOffGraphics.strokeCircleShape(circle4);
                 return {velocityX: 0, velocityY: 0};
             }
             this.pathGraphics = this.scene.add.graphics({ lineStyle: { width: 2, color: 0x00ffff }, fillStyle: { color: 0xffffff } });
@@ -130,6 +159,7 @@ export default class NpcVelocityControls {
             this.pathGraphics.strokeCircleShape(circle2);
             deflectionVelocityX *= -1;
             deflectionVelocityY *= -1;
+            return {velocityX: deflectionVelocityX, velocityY: deflectionVelocityY};
         }
 
         if (this.currentBehavior === this.behaviors.stop) {
@@ -137,12 +167,11 @@ export default class NpcVelocityControls {
         }
 
         // console.log(velocityX.toFixed(2), velocityY.toFixed(2), deflectionVelocityX.toFixed(2), deflectionVelocityY.toFixed(2));
-        if (this.pathRefreshVelocity > (Math.abs(velocityX) + Math.abs(velocityY))) {
+        if (this.pathRefreshVelocity > (Math.abs(velocityX) + Math.abs(velocityY)) || closestNodes[0].terminal) {
             if (this.currentBehavior === this.behaviors.random && !this.debounce) {
                 this.debounce = true;
                 setTimeout(() => {
                     // setting target refreshes map
-                    this.npcMap.setTarget(undefined);
                     this.debounce = false;
                 }, this.waitTime);
             }

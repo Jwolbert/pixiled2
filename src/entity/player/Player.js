@@ -21,9 +21,13 @@ export default class Player extends Entity {
     maxStamina = 100;
     manaRegen = 0.3;
     healthRegen = 0.1;
-    staminaRegen = 0.5;
+    staminaRegen = 0;
+    reloadStamina = this.maxStamina;
+    reloadStaminaRegen = 2;
+    defaultStaminaRegen = 0;
     regenCounter = 0;
     regenRate = 1;
+    reloadSpeed = 2;
     roundingConstant = 1000;
     blockMovement = false;
     blockMovementCounter = 0
@@ -34,10 +38,13 @@ export default class Player extends Entity {
     abilityActive = false;
     abilityCooldown = 0;
     silent = false;
+    hidden = false;
+    reloading = false;
+    reloadSound;
 
     constructor (name, gameObject, input, scene, interactions)
     {
-        super(name, gameObject, window.clientId, scene, interactions);
+        super(name, gameObject, window.clientId, scene, interactions, -1);
         this.controls = {};
         this.controls.velocity = new PlayerVelocityControls(input);
         this.controls.attack = new PlayerAttackControls(input);
@@ -132,6 +139,13 @@ export default class Player extends Entity {
         const input = this.controls.attack.get();
         if (input) {
             this.weapon = input.button === "left" ? this.primaryWeapon : this.secondaryWeapon;
+            if (this.stamina < this.weapon.staminaCost && this.weapon.reloadable && !this.reloading) {
+                this.reloadStamina = this.stamina;
+                this.reloading = true;
+                this.reloadSound = this.weapon.reloadSound;
+                return;
+            }
+            this.reloading = false;
             if (this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost || this.hp < this.weapon.healthCost) return;
             if (input.button === "left") {
                 if (this.abilityActive) {
@@ -159,6 +173,10 @@ export default class Player extends Entity {
                     effect: this.weapon.action.attacking.id,
                 });
             }
+        } else if (!this.reloading) {
+            this.reloadStamina = this.stamina;
+            this.reloading = true;
+            this.reloadSound = this.weapon.reloadSound;
         }
     }
 
@@ -208,6 +226,15 @@ export default class Player extends Entity {
         this.hp = Math.min(this.maxHealth, this.hp.toFixed(2));
         this.stamina = Math.min(this.maxStamina, this.stamina.toFixed(2));
 
+
+        if (this.reloadStamina >= this.maxStamina && this.reloading) {
+            this.stamina = this.maxStamina;
+            this.reloading = false;
+            window.SoundManager.play(this.reloadSound);
+        } else {
+            this.reloadStamina += this.reloadStaminaRegen;
+            this.reloadStamina = Math.min(this.maxStamina, this.reloadStamina.toFixed(2));
+        }
         document.querySelector("#healthBar").style.width = this.hp + "%";
         document.querySelector("#healthBarRegen").textContent = `+${this.healthRegen}`;
         document.querySelector("#healthBarRemaining").textContent = `${this.hp.toFixed(0)} / ${this.maxHealth} `;

@@ -39,7 +39,6 @@ export default class NpcAttackControls {
             direction: this.direction,
             location: this.location,
         };
-        console.log(control);
         return control;
     }
 }

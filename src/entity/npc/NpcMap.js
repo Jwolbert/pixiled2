@@ -70,6 +70,10 @@ export default class NpcMap {
         this.loop();
     }
 
+    setPath(path) {
+        this.currentPath = path;
+    }
+
     createMapInfo (map) {
         const mapInfo = {
             tiles: map.layers[0].data

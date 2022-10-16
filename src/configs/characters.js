@@ -15,7 +15,7 @@ export default {
         ability: effects.bloodForm,
     },
     "iceMage": {
-        weapons: [weapons.vampireBite, weapons.bloodOrbScroll],
+        weapons: [weapons.slowbow, weapons.sabotageKitPoison],
         items: [items.bloodChalice],
         ability: effects.bloodForm,
     },

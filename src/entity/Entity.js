@@ -23,15 +23,19 @@ export default class Entity {
     stamina = 100;
     effectTimer = 0;
     effectTimerMaximum = 10;
-    defaultSpeed = 75;
-    speed = 75;
+    defaultSpeed = 100;
+    speed = 100;
     direction;
     scene;
     blockMovement = false;
     interactions;
+    priority;
 
-    constructor (name, gameObject, id, scene, interactions)
+    constructor (name, gameObject, id, scene, interactions, priority)
     {
+        if (priority) {
+            this.priority = priority;
+        }
         if (id) {
             this.id = id; 
         } else {
@@ -114,12 +118,14 @@ export default class Entity {
     }
 
     setAnimation (animation) {
-        if (this.currentAnimation !== animation) {
-            this.gameObject.play(this.name + '_' + animation);
+        if (animation === "wait" || this.blockMovement) {
+            this.gameObject.stop();
             this.currentAnimation = animation;
-            if (this.blockMovement) {
-                this.gameObject.stop();
-            }
+            return;
+        }
+        if (this.currentAnimation !== animation) {
+            this.currentAnimation = animation;
+            this.gameObject.play(this.name + '_' + animation);
         }
     }
 

@@ -3,6 +3,7 @@ import NpcMap from "./NpcMap";
 import NpcVelocityControls from "../../controls/NpcVelocityControls";
 import NpcAttackControls from "../../controls/NpcAttackControls";
 import characters from "../../configs/characters";
+import e from "cors";
 
 export default class Npc extends Entity {
     controls;
@@ -24,6 +25,7 @@ export default class Npc extends Entity {
     staminaRegen = 0.5;
     regenCounter = 0;
     regenRate = 1;
+    hp = 30;
     roundingConstant = 1000;
     blockMovement = false;
     blockMovementCounter = 0
@@ -34,17 +36,19 @@ export default class Npc extends Entity {
     abilityActive = false;
     abilityCooldown = 0;
     silent = false;
-    speed = 25;
+    speed = 50;
+    defaultSpeed = 50;
     input;
     npcMap;
+    target;
 
-    constructor (name, gameObject, scene, interactions)
+    constructor (name, gameObject, scene, interactions, priority)
     {
-        super(name, gameObject, undefined, scene, interactions);
+        super(name, gameObject, undefined, scene, interactions, priority);
         this.controls = {};
         this.npcMap = new NpcMap(scene, this);
         this.npcMap.setTarget(undefined);
-        this.controls.velocity = new NpcVelocityControls(gameObject, this.npcMap, scene);
+        this.controls.velocity = new NpcVelocityControls(gameObject, this.npcMap, scene, priority);
         this.controls.attack = new NpcAttackControls(scene.player, this);
         // this.controls.inventory = new PlayerInventoryControls(input);
         // this.controls.ability = new PlayerAbilityControls(input);
@@ -57,8 +61,11 @@ export default class Npc extends Entity {
         });
         this.equipped.weapons = characters[this.name].weapons;
         this.ability = characters[this.name].ability;
-
-        this.controls.attack.setBehavior("passive");
+        this.target = scene.player.id;
+        this.targetEntity = scene.player;
+        // this.controls.attack.setBehavior("passive");
+        this.controls.attack.setBehavior("aggressive");
+        this.npcMap.setTarget(scene.player);
     }
 
     initPlayerPosition (JSON) {
@@ -67,6 +74,14 @@ export default class Npc extends Entity {
     }
 
     update () {
+        if (this.targetEntity.hidden) {
+            this.controls.attack.setBehavior("passive");
+            this.controls.velocity.setBehavior("random");
+        } else {
+            this.controls.attack.setBehavior("aggressive");
+            this.npcMap.setTarget(this.targetEntity);
+            this.controls.velocity.setBehavior("follow");
+        }
         this.velocityInput();
         this.attackInput();
         // this.inventoryInput();
@@ -128,6 +143,10 @@ export default class Npc extends Entity {
 
     attack (notFake) {
         if (!this.input) return;
+        console.log(!!notFake, this.target);
+        if (notFake && notFake !== this.target) {
+            return;
+        }
         // this.weapon = input.button === "left" ? this.primaryWeapon : this.secondaryWeapon;
         if (notFake && this.mana < this.weapon.manaCost || this.stamina < this.weapon.staminaCost || this.hp < this.weapon.healthCost) return;
         if (false) {
@@ -148,8 +167,11 @@ export default class Npc extends Entity {
             direction: this.input.direction,
             location: location,
             source: this.id,
-            fake: !notFake,
-            fakeCallback: () => {this.attack(true);},
+            fake: !(!!notFake),
+            fakeCallback: (hitId) => {
+                console.log("callback");
+                this.attack(hitId);
+            },
         };
     }
 

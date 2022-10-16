@@ -51,7 +51,7 @@ export default {
         reApply: true,
         selfTarget: false,
         apply() {
-            this.hp -= 20;
+            this.hp -= 50;
         },
         tick() {
 
@@ -152,6 +152,7 @@ export default {
         apply() {
             this.speed += 25;
             window.SoundManager.play("fade");
+            this.hidden = true;
         },
         tick() {
             this.gameObject.alpha -= 0.1;
@@ -161,6 +162,7 @@ export default {
             this.gameObject.setAlpha(1);
             this.speed = this.defaultSpeed;
             this.abilityCooldown = 500;
+            this.hidden = false;
         },
         duration: 100,
     },

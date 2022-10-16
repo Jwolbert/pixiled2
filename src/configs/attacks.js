@@ -66,7 +66,7 @@ export default {
         fizzleSelfTarget: false,
     },
     vampireBite: {
-        radius: 8,
+        radius: 10,
         dimX: 32,
         dimY: 32,
         speed: 200,

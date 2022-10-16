@@ -22,7 +22,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = true; // DEBUGGGGGGG
+    debug = false; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -249,24 +249,26 @@ export class Example extends Phaser.Scene
 
         const npcMax = 50;
         let npcCount = 0;
+        const spawns = [[144, 144], [240, 540], [840, 870], [650, 260], [350, 255], [100,  760]]
         const createNpc = () => {
-            this.npcChar = this.physics.add.sprite(72, 72, 'iceMage').setScale(1).setDepth(4);
-            // this.npcChar.setCircle(7, 5, 12);
-            this.npcChar.setCircle(10, 2, 14);
-            this.npc = new Npc("hatman", this.npcChar, this, this.interactions);
+            const spawnPoint = spawns[Math.floor(Math.random() * spawns.length)]
+            this.npcChar = this.physics.add.sprite(spawnPoint[0], spawnPoint[1], 'iceMage').setScale(1).setDepth(4);
+            this.npcChar.setCircle(7, 5, 12);
+            // this.npcChar.setCircle(10, 2, 14);
+            this.npc = new Npc("iceMage", this.npcChar, this, this.interactions, npcCount++);
             this.physics.add.collider(this.character, this.npcChar);
             this.entities[this.npc.getId()] = this.npc;
             this.physics.add.collider(this.npcChar, this.mapLayer);
             this.physics.add.collider(this.npcChar, this.npcGroup);
             this.npcGroup.add(this.npcChar);
             this.dynamicLayer.add(this.npcChar);
-            if (npcCount++ < npcMax) {
-                setTimeout(createNpc, Math.round(Math.random() * 2000));
+            if (npcCount < npcMax) {
+                setTimeout(createNpc, Math.round(3000));
             }
         };
-        setTimeout(createNpc, Math.round(Math.random() * 5000));
+        setTimeout(createNpc, Math.round(5000));
 
-        this.cameras.main.setZoom(2);
+        this.cameras.main.setZoom(1.5);
         this.cameras.main.startFollow(this.character);
         // this.entities[this.portal.getId()] = this.portal;
         if (this.debug) {
