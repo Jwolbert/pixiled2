@@ -2,6 +2,7 @@ export default class NpcAttackControls {
     direction;
     location;
     range = 10;
+    detectionRange = 200;
     target;
     source;
     behaviors = {aggressive: 0, passive: 1};
@@ -20,6 +21,11 @@ export default class NpcAttackControls {
     calculateLocation () {
         const dx = this.target.gameObject.body.center.x - this.source.gameObject.body.center.x;
         const dy = this.source.gameObject.body.center.y - this.target.gameObject.body.center.y;
+        const distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+        if (distance > this.detectionRange) {
+            this.location = undefined;
+            return;
+        }
         this.direction = Math.atan( dy / dx);
         if (dx < 0) {
             this.direction += Math.PI;
@@ -34,6 +40,7 @@ export default class NpcAttackControls {
     get () {
         if (this.currentBehavior === this.behaviors.passive) return;
         this.calculateLocation();
+        if (!this.location) return;
         const control = {
             type: "attack",
             direction: this.direction,

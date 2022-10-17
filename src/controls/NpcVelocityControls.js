@@ -26,12 +26,16 @@ export default class NpcVelocityControls {
     }
 
     setBehavior (behavior) {
-        if (this.currentBehavior === behavior) {
+        if (this.currentBehavior === this.behaviors[behavior]) {
+            console.log("return");
             return;
         }
         this.currentBehavior = this.behaviors[behavior];
         if (this.currentBehavior === this.behaviors.random) {
             this.npcMap.setTarget(undefined);
+        }
+        if (this.currentBehavior === this.behaviors.follow) {
+            this.npcMap.setTarget(this.entities[this.gameObject.id].targetEntity);
         }
     }
 
@@ -48,6 +52,7 @@ export default class NpcVelocityControls {
                 difY: node.pixelY - this.gameObject.body.center.y,
                 dif: Math.abs(node.pixelX - this.gameObject.body.center.x) + Math.abs(node.pixelY - this.gameObject.body.center.y),
                 cost: node.cost,
+                terminal: node.terminal
             });
         });
         // get cost of node closest to npc
@@ -110,8 +115,7 @@ export default class NpcVelocityControls {
 
         // collision avoidance
         const closest = within.reduce((closestBody, body) => {
-            console.log("id", this.entities[body.gameObject.id]);
-            if (this.entities[body.gameObject.id]?.priority > this.priority) {
+            if (this.entities[body.gameObject.id]?.priority > this.priority && this.currentBehavior !== this.behaviors.follow) {
                 this.entities[body.gameObject.id]?.npcMap?.setPath(this.npcMap.get());
             }
             if (body.gameObject.id !== this.gameObject.id &&
@@ -172,6 +176,7 @@ export default class NpcVelocityControls {
                 this.debounce = true;
                 setTimeout(() => {
                     // setting target refreshes map
+                    this.npcMap.setTarget(undefined);
                     this.debounce = false;
                 }, this.waitTime);
             }

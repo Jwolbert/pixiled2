@@ -3,7 +3,6 @@ import NpcMap from "./NpcMap";
 import NpcVelocityControls from "../../controls/NpcVelocityControls";
 import NpcAttackControls from "../../controls/NpcAttackControls";
 import characters from "../../configs/characters";
-import e from "cors";
 
 export default class Npc extends Entity {
     controls;
@@ -17,7 +16,7 @@ export default class Npc extends Entity {
         items: [],
         clothing: [],
     }
-    maxHealth = 100;
+    maxHealth = 30;
     maxMana = 100;
     maxStamina = 100;
     manaRegen = 0.3;
@@ -63,9 +62,6 @@ export default class Npc extends Entity {
         this.ability = characters[this.name].ability;
         this.target = scene.player.id;
         this.targetEntity = scene.player;
-        // this.controls.attack.setBehavior("passive");
-        this.controls.attack.setBehavior("aggressive");
-        this.npcMap.setTarget(scene.player);
     }
 
     initPlayerPosition (JSON) {
@@ -79,8 +75,6 @@ export default class Npc extends Entity {
             this.controls.velocity.setBehavior("random");
         } else {
             this.controls.attack.setBehavior("aggressive");
-            this.npcMap.setTarget(this.targetEntity);
-            this.controls.velocity.setBehavior("follow");
         }
         this.velocityInput();
         this.attackInput();
@@ -120,6 +114,7 @@ export default class Npc extends Entity {
     }
     destroy () {
         clearInterval(this.walkingInterval);
+        this.npcMap.destroy();
         super.destroy();
     }
 
@@ -143,7 +138,6 @@ export default class Npc extends Entity {
 
     attack (notFake) {
         if (!this.input) return;
-        console.log(!!notFake, this.target);
         if (notFake && notFake !== this.target) {
             return;
         }
@@ -169,7 +163,7 @@ export default class Npc extends Entity {
             source: this.id,
             fake: !(!!notFake),
             fakeCallback: (hitId) => {
-                console.log("callback");
+                this.controls.velocity.setBehavior("follow");
                 this.attack(hitId);
             },
         };

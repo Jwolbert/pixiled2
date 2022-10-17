@@ -22,7 +22,7 @@ export class Example extends Phaser.Scene
     ray;
     graphics;
     intersections = [];
-    debug = false; // DEBUGGGGGGG
+    debug = true; // DEBUGGGGGGG
     fogOfWar;
     map;
     debugData;
@@ -247,7 +247,7 @@ export class Example extends Phaser.Scene
         this.entities[this.player.getId()] = this.player;
         // this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
 
-        const npcMax = 50;
+        const npcMax = 100;
         let npcCount = 0;
         const spawns = [[144, 144], [240, 540], [840, 870], [650, 260], [350, 255], [100,  760]]
         const createNpc = () => {
@@ -263,7 +263,7 @@ export class Example extends Phaser.Scene
             this.npcGroup.add(this.npcChar);
             this.dynamicLayer.add(this.npcChar);
             if (npcCount < npcMax) {
-                setTimeout(createNpc, Math.round(3000));
+                setTimeout(createNpc, Math.round(1000));
             }
         };
         setTimeout(createNpc, Math.round(5000));

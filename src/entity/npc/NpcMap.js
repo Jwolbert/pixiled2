@@ -12,7 +12,7 @@ export default class NpcMap {
     currentPath;
     timeoutId = undefined;
     timeoutMultiple = 75;
-    randomRange = 6;
+    randomRange = 4;
     randomMin = 4;
     loop;
     drawGrid;
@@ -56,9 +56,13 @@ export default class NpcMap {
                 }
             });
             if (this.targetEntity) {
-                setTimeout(this.loop, this.timeoutMultiple * this.currentPath.length);
+                this.timeoutId = setTimeout(this.loop, this.timeoutMultiple * this.currentPath.length);
             }
         }
+    }
+
+    destroy() {
+        clearTimeout(this.timeoutId);
     }
 
     get () {
@@ -102,6 +106,7 @@ export default class NpcMap {
     }
 
     dijkstra (targetEntity, sourceEntity) {
+        if (!sourceEntity.gameObject.body) return [];
         const tiles = this.mapInfo.tiles;
         const open = [];
         const startX = Math.floor(sourceEntity.gameObject.body.center.x / 32);

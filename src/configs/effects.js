@@ -164,7 +164,7 @@ export default {
             this.abilityCooldown = 500;
             this.hidden = false;
         },
-        duration: 100,
+        duration: 200,
     },
     bloodForm: {
         id: "bloodForm",
