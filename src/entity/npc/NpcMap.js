@@ -16,6 +16,7 @@ export default class NpcMap {
     randomMin = 4;
     loop;
     drawGrid;
+    stopped = false;
 
     constructor (scene, identityEntity, drawGrid) {
         // from scene.js ...
@@ -55,7 +56,7 @@ export default class NpcMap {
                     pixelY: node.y * this.gridSize + this.gridSize / 2,
                 }
             });
-            if (this.targetEntity) {
+            if (this.targetEntity && !this.stopped) {
                 this.timeoutId = setTimeout(this.loop, this.timeoutMultiple * this.currentPath.length);
             }
         }
@@ -69,7 +70,13 @@ export default class NpcMap {
         return this.currentPath;
     }
 
+    stop () {
+        this.stopped = true;
+        clearTimeout(this.timeoutId);
+    }
+
     setTarget (target) {
+        this.stopped = false;
         this.targetEntity = target;
         this.loop();
     }

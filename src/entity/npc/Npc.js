@@ -39,11 +39,13 @@ export default class Npc extends Entity {
     defaultSpeed = 50;
     input;
     npcMap;
-    target;
+    targetEntity;
+    owner;
 
-    constructor (name, gameObject, scene, interactions, priority)
+    constructor (name, gameObject, scene, interactions, priority, owner)
     {
         super(name, gameObject, undefined, scene, interactions, priority);
+        this.owner = scene.entities[owner];
         this.controls = {};
         this.npcMap = new NpcMap(scene, this);
         this.npcMap.setTarget(undefined);
@@ -60,8 +62,30 @@ export default class Npc extends Entity {
         });
         this.equipped.weapons = characters[this.name].weapons;
         this.ability = characters[this.name].ability;
-        this.target = scene.player.id;
         this.targetEntity = scene.player;
+        if (this.owner) {
+            this.controls.velocity.setBehavior("follow", this.owner);
+            this.controls.attack.setBehavior("passive");
+        } else {
+            this.controls.velocity.setBehavior("random");
+            this.controls.attack.setBehavior("passive");
+        }
+    }
+
+    addEffect (effect, addon) {
+        if (effect.source !== this.id) {
+            this.targetEntity = this.scene.entities[effect.source];
+            this.controls.attack.setBehavior("aggressive");
+            this.controls.velocity.setBehavior("follow", this.scene.entities[effect.source]);
+        }
+        super.addEffect(effect, addon);
+    }
+
+
+    goAggressive (id) {
+        this.targetEntity = this.scene.entities[id];
+        this.controls.attack.setBehavior("aggressive");
+        this.controls.velocity.setBehavior("follow", this.scene.entities[id]);
     }
 
     initPlayerPosition (JSON) {
@@ -70,11 +94,9 @@ export default class Npc extends Entity {
     }
 
     update () {
-        if (this.targetEntity.hidden) {
+        if (this.targetEntity && this.targetEntity?.hidden) {
             this.controls.attack.setBehavior("passive");
             this.controls.velocity.setBehavior("random");
-        } else {
-            this.controls.attack.setBehavior("aggressive");
         }
         this.velocityInput();
         this.attackInput();
@@ -137,8 +159,9 @@ export default class Npc extends Entity {
     }
 
     attack (notFake) {
+        // notFake is an entity id, lol
         if (!this.input) return;
-        if (notFake && notFake !== this.target) {
+        if (notFake && notFake !== this.targetEntity?.id) {
             return;
         }
         // this.weapon = input.button === "left" ? this.primaryWeapon : this.secondaryWeapon;
@@ -163,7 +186,7 @@ export default class Npc extends Entity {
             source: this.id,
             fake: !(!!notFake),
             fakeCallback: (hitId) => {
-                this.controls.velocity.setBehavior("follow");
+                this.controls.velocity.setBehavior("follow", this.scene.entities[hitId]);
                 this.attack(hitId);
             },
         };

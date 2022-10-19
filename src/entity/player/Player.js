@@ -41,6 +41,7 @@ export default class Player extends Entity {
     hidden = false;
     reloading = false;
     reloadSound;
+    owned = [];
 
     constructor (name, gameObject, input, scene, interactions)
     {
@@ -61,6 +62,15 @@ export default class Player extends Entity {
         this.ability = characters[this.name].ability;
     }
 
+    addEffect (effect, addon) {
+        if (effect.source !== this.id) {
+            this.owned.forEach((npc) => {
+                npc.goAggressive(effect.source);
+            });
+        }
+        super.addEffect(effect, addon);
+    }
+
     initPlayerPosition (JSON) {
         this.gameObject.x = JSON.x;
         this.gameObject.y = JSON.y;
@@ -69,6 +79,10 @@ export default class Player extends Entity {
     destroy () {
         super.destroy();
         document.location.reload();
+    }
+    
+    addNpc (npc) {
+        this.owned.push(npc);
     }
 
     update () {

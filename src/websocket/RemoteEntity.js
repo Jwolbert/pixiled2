@@ -7,7 +7,7 @@ export default class RemoteEntity extends Entity {
     positionBufferSize = 2;
     positionBufferSumX;
     positionBufferSumY;
-    deadReck = 200;
+    deadReck = 30;
 
     constructor (JSON, gameObject, id, scene) {
         super(JSON.name, gameObject, id, scene);
@@ -45,8 +45,6 @@ export default class RemoteEntity extends Entity {
     }
 
     updatePositionWithBuffer (JSON) {
-        // this.gameObject.setX(Math.round(this.positionBufferSumX / this.positionBufferSize));
-        // this.gameObject.setY(Math.round(this.positionBufferSumY / this.positionBufferSize));
         const lastBufferEntry = this.positionBuffer.shift();
         this.positionBufferSumX -= lastBufferEntry.x;
         this.positionBufferSumY -= lastBufferEntry.y;
@@ -61,7 +59,8 @@ export default class RemoteEntity extends Entity {
         this.velocityY = Math.log10(Math.abs(difY) + 1) * difYSign * this.speed * 1.5;
         this.gameObject.setVelocityX(this.velocityX);
         this.gameObject.setVelocityY(this.velocityY);
-        if ((Math.abs(difX) + Math.abs(difY)) > 30) {
+        // dead reckoning
+        if ((Math.abs(difX) + Math.abs(difY)) > this.deadReck) {
             this.gameObject.setX(JSON.x);
             this.gameObject.setY(JSON.y);
         }

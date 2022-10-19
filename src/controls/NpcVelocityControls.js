@@ -6,7 +6,7 @@ export default class NpcVelocityControls {
     costStepMax = 3;
     waitTime = 500;
     behaviors = {follow: 0, random: 1, stop: 2, run: 3};
-    currentBehavior = this.behaviors.random;
+    currentBehavior;
     detectionRadius = 30;
     standoffDistance = this.detectionRadius * 4 / 5;
     deflectionVelocity = 1;
@@ -23,9 +23,10 @@ export default class NpcVelocityControls {
         this.gameObject = gameObject;
         this.scene = scene;
         this.entities = scene.entities;
+        this.setBehavior("stop");
     }
 
-    setBehavior (behavior) {
+    setBehavior (behavior, entity) {
         if (this.currentBehavior === this.behaviors[behavior]) {
             console.log("return");
             return;
@@ -35,7 +36,10 @@ export default class NpcVelocityControls {
             this.npcMap.setTarget(undefined);
         }
         if (this.currentBehavior === this.behaviors.follow) {
-            this.npcMap.setTarget(this.entities[this.gameObject.id].targetEntity);
+            this.npcMap.setTarget(entity);
+        }
+        if (this.currentBehavior === this.behaviors.stop) {
+            this.npcMap.stop();
         }
     }
 
@@ -122,7 +126,8 @@ export default class NpcVelocityControls {
                 body.gameObject?.id && 
                 this.entities[body.gameObject.id]?.priority < this.priority &&
                 (body.velocity.x != 0 ||
-                 body.velocity.y != 0)
+                 body.velocity.y != 0 ||
+                  this.entities[body.gameObject.id].type === "player")
                  ) {
                     if (!closestBody) {
                         return body;
@@ -179,8 +184,8 @@ export default class NpcVelocityControls {
                     this.npcMap.setTarget(undefined);
                     this.debounce = false;
                 }, this.waitTime);
+                return {velocityX: deflectionVelocityX, velocityY: deflectionVelocityY};
             }
-            return {velocityX: deflectionVelocityX, velocityY: deflectionVelocityY};
         }
 
         const outputVelocity = {};

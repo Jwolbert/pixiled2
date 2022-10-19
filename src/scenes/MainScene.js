@@ -247,15 +247,16 @@ export class Example extends Phaser.Scene
         this.entities[this.player.getId()] = this.player;
         // this.portal = new Portal('portals', this.physics.add.sprite(144, -8, 'portals').setDepth(3), this.player, this);
 
-        const npcMax = 100;
+        const npcMax = 5;
         let npcCount = 0;
-        const spawns = [[144, 144], [240, 540], [840, 870], [650, 260], [350, 255], [100,  760]]
+        // const spawns = [[144, 144], [240, 540], [840, 870], [650, 260], [350, 255], [100,  760]];
+        const spawns = [[144, 144]];
         const createNpc = () => {
             const spawnPoint = spawns[Math.floor(Math.random() * spawns.length)]
             this.npcChar = this.physics.add.sprite(spawnPoint[0], spawnPoint[1], 'iceMage').setScale(1).setDepth(4);
             this.npcChar.setCircle(7, 5, 12);
             // this.npcChar.setCircle(10, 2, 14);
-            this.npc = new Npc("iceMage", this.npcChar, this, this.interactions, npcCount++);
+            this.npc = new Npc("iceMage", this.npcChar, this, this.interactions, npcCount++, npcCount - 1 ? undefined : this.player.id);
             this.physics.add.collider(this.character, this.npcChar);
             this.entities[this.npc.getId()] = this.npc;
             this.physics.add.collider(this.npcChar, this.mapLayer);
